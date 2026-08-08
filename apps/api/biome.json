@@ -1,0 +1,16 @@
+{
+  "extends": ["@teste-ticket/config/biome"],
+  "root": false,
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        "useImportType": "off"
+      }
+    }
+  }
+}

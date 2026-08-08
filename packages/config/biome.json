@@ -1,0 +1,4 @@
+{
+  "extends": ["@teste-ticket/config/biome"],
+  "root": false
+}

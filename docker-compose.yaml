@@ -1,0 +1,39 @@
+# Docker Compose stub
+# Dockerfiles ainda não existem — desenvolvimento principal é local (`pnpm start:dev`).
+
+
+services:
+  api:
+    # build:
+    #   context: .
+    #   dockerfile: apps/api/Dockerfile
+    #   target: dev
+    image: node:24-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "echo 'API Docker stub — use: pnpm --filter api start:dev' && sleep infinity"
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./apps/api/.env
+
+  web:
+    # build:
+    #   context: .
+    #   dockerfile: apps/web/Dockerfile
+    #   target: dev
+    image: node:24-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "echo 'Web Docker stub — use: pnpm --filter web start:dev' && sleep infinity"
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./apps/web/.env
+
+networks:
+  default:
+    name: teste-ticket
+    driver: bridge

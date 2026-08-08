@@ -3,17 +3,44 @@
   "version": "1.0.0",
   "private": true,
   "description": "Teste Tecnico, simulando um sistema de tickets.",
-  "keywords": [
-    "teste",
-    "ticket"
-  ],
+  "keywords": ["teste", "ticket"],
   "author": "Vitor",
   "license": "ISC",
   "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
+    "dev": "turbo start:dev",
+    "start:dev": "turbo start:dev",
     "dev:api": "pnpm --filter api start:dev",
-    "dev:web": "pnpm --filter web dev",
-    "build": "pnpm -r run build",
-    "lint": "pnpm -r run lint"
+    "dev:web": "pnpm --filter web start:dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "format": "turbo format",
+    "check": "turbo check",
+    "lint:fix": "turbo lint:fix",
+    "format:fix": "turbo format:fix",
+    "check:fix": "turbo check:fix",
+    "test": "turbo test",
+    "test:watch": "turbo test:watch",
+    "test:cov": "turbo test:cov",
+    "setup:env": "bash scripts/setup-env.sh"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "turbo": "^2.5.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@prisma/client",
+      "@prisma/engines",
+      "bcrypt",
+      "esbuild",
+      "prisma",
+      "sharp"
+    ]
   }
 }

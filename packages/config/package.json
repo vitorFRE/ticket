@@ -1,0 +1,31 @@
+{
+  "name": "@teste-ticket/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared configuration for the teste-ticket monorepo",
+  "license": "ISC",
+  "scripts": {
+    "build": "tsup",
+    "lint": "biome lint .",
+    "format": "biome format .",
+    "check": "biome check .",
+    "lint:fix": "biome lint . --fix",
+    "format:fix": "biome format . --write",
+    "check:fix": "biome check . --fix"
+  },
+  "exports": {
+    "./biome": "./dist/biome.json",
+    "./typescript": "./dist/tsconfig.json",
+    "./jest": {
+      "types": "./dist/jest.config.d.ts",
+      "import": "./dist/jest.config.mjs",
+      "require": "./dist/jest.config.js"
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "jest": "catalog:",
+    "tsup": "8.5.0",
+    "typescript": "catalog:"
+  }
+}
