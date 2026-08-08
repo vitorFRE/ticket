@@ -1,6 +1,8 @@
 # teste-ticket
 
-Monorepo de um sistema de tickets (teste técnico).
+Monorepo de uma plataforma de eventos e ingressos (desafio Verzel Elite Dev).
+
+**desafio:** ver o [PRD](docs/prd.md) — personas, fluxos, modelo de dados, API e ordem de implementação.
 
 ## Stack
 
@@ -28,10 +30,10 @@ pnpm dev:web   # http://localhost:3000
 
 ### Database
 
-| Ambiente | Variáveis | Onde |
-| --- | --- | --- |
-| Local | `LOCAL_DATABASE_URL` | SQLite (`file:dev.db`) |
-| Produção | `DATABASE_URL` + `DATABASE_AUTH_TOKEN` | Turso (libSQL) |
+| Ambiente | Variáveis                              | Onde                   |
+| -------- | -------------------------------------- | ---------------------- |
+| Local    | `LOCAL_DATABASE_URL`                   | SQLite (`file:dev.db`) |
+| Produção | `DATABASE_URL` + `DATABASE_AUTH_TOKEN` | Turso (libSQL)         |
 
 Em produção defina `NODE_ENV=production` e as variáveis do Turso. Migrations locais usam `LOCAL_DATABASE_URL`; para aplicar no Turso, rode `prisma migrate deploy` com `LOCAL_DATABASE_URL` apontando para a URL do Turso (mesmo padrão do Sellow no `prisma.config.ts`).
 
@@ -46,12 +48,12 @@ Em produção defina `NODE_ENV=production` e as variáveis do Turso. Migrations 
 
 ## Scripts úteis
 
-| Comando | Descrição |
-| --- | --- |
-| `pnpm build` | Build de todos os pacotes/apps |
-| `pnpm check` | Lint + format check (Biome) |
-| `pnpm check:fix` | Aplica fixes do Biome |
-| `pnpm test` | Testes unitários |
+| Comando          | Descrição                      |
+| ---------------- | ------------------------------ |
+| `pnpm build`     | Build de todos os pacotes/apps |
+| `pnpm check`     | Lint + format check (Biome)    |
+| `pnpm check:fix` | Aplica fixes do Biome          |
+| `pnpm test`      | Testes unitários               |
 
 ## Docker
 
