@@ -60,6 +60,16 @@ Registro público (`POST /auth/register`) sempre cria `CLIENT`. Roles especiais 
 - `POST /auth/logout`
 - `GET /health` — público
 
+### Catalog (ORGANIZER)
+
+Detalhes em [docs/features/catalog.md](docs/features/catalog.md).
+
+- `GET /catalog/tmdb/search?q=`
+- `GET /catalog/ticketmaster/search?q=`
+- `GET /catalog/:source/:externalId` — `source`: `tmdb` \| `ticketmaster`
+
+Env: `TMDB_API_KEY` (ou `TMDB_ACCESS_TOKEN`), `TICKETMASTER_API_KEY`.
+
 ## Scripts úteis
 
 | Comando          | Descrição                      |

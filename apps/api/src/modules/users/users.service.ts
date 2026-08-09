@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { UserRole } from "../../generated/prisma/client";
+import { UserRole } from "../../generated/prisma/enums";
 import { PrismaService } from "../prisma/prisma.service";
 
 type CreateUserData = {
