@@ -14,4 +14,9 @@ export const envConfig = () => ({
   },
   frontendUrl: process.env.FRONTEND_URL ?? "http://localhost:3000",
   allowRegistration: process.env.ALLOW_REGISTRATION !== "false",
+  catalog: {
+    tmdbApiKey: process.env.TMDB_API_KEY ?? "",
+    tmdbAccessToken: process.env.TMDB_ACCESS_TOKEN ?? "",
+    ticketmasterApiKey: process.env.TICKETMASTER_API_KEY ?? "",
+  },
 });
