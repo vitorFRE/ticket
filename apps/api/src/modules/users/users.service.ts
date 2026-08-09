@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { UserRole } from "../../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 
 type CreateUserData = {
   email: string;
   name?: string;
   password?: string;
+  role?: UserRole;
 };
 
 @Injectable()
@@ -37,7 +39,13 @@ export class UsersService {
   }
 
   async create(data: CreateUserData) {
-    return this.prisma.user.create({ data });
+    const { role: _ignoredRole, ...rest } = data;
+    return this.prisma.user.create({
+      data: {
+        ...rest,
+        role: UserRole.CLIENT,
+      },
+    });
   }
 
   async updateRefreshToken(userId: string, hashedToken: string | null) {

@@ -8,6 +8,7 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import type { JwtPayload } from "../../common/types/jwt-payload.type";
+import { UserRole } from "../../generated/prisma/client";
 import { UsersService } from "../users/users.service";
 import type { LoginDto } from "./dto/login.dto";
 import type { RegisterDto } from "./dto/register.dto";
@@ -31,6 +32,7 @@ export class AuthService {
       email: dto.email,
       name: dto.name,
       password: hashed,
+      role: UserRole.CLIENT,
     });
 
     const tokens = await this.generateTokens({

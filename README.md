@@ -18,6 +18,7 @@ Monorepo de uma plataforma de eventos e ingressos (desafio Verzel Elite Dev).
 pnpm install
 pnpm setup:env
 pnpm --filter api prisma:migrate
+pnpm --filter api prisma:seed
 pnpm start:dev
 ```
 
@@ -37,9 +38,22 @@ pnpm dev:web   # http://localhost:3000
 
 Em produção defina `NODE_ENV=production` e as variáveis do Turso. Migrations locais usam `LOCAL_DATABASE_URL`; para aplicar no Turso, rode `prisma migrate deploy` com `LOCAL_DATABASE_URL` apontando para a URL do Turso (mesmo padrão do Sellow no `prisma.config.ts`).
 
+### Seed (usuários)
+
+`pnpm --filter api prisma:seed` — senha de todos: `Password123!`
+
+| Email                    | Role        |
+| ------------------------ | ----------- |
+| `organizer@ticket.local` | `ORGANIZER` |
+| `client1@ticket.local`   | `CLIENT`    |
+| `client2@ticket.local`   | `CLIENT`    |
+| `gate@ticket.local`      | `GATE`      |
+
+Registro público (`POST /auth/register`) sempre cria `CLIENT`. Roles especiais vêm do seed (ou criação interna).
+
 ### API auth (exemplos)
 
-- `POST /auth/register` — `{ email, password, name? }`
+- `POST /auth/register` — `{ email, password, name? }` → role `CLIENT`
 - `POST /auth/login`
 - `POST /auth/refresh` — Bearer refresh token
 - `GET /auth/me` — Bearer access token
