@@ -38,7 +38,7 @@ pnpm dev:web   # http://localhost:3000
 
 Em produção defina `NODE_ENV=production` e as variáveis do Turso. Migrations locais usam `LOCAL_DATABASE_URL`; para aplicar no Turso, rode `prisma migrate deploy` com `LOCAL_DATABASE_URL` apontando para a URL do Turso (mesmo padrão do Sellow no `prisma.config.ts`).
 
-### Seed (usuários)
+### Seed (usuários + eventos)
 
 `pnpm --filter api prisma:seed` — senha de todos: `Password123!`
 
@@ -48,6 +48,8 @@ Em produção defina `NODE_ENV=production` e as variáveis do Turso. Migrations 
 | `client1@ticket.local`   | `CLIENT`    |
 | `client2@ticket.local`   | `CLIENT`    |
 | `gate@ticket.local`      | `GATE`      |
+
+Também cria 2 eventos **PUBLISHED** do organizer (mapa de assentos + setores GA). Detalhes em [docs/features/events.md](docs/features/events.md).
 
 Registro público (`POST /auth/register`) sempre cria `CLIENT`. Roles especiais vêm do seed (ou criação interna).
 
@@ -70,6 +72,17 @@ Detalhes em [docs/features/catalog.md](docs/features/catalog.md).
 
 Env: `TMDB_API_KEY` (ou `TMDB_ACCESS_TOKEN`), `TICKETMASTER_API_KEY`.
 
+### Events + inventário
+
+Detalhes em [docs/features/events.md](docs/features/events.md).
+
+- `GET /events?q=` — público (só publicados)
+- `GET /events/:id` — público / owner vê draft
+- `GET /events/mine` — ORGANIZER
+- `POST /events` — ORGANIZER (a partir do catalog + inventário)
+- `PATCH /events/:id` — ORGANIZER (só DRAFT)
+- `POST /events/:id/publish` — ORGANIZER
+- `GET /events/:id/seats` | `/sectors` — inventário
 ## Scripts úteis
 
 | Comando          | Descrição                      |

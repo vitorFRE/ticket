@@ -93,5 +93,5 @@ Cobertura pretendida: mapeamento TMDb/Ticketmaster, chave ausente, upstream/netw
 ## Limitações
 
 - Sem cache e sem sync offline
-- Só busca/detalhe — criação de `Event` é o próximo passo do PRD
 - Rate limits das APIs externas não são tratados além do 502
+- Persistência do evento a partir do catalog: ver [events.md](./events.md)

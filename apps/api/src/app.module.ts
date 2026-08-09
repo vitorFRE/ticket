@@ -7,6 +7,7 @@ import { RolesGuard } from "./common/guards/roles.guard";
 import { envConfig } from "./config/env.config";
 import { AuthModule } from "./modules/auth/auth.module";
 import { CatalogModule } from "./modules/catalog/catalog.module";
+import { EventsModule } from "./modules/events/events.module";
 import { HealthModule } from "./modules/health/health.module";
 import { PrismaModule } from "./modules/prisma/prisma.module";
 import { UsersModule } from "./modules/users/users.module";
@@ -19,6 +20,7 @@ import { UsersModule } from "./modules/users/users.module";
     UsersModule,
     HealthModule,
     CatalogModule,
+    EventsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

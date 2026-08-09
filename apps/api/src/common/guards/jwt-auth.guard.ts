@@ -25,10 +25,21 @@ export class JwtAuthGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    if (isPublic) return true;
-
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractToken(request);
+
+    if (isPublic) {
+      if (token) {
+        try {
+          request.user = await this.jwtService.verifyAsync<JwtPayload>(token, {
+            secret: this.configService.get<string>("JWT_ACCESS_SECRET"),
+          });
+        } catch {
+          // rota pública: token inválido não bloqueia; segue sem user
+        }
+      }
+      return true;
+    }
 
     if (!token) throw new UnauthorizedException("Token não fornecido");
 

@@ -1,9 +1,19 @@
 import "dotenv/config";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 import * as bcrypt from "bcrypt";
-import { PrismaClient, UserRole } from "../src/generated/prisma/client";
+import {
+  EventStatus,
+  ExternalSource,
+  InventoryMode,
+  PrismaClient,
+  SeatStatus,
+  UserRole,
+} from "../src/generated/prisma/client";
 
 const SEED_PASSWORD = "Password123!";
+
+const SEAT_MAP_EVENT_ID = "00000000-0000-4000-8000-000000000001";
+const GA_SECTOR_EVENT_ID = "00000000-0000-4000-8000-000000000002";
 
 const users: Array<{
   email: string;
@@ -59,10 +69,86 @@ async function main() {
     });
   }
 
+  const organizer = await prisma.user.findUniqueOrThrow({
+    where: { email: "organizer@ticket.local" },
+  });
+
+  await prisma.seat.deleteMany({
+    where: { eventId: { in: [SEAT_MAP_EVENT_ID, GA_SECTOR_EVENT_ID] } },
+  });
+  await prisma.sector.deleteMany({
+    where: { eventId: { in: [SEAT_MAP_EVENT_ID, GA_SECTOR_EVENT_ID] } },
+  });
+  await prisma.event.deleteMany({
+    where: { id: { in: [SEAT_MAP_EVENT_ID, GA_SECTOR_EVENT_ID] } },
+  });
+
+  const seatRows = ["A", "B", "C"];
+  const seatsPerRow = 4;
+  const seats = seatRows.flatMap((row) =>
+    Array.from({ length: seatsPerRow }, (_, i) => {
+      const number = i + 1;
+      return {
+        label: `${row}${number}`,
+        row,
+        number,
+        status: SeatStatus.AVAILABLE,
+      };
+    }),
+  );
+
+  await prisma.event.create({
+    data: {
+      id: SEAT_MAP_EVENT_ID,
+      organizerId: organizer.id,
+      title: "Clube da Luta (Seed SEAT_MAP)",
+      description: "Evento seed com mapa de assentos",
+      venue: "Cinema Seed",
+      startsAt: new Date("2026-09-01T20:00:00.000Z"),
+      priceCents: 3500,
+      status: EventStatus.PUBLISHED,
+      inventoryMode: InventoryMode.SEAT_MAP,
+      externalSource: ExternalSource.TMDB,
+      externalId: "movie:550",
+      imageUrl: "https://image.tmdb.org/t/p/w500/seed-fight-club.jpg",
+      externalPayload: { seed: true, source: "tmdb" },
+      seats: { createMany: { data: seats } },
+    },
+  });
+
+  await prisma.event.create({
+    data: {
+      id: GA_SECTOR_EVENT_ID,
+      organizerId: organizer.id,
+      title: "Show Seed (GA_SECTOR)",
+      description: "Evento seed com setores",
+      venue: "Arena Seed",
+      startsAt: new Date("2026-10-15T21:00:00.000Z"),
+      priceCents: 8000,
+      status: EventStatus.PUBLISHED,
+      inventoryMode: InventoryMode.GA_SECTOR,
+      externalSource: ExternalSource.TICKETMASTER,
+      externalId: "seed-tm-event-1",
+      imageUrl: null,
+      externalPayload: { seed: true, source: "ticketmaster" },
+      sectors: {
+        createMany: {
+          data: [
+            { name: "Pista", capacity: 100, priceCents: null },
+            { name: "Camarote", capacity: 20, priceCents: 15000 },
+          ],
+        },
+      },
+    },
+  });
+
   console.log("Seed OK — usuários:");
   for (const user of users) {
     console.log(`  ${user.email} (${user.role}) / ${SEED_PASSWORD}`);
   }
+  console.log("Seed OK — eventos:");
+  console.log(`  ${SEAT_MAP_EVENT_ID} SEAT_MAP PUBLISHED`);
+  console.log(`  ${GA_SECTOR_EVENT_ID} GA_SECTOR PUBLISHED`);
 
   await prisma.$disconnect();
 }
