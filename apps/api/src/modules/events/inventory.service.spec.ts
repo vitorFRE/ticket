@@ -39,8 +39,8 @@ describe("InventoryService", () => {
       { name: "VIP", capacity: 5, priceCents: 2000 },
     ]);
     expect(sectors).toEqual([
-      { name: "Pista", capacity: 10, priceCents: null },
-      { name: "VIP", capacity: 5, priceCents: 2000 },
+      { name: "Pista", capacity: 10, availableCount: 10, priceCents: null },
+      { name: "VIP", capacity: 5, availableCount: 5, priceCents: 2000 },
     ]);
   });
 

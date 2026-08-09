@@ -73,6 +73,16 @@ async function main() {
     where: { email: "organizer@ticket.local" },
   });
 
+  await prisma.reservationItem.deleteMany({
+    where: {
+      reservation: {
+        eventId: { in: [SEAT_MAP_EVENT_ID, GA_SECTOR_EVENT_ID] },
+      },
+    },
+  });
+  await prisma.reservation.deleteMany({
+    where: { eventId: { in: [SEAT_MAP_EVENT_ID, GA_SECTOR_EVENT_ID] } },
+  });
   await prisma.seat.deleteMany({
     where: { eventId: { in: [SEAT_MAP_EVENT_ID, GA_SECTOR_EVENT_ID] } },
   });
@@ -134,8 +144,18 @@ async function main() {
       sectors: {
         createMany: {
           data: [
-            { name: "Pista", capacity: 100, priceCents: null },
-            { name: "Camarote", capacity: 20, priceCents: 15000 },
+            {
+              name: "Pista",
+              capacity: 100,
+              availableCount: 100,
+              priceCents: null,
+            },
+            {
+              name: "Camarote",
+              capacity: 20,
+              availableCount: 20,
+              priceCents: 15000,
+            },
           ],
         },
       },

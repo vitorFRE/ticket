@@ -126,6 +126,7 @@ pnpm --filter api test:e2e
 
 ## Limitações (este passo)
 
-- Sem reservations / hold / payment / tickets
+- Sem reservations / hold / payment / tickets — ver [reservations.md](./reservations.md) para hold; payment no passo seguinte
 - Sem edição de inventário após create
 - Preço em centavos (`priceCents`)
+- Setores expõem `availableCount` (capacidade restante)

@@ -10,6 +10,7 @@ import { CatalogModule } from "./modules/catalog/catalog.module";
 import { EventsModule } from "./modules/events/events.module";
 import { HealthModule } from "./modules/health/health.module";
 import { PrismaModule } from "./modules/prisma/prisma.module";
+import { ReservationsModule } from "./modules/reservations/reservations.module";
 import { UsersModule } from "./modules/users/users.module";
 
 @Module({
@@ -21,6 +22,7 @@ import { UsersModule } from "./modules/users/users.module";
     HealthModule,
     CatalogModule,
     EventsModule,
+    ReservationsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

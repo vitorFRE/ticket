@@ -35,17 +35,26 @@ enum SeatStatus {
   SOLD
 }
 
+enum ReservationStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
+  id           String        @id @default(uuid())
+  email        String        @unique
   name         String?
   password     String?
-  role         UserRole @default(CLIENT)
-  isActive     Boolean  @default(true)
+  role         UserRole      @default(CLIENT)
+  isActive     Boolean       @default(true)
   refreshToken String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   events       Event[]
+  reservations Reservation[]
 }
 
 model Event {
@@ -67,31 +76,67 @@ model Event {
   organizer       User           @relation(fields: [organizerId], references: [id])
   seats           Seat[]
   sectors         Sector[]
+  reservations    Reservation[]
 
   @@index([status])
   @@index([organizerId])
 }
 
 model Seat {
-  id      String     @id @default(uuid())
-  eventId String
-  label   String
-  row     String
-  number  Int
-  status  SeatStatus @default(AVAILABLE)
-  event   Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id                String            @id @default(uuid())
+  eventId           String
+  label             String
+  row               String
+  number            Int
+  status            SeatStatus        @default(AVAILABLE)
+  event             Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  reservationItems  ReservationItem[]
 
   @@unique([eventId, label])
   @@index([eventId])
 }
 
 model Sector {
-  id         String  @id @default(uuid())
-  eventId    String
-  name       String
-  capacity   Int
-  priceCents Int?
-  event      Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id               String            @id @default(uuid())
+  eventId          String
+  name             String
+  capacity         Int
+  availableCount   Int
+  priceCents       Int?
+  event            Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  reservationItems ReservationItem[]
 
   @@index([eventId])
+}
+
+model Reservation {
+  id        String            @id @default(uuid())
+  eventId   String
+  userId    String
+  status    ReservationStatus @default(PENDING)
+  expiresAt DateTime?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  event     Event             @relation(fields: [eventId], references: [id])
+  user      User              @relation(fields: [userId], references: [id])
+  items     ReservationItem[]
+
+  @@index([userId])
+  @@index([eventId, status])
+  @@index([status, expiresAt])
+}
+
+model ReservationItem {
+  id            String      @id @default(uuid())
+  reservationId String
+  seatId        String?
+  sectorId      String?
+  quantity      Int?
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  seat          Seat?       @relation(fields: [seatId], references: [id])
+  sector        Sector?     @relation(fields: [sectorId], references: [id])
+
+  @@index([reservationId])
+  @@index([seatId])
+  @@index([sectorId])
 }

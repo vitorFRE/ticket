@@ -14,6 +14,7 @@ import { CatalogService } from "../catalog/catalog.service";
 import type { CatalogSource } from "../catalog/types/catalog-item.type";
 import { isCatalogSource } from "../catalog/types/catalog-item.type";
 import { PrismaService } from "../prisma/prisma.service";
+import { ReservationsService } from "../reservations/reservations.service";
 import type { CreateEventDto } from "./dto/create-event.dto";
 import type { UpdateEventDto } from "./dto/update-event.dto";
 import { InventoryService } from "./inventory.service";
@@ -34,6 +35,7 @@ export class EventsService {
     private readonly prisma: PrismaService,
     private readonly catalogService: CatalogService,
     private readonly inventory: InventoryService,
+    private readonly reservations: ReservationsService,
   ) {}
 
   async listPublished(q?: string) {
@@ -213,6 +215,7 @@ export class EventsService {
   }
 
   async listSeats(eventId: string, viewer: Viewer) {
+    await this.reservations.expireOverdueReservations();
     const event = await this.requireViewableEvent(eventId, viewer);
     if (event.inventoryMode !== InventoryMode.SEAT_MAP) {
       throw new BadRequestException("Evento não usa mapa de assentos");
@@ -234,6 +237,7 @@ export class EventsService {
   }
 
   async listSectors(eventId: string, viewer: Viewer) {
+    await this.reservations.expireOverdueReservations();
     const event = await this.requireViewableEvent(eventId, viewer);
     if (event.inventoryMode !== InventoryMode.GA_SECTOR) {
       throw new BadRequestException("Evento não usa setores GA");
@@ -246,6 +250,7 @@ export class EventsService {
         id: true,
         name: true,
         capacity: true,
+        availableCount: true,
         priceCents: true,
       },
     });

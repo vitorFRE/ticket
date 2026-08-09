@@ -27,6 +27,7 @@ export type SeatCreateInput = {
 export type SectorCreateInput = {
   name: string;
   capacity: number;
+  availableCount: number;
   priceCents: number | null;
 };
 
@@ -80,6 +81,7 @@ export class InventoryService {
     return sectors.map((sector) => ({
       name: sector.name.trim(),
       capacity: sector.capacity,
+      availableCount: sector.capacity,
       priceCents: sector.priceCents ?? null,
     }));
   }

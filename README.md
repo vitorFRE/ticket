@@ -83,6 +83,15 @@ Detalhes em [docs/features/events.md](docs/features/events.md).
 - `PATCH /events/:id` — ORGANIZER (só DRAFT)
 - `POST /events/:id/publish` — ORGANIZER
 - `GET /events/:id/seats` | `/sectors` — inventário
+
+### Reservations (CLIENT)
+
+Detalhes em [docs/features/reservations.md](docs/features/reservations.md).
+
+- `POST /reservations` — hold 15 min (`seatIds` ou `sectorId`+`quantity`)
+- `GET /reservations/me`
+- `GET /reservations/:id`
+
 ## Scripts úteis
 
 | Comando          | Descrição                      |

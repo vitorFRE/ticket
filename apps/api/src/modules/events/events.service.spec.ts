@@ -56,6 +56,7 @@ describe("EventsService", () => {
       prisma as unknown as PrismaService,
       catalog as unknown as CatalogService,
       new InventoryService(),
+      { expireOverdueReservations: jest.fn().mockResolvedValue(0) } as never,
     );
   });
 
@@ -107,7 +108,7 @@ describe("EventsService", () => {
 
     const args = prisma.event.create.mock.calls[0][0];
     expect(args.data.sectors.createMany.data).toEqual([
-      { name: "Pista", capacity: 50, priceCents: null },
+      { name: "Pista", capacity: 50, availableCount: 50, priceCents: null },
     ]);
   });
 
