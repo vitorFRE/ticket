@@ -4,17 +4,9 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { PageState } from "@/components/page-state";
+import { PagePulse } from "@/components/skeletons/page-pulse";
 import { formatDate, formatPrice, modeLabel } from "@/features/events/format";
-import type { EventDetail } from "@/features/events/types";
-import {
-  getOrganizerEvent,
-  publishEvent,
-  updateEvent,
-} from "@/features/organizer/api/organizer-events-api";
-import {
-  OrganizerPulse,
-  OrganizerShell,
-} from "@/features/organizer/components/organizer-shell";
+import { OrganizerShell } from "@/features/organizer/components/organizer-shell";
 import { eventStatusLabel } from "@/features/organizer/event-status";
 import {
   centsToReaisInput,
@@ -22,15 +14,19 @@ import {
   reaisToCents,
   toDatetimeLocal,
 } from "@/features/organizer/money";
-import { HttpError } from "@/shared/api/http-error";
+import {
+  useOrganizerEvent,
+  usePublishEvent,
+  useUpdateEvent,
+} from "@/features/organizer/use-organizer-query";
+import { isHttpNotFound, queryErrorMessage } from "@/shared/api/query-error";
 
 export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
-  const [event, setEvent] = useState<EventDetail | null>(null);
-  const [error, setError] = useState<"not-found" | "network" | null>(null);
+  const eventQuery = useOrganizerEvent(eventId);
+  const event = eventQuery.data ?? null;
+  const update = useUpdateEvent(eventId);
+  const publish = usePublishEvent();
   const [formError, setFormError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [publishing, setPublishing] = useState(false);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -40,35 +36,14 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
-    let cancelled = false;
-    setIsLoading(true);
-    setError(null);
-    void getOrganizerEvent(eventId)
-      .then((data) => {
-        if (cancelled) return;
-        setEvent(data);
-        setTitle(data.title);
-        setDescription(data.description ?? "");
-        setVenue(data.venue);
-        setStartsAt(toDatetimeLocal(data.startsAt));
-        setPrice(centsToReaisInput(data.priceCents));
-        setImageUrl(data.imageUrl ?? "");
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        if (err instanceof HttpError && err.status === 404) {
-          setError("not-found");
-          return;
-        }
-        setError("network");
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [eventId]);
+    if (!event) return;
+    setTitle(event.title);
+    setDescription(event.description ?? "");
+    setVenue(event.venue);
+    setStartsAt(toDatetimeLocal(event.startsAt));
+    setPrice(centsToReaisInput(event.priceCents));
+    setImageUrl(event.imageUrl ?? "");
+  }, [event]);
 
   async function onSave(e: FormEvent) {
     e.preventDefault();
@@ -79,10 +54,9 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
       setFormError("Preencha título, local, data e preço.");
       return;
     }
-    setSaving(true);
     setFormError(null);
     try {
-      const updated = await updateEvent(event.id, {
+      await update.mutateAsync({
         title: title.trim(),
         description: description.trim() || null,
         venue: venue.trim(),
@@ -90,34 +64,25 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
         priceCents,
         imageUrl: imageUrl.trim() || null,
       });
-      setEvent(updated);
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : "Não foi possível salvar.");
-    } finally {
-      setSaving(false);
+      setFormError(queryErrorMessage(err, "Não foi possível salvar."));
     }
   }
 
   async function onPublish() {
     if (!event) return;
-    setPublishing(true);
     setFormError(null);
     try {
-      const updated = await publishEvent(event.id);
-      setEvent(updated);
+      await publish.mutateAsync(event.id);
     } catch (err) {
-      setFormError(
-        err instanceof Error ? err.message : "Não foi possível publicar.",
-      );
-    } finally {
-      setPublishing(false);
+      setFormError(queryErrorMessage(err, "Não foi possível publicar."));
     }
   }
 
-  if (isLoading) {
+  if (eventQuery.isPending) {
     return (
       <OrganizerShell>
-        <OrganizerPulse />
+        <PagePulse />
       </OrganizerShell>
     );
   }
@@ -132,20 +97,20 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
         Meus eventos
       </Link>
 
-      {error === "not-found" ? (
+      {eventQuery.isError && isHttpNotFound(eventQuery.error) ? (
         <PageState
           title="Evento não encontrado"
           body="Esse evento não existe ou não está disponível."
         />
       ) : null}
-      {error === "network" ? (
+      {eventQuery.isError && !isHttpNotFound(eventQuery.error) ? (
         <PageState
           title="Não foi possível carregar"
           body="Não foi possível carregar o evento."
         />
       ) : null}
 
-      {event && !error ? (
+      {event && !eventQuery.isError ? (
         <div className="max-w-xl space-y-10">
           <header className="flex items-start gap-4">
             {event.imageUrl ? (
@@ -236,18 +201,18 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
               <div className="flex flex-wrap items-center gap-4 pt-2">
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={update.isPending}
                   className="inline-flex h-11 items-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-40"
                 >
-                  {saving ? "Salvando..." : "Salvar"}
+                  {update.isPending ? "Salvando..." : "Salvar"}
                 </button>
                 <button
                   type="button"
-                  disabled={publishing}
+                  disabled={publish.isPending}
                   onClick={() => void onPublish()}
                   className="text-sm text-white/70 underline-offset-4 hover:text-foreground hover:underline disabled:opacity-40"
                 >
-                  {publishing ? "Publicando..." : "Publicar"}
+                  {publish.isPending ? "Publicando..." : "Publicar"}
                 </button>
               </div>
             </form>

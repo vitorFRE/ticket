@@ -9,7 +9,3 @@ export function OrganizerShell({ children }: { children: ReactNode }) {
     </div>
   );
 }
-
-export function OrganizerPulse() {
-  return <div className="h-48 animate-pulse rounded-lg bg-white/[0.04]" />;
-}

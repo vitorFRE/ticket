@@ -33,7 +33,7 @@ export function EventCard({ event }: { event: EventListItem }) {
             </div>
           )}
           <div className="absolute inset-x-0 bottom-0 z-[2] bg-gradient-to-t from-background/90 via-background/20 to-transparent px-3 pt-10 pb-2.5">
-            <span className="inline-flex rounded-full border border-white/10 bg-black/30 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-foreground/90 backdrop-blur-sm">
+            <span className="inline-flex rounded-md border border-white/10 bg-black/30 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-foreground/90 backdrop-blur-sm">
               {kindLabelFromSource(event.externalSource)}
             </span>
           </div>

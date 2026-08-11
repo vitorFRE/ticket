@@ -3,53 +3,26 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { MissingPage } from "@/components/missing-page";
 import { PageState } from "@/components/page-state";
+import { EventDetailSkeleton } from "@/components/skeletons/event-detail-skeleton";
 import { useAuth } from "@/features/auth/components/auth-provider";
-import { getEventById } from "@/features/events/api/events-api";
 import { MoreEvents } from "@/features/events/components/more-events";
 import { kindLabelFromSource } from "@/features/events/catalog-kind";
 import { formatDate, formatPrice } from "@/features/events/format";
-import type { EventDetail } from "@/features/events/types";
+import { useEventDetail } from "@/features/events/use-events-query";
 import { PendingHoldHint } from "@/features/reservations/components/pending-hold-hint";
 import { usePendingHold } from "@/features/reservations/use-pending-hold";
-import { HttpError } from "@/shared/api/http-error";
+import { isHttpNotFound } from "@/shared/api/query-error";
 
 export function EventDetailPage({ eventId }: { eventId: string }) {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
-  const [event, setEvent] = useState<EventDetail | null>(null);
-  const [error, setError] = useState<"not-found" | "network" | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    setIsLoading(true);
-    setError(null);
-    void getEventById(eventId)
-      .then((data) => {
-        if (!cancelled) setEvent(data);
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        setEvent(null);
-        if (err instanceof HttpError && err.status === 404) {
-          setError("not-found");
-          return;
-        }
-        setError("network");
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [eventId]);
+  const query = useEventDetail(eventId);
+  const event = query.data ?? null;
+  const pendingHold = usePendingHold(eventId);
 
   const checkoutPath = `/events/${eventId}/checkout`;
-  const pendingHold = usePendingHold(eventId);
 
   function onReserve() {
     if (!user) {
@@ -60,12 +33,14 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
   }
 
   const isStaff = user?.role === "ORGANIZER" || user?.role === "GATE";
+  const notFound = query.isError && isHttpNotFound(query.error);
+  const network = query.isError && !notFound;
 
   return (
     <div className="relative z-10 flex-1">
-      {isLoading ? <DetailSkeleton /> : null}
+      {query.isPending ? <EventDetailSkeleton /> : null}
 
-      {error === "not-found" ? (
+      {notFound ? (
         <MissingPage
           title="Evento não encontrado"
           body="Essa sessão saiu de cartaz ou o link não existe."
@@ -73,14 +48,14 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
         />
       ) : null}
 
-      {error === "network" ? (
+      {network ? (
         <DetailState
           title="Não foi possível carregar"
           body="Verifique sua conexão e tente de novo."
         />
       ) : null}
 
-      {event && !error ? (
+      {event && !query.isError ? (
         <>
           <section className="relative min-h-[78dvh] overflow-hidden">
             {event.imageUrl ? (
@@ -160,12 +135,6 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
         </>
       ) : null}
     </div>
-  );
-}
-
-function DetailSkeleton() {
-  return (
-    <div className="min-h-[78dvh] animate-pulse bg-white/[0.03]" />
   );
 }
 

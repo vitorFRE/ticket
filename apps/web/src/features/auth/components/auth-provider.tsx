@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import {
   createContext,
   useCallback,
@@ -26,6 +27,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -68,9 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     const data = await loginRequest(email, password);
     tokenStorage.setTokens(data.accessToken, data.refreshToken);
+    queryClient.clear();
     setUser(data.user);
     return data.user;
-  }, []);
+  }, [queryClient]);
 
   const logout = useCallback(async () => {
     try {
@@ -79,9 +82,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // ignore network errors on logout
     } finally {
       clearAuthState();
+      queryClient.clear();
       setUser(null);
     }
-  }, []);
+  }, [queryClient]);
 
   const value = useMemo(
     () => ({ user, isLoading, login, logout, refreshSession }),

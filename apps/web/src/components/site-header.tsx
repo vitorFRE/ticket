@@ -38,7 +38,7 @@ export function SiteHeader() {
               {area && !onArea ? (
                 <Link
                   href={area.href}
-                  className="inline-flex h-8 items-center rounded-full border border-white/12 bg-white/[0.05] px-3 text-xs font-medium text-foreground transition-colors hover:bg-white/[0.1] active:scale-[0.98]"
+                  className="inline-flex h-8 items-center rounded-md border border-white/12 bg-white/[0.05] px-3 text-xs font-medium text-foreground transition-colors hover:bg-white/[0.1] active:scale-[0.98]"
                 >
                   {area.label}
                 </Link>
@@ -47,7 +47,7 @@ export function SiteHeader() {
                 type="button"
                 onClick={() => void onLogout()}
                 aria-label="Sair"
-                className="inline-flex size-9 items-center justify-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] text-xs font-medium text-foreground transition-colors hover:bg-white/[0.06] active:scale-[0.98] sm:h-9 sm:w-auto sm:px-3"
+                className="inline-flex size-9 items-center justify-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] text-xs font-medium text-foreground transition-colors hover:bg-white/[0.06] active:scale-[0.98] sm:h-9 sm:w-auto sm:px-3"
               >
                 <SignOutIcon size={14} weight="bold" />
                 <span className="hidden sm:inline">Sair</span>
@@ -57,10 +57,10 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-3.5 text-xs font-medium text-primary-foreground transition-[transform,opacity] hover:opacity-90 active:scale-[0.98]"
+              className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3.5 text-xs font-medium text-primary-foreground transition-[transform,opacity] hover:opacity-90 active:scale-[0.98]"
             >
               Entrar
-              <span className="flex size-5 items-center justify-center rounded-full bg-white/15">
+              <span className="flex size-5 items-center justify-center rounded-md bg-white/15">
                 <ArrowUpRightIcon size={12} weight="bold" />
               </span>
             </button>

@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { ArrowRightIcon } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { EventCardSkeletonGrid } from "@/components/skeletons/event-card-skeleton";
 import { EventCard } from "@/features/events/components/event-card";
-import { listEvents } from "@/features/events/api/events-api";
 import { kindFromSource } from "@/features/events/catalog-kind";
 import { moreInCartaz } from "@/features/events/split-catalog";
 import type { EventListItem } from "@/features/events/types";
+import { useEventsList } from "@/features/events/use-events-query";
 
 export function MoreEvents({
   currentId,
@@ -16,23 +16,16 @@ export function MoreEvents({
   currentId: string;
   source: EventListItem["externalSource"];
 }) {
-  const [items, setItems] = useState<EventListItem[]>([]);
+  const { data, isPending } = useEventsList();
+  const items = data ? moreInCartaz(data.items, currentId, source) : [];
 
-  useEffect(() => {
-    let cancelled = false;
-    void listEvents()
-      .then((data) => {
-        if (!cancelled) {
-          setItems(moreInCartaz(data.items, currentId, source));
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setItems([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [currentId, source]);
+  if (isPending) {
+    return (
+      <section className="mx-auto max-w-6xl px-4 pb-20 md:px-6 md:pb-24 lg:px-8">
+        <EventCardSkeletonGrid />
+      </section>
+    );
+  }
 
   if (items.length === 0) return null;
 

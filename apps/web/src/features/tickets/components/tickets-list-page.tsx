@@ -3,12 +3,12 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { PageState } from "@/components/page-state";
+import { TicketRowSkeletonList } from "@/components/skeletons/ticket-row-skeleton";
 import { useRequireRole } from "@/features/auth/use-require-role";
-import { listMyReservations } from "@/features/reservations/api/reservations-api";
+import { useMyReservations } from "@/features/reservations/use-reservations-query";
 import type { ReservationDetail } from "@/features/reservations/types";
-import { listMyTickets } from "@/features/tickets/api/tickets-api";
 import { PaymentHistoryList } from "@/features/tickets/components/payment-history-list";
 import { TicketRowList } from "@/features/tickets/components/ticket-row-list";
 import { TicketsTabNav } from "@/features/tickets/components/tickets-tab-nav";
@@ -17,7 +17,7 @@ import {
   type TicketsTab,
 } from "@/features/tickets/tickets-tab";
 import type { Ticket } from "@/features/tickets/types";
-import { HttpError } from "@/shared/api/http-error";
+import { useMyTickets } from "@/features/tickets/use-tickets-query";
 
 export function TicketsListPage() {
   const { ready } = useRequireRole("CLIENT");
@@ -25,36 +25,13 @@ export function TicketsListPage() {
   const searchParams = useSearchParams();
   const tab = parseTicketsTab(searchParams.get("tab"));
 
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [reservations, setReservations] = useState<ReservationDetail[]>([]);
-  const [error, setError] = useState<"network" | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (!ready) return;
-    let cancelled = false;
-    setIsLoading(true);
-    setError(null);
-    void Promise.all([listMyTickets(), listMyReservations()])
-      .then(([ticketData, reservationData]) => {
-        if (cancelled) return;
-        setTickets(ticketData.items);
-        setReservations(reservationData.items);
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        setError("network");
-        if (err instanceof HttpError && err.status === 401) {
-          router.replace(`/login?next=${encodeURIComponent("/tickets")}`);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [ready, router]);
+  const ticketsQuery = useMyTickets(ready);
+  const reservationsQuery = useMyReservations(ready);
+  const tickets = ticketsQuery.data?.items ?? [];
+  const reservations = reservationsQuery.data?.items ?? [];
+  const isPending =
+    ticketsQuery.isPending || reservationsQuery.isPending;
+  const isError = ticketsQuery.isError || reservationsQuery.isError;
 
   function setTab(next: TicketsTab) {
     const params = new URLSearchParams(searchParams.toString());
@@ -73,10 +50,20 @@ export function TicketsListPage() {
     (ticket) => ticket.status === "USED" || ticket.status === "VOID",
   );
 
-  if (!ready) {
+  if (!ready || isPending) {
     return (
       <Shell>
-        <Pulse />
+        <Link
+          href="/"
+          className="mb-10 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeftIcon size={16} weight="bold" />
+          Eventos
+        </Link>
+        <h1 className="text-3xl font-semibold tracking-[-0.03em]">Ingressos</h1>
+        <div className="mt-8">
+          <TicketRowSkeletonList />
+        </div>
       </Shell>
     );
   }
@@ -105,16 +92,12 @@ export function TicketsListPage() {
         />
       </div>
 
-      {isLoading ? <Pulse /> : null}
-
-      {error ? (
+      {isError ? (
         <PageState
           title="Não foi possível carregar"
           body="Não foi possível carregar seus ingressos."
         />
-      ) : null}
-
-      {!isLoading && !error ? (
+      ) : (
         <div className="mt-8">
           <TabBody
             tab={tab}
@@ -123,7 +106,7 @@ export function TicketsListPage() {
             reservations={reservations}
           />
         </div>
-      ) : null}
+      )}
     </Shell>
   );
 }
@@ -202,8 +185,4 @@ function Shell({ children }: { children: ReactNode }) {
       </div>
     </div>
   );
-}
-
-function Pulse() {
-  return <div className="mt-10 h-48 animate-pulse rounded-lg bg-white/[0.04]" />;
 }

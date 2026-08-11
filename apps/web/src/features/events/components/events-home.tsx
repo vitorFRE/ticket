@@ -4,18 +4,19 @@ import { CircleNotchIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/rea
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { PageState } from "@/components/page-state";
+import { EventCardSkeletonGrid } from "@/components/skeletons/event-card-skeleton";
 import { Input } from "@/components/ui/input";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { EventKindFilter } from "@/features/events/components/event-kind-filter";
 import { EventSection } from "@/features/events/components/event-section";
-import { listEvents } from "@/features/events/api/events-api";
 import {
   parseKind,
   sourceFromKind,
   type CatalogKind,
 } from "@/features/events/catalog-kind";
 import { popularEvents, upcomingEvents } from "@/features/events/split-catalog";
-import type { EventListItem } from "@/features/events/types";
+import { useEventsList } from "@/features/events/use-events-query";
+import { queryErrorMessage } from "@/shared/api/query-error";
 import { glassSubtle } from "@/lib/glass-styles";
 import { cn } from "@/lib/utils";
 
@@ -32,9 +33,6 @@ export function EventsHome() {
   const [debouncedQuery, setDebouncedQuery] = useState(initialQ.trim());
   const [kind, setKind] = useState<CatalogKind | null>(initialKind);
   const [focused, setFocused] = useState(false);
-  const [items, setItems] = useState<EventListItem[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setQuery(searchParams.get("q") ?? "");
@@ -61,36 +59,18 @@ export function EventsHome() {
     }
   }, [debouncedQuery, kind, router]);
 
-  useEffect(() => {
-    let cancelled = false;
-    setIsLoading(true);
-    setError(null);
-    void listEvents({
-      q: debouncedQuery || undefined,
-      source: kind ? sourceFromKind(kind) : undefined,
-    })
-      .then((data) => {
-        if (!cancelled) setItems(data.items);
-      })
-      .catch((err: unknown) => {
-        if (!cancelled) {
-          setError(
-            err instanceof Error ? err.message : "Não foi possível carregar os eventos.",
-          );
-          setItems([]);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [debouncedQuery, kind]);
+  const listQuery = useEventsList({
+    q: debouncedQuery || undefined,
+    source: kind ? sourceFromKind(kind) : undefined,
+  });
+  const items = listQuery.data?.items ?? [];
+  const error = listQuery.isError
+    ? queryErrorMessage(listQuery.error, "Não foi possível carregar os eventos.")
+    : null;
 
   const waitingDebounce = query.trim() !== debouncedQuery;
-  const searching = isLoading || waitingDebounce;
-  const showSkeleton = isLoading && items.length === 0;
+  const searching = listQuery.isFetching || waitingDebounce;
+  const showSkeleton = listQuery.isPending && !listQuery.data;
   const hasQuery = query.length > 0;
   const isSearch = Boolean(debouncedQuery);
   const upcoming = upcomingEvents(items);
@@ -129,7 +109,7 @@ export function EventsHome() {
 
         {error ? <PageState title="Não foi possível carregar" body={error} /> : null}
 
-        {showSkeleton ? <HomeSkeleton /> : null}
+        {showSkeleton ? <EventCardSkeletonGrid /> : null}
 
         {!showSkeleton && !error && items.length === 0 ? (
           <EmptyCatalog
@@ -247,7 +227,7 @@ function HomeSearch({
           <button
             type="button"
             onClick={() => onQuery("")}
-            className="absolute top-1/2 right-2.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-white/[0.08] hover:text-foreground"
+            className="absolute top-1/2 right-2.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/[0.08] hover:text-foreground"
             aria-label="Limpar busca"
           >
             <XIcon size={14} weight="bold" />
@@ -265,19 +245,6 @@ function HomeSearch({
             ? "A lista atualiza enquanto você digita."
             : "Busque pelo nome."}
       </p>
-    </div>
-  );
-}
-
-function HomeSkeleton() {
-  return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      {Array.from({ length: 4 }, (_, index) => (
-        <div
-          key={index}
-          className="h-56 animate-pulse rounded-2xl bg-white/4 ring-1 ring-white/10"
-        />
-      ))}
     </div>
   );
 }

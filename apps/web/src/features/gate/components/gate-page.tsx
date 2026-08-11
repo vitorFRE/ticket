@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PageState } from "@/components/page-state";
-import { listEvents } from "@/features/events/api/events-api";
-import type { EventListItem } from "@/features/events/types";
+import { PagePulse } from "@/components/skeletons/page-pulse";
+import { useEventsList } from "@/features/events/use-events-query";
 import { validateGate } from "@/features/gate/api/gate-api";
 import { GateCodeForm } from "@/features/gate/components/gate-code-form";
 import { GateEventPicker } from "@/features/gate/components/gate-event-picker";
@@ -13,45 +13,28 @@ import {
   setStoredGateEventId,
 } from "@/features/gate/gate-event-storage";
 import type { GateValidateResponse } from "@/features/gate/types";
+import { queryErrorMessage } from "@/shared/api/query-error";
 
 export function GatePage() {
-  const [events, setEvents] = useState<EventListItem[]>([]);
+  const eventsQuery = useEventsList();
+  const events = eventsQuery.data?.items ?? [];
   const [eventId, setEventId] = useState<string | null>(null);
   const [picking, setPicking] = useState(false);
   const [code, setCode] = useState("");
   const [result, setResult] = useState<GateValidateResponse | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [loadingEvents, setLoadingEvents] = useState(true);
   const busyRef = useRef(false);
 
   useEffect(() => {
     setEventId(getStoredGateEventId());
-    let cancelled = false;
-    setLoadingEvents(true);
-    setLoadError(null);
-    void listEvents()
-      .then((data) => {
-        if (!cancelled) setEvents(data.items);
-      })
-      .catch((err: unknown) => {
-        if (!cancelled) {
-          setLoadError(
-            err instanceof Error ? err.message : "Não foi possível carregar os eventos.",
-          );
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingEvents(false);
-      });
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
   const selected = events.find((event) => event.id === eventId) ?? null;
   const showPicker = !selected || picking;
+  const loadError = eventsQuery.isError
+    ? queryErrorMessage(eventsQuery.error, "Não foi possível carregar os eventos.")
+    : null;
 
   function pickEvent(id: string) {
     setEventId(id);
@@ -88,8 +71,8 @@ export function GatePage() {
   return (
     <div className="relative z-10 flex-1">
       <div className="mx-auto max-w-6xl px-4 pt-8 pb-20 md:px-6 lg:px-8 lg:pt-10">
-        {loadingEvents ? (
-          <div className="h-48 animate-pulse rounded-lg bg-white/[0.04]" />
+        {eventsQuery.isPending ? (
+          <PagePulse />
         ) : (
           <div className="space-y-10">
             <header className="space-y-2">

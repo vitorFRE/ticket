@@ -3,107 +3,74 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { PageState } from "@/components/page-state";
+import { TicketRowSkeletonList } from "@/components/skeletons/ticket-row-skeleton";
 import { useRequireRole } from "@/features/auth/use-require-role";
-import { getEventById } from "@/features/events/api/events-api";
-import type { EventDetail } from "@/features/events/types";
-import {
-  getReservation,
-  payReservation,
-} from "@/features/reservations/api/reservations-api";
+import { useEventDetail } from "@/features/events/use-events-query";
 import { ReservationPayContent } from "@/features/reservations/components/reservation-pay-content";
-import type { ReservationDetail } from "@/features/reservations/types";
+import {
+  usePayReservation,
+  useReservationDetail,
+} from "@/features/reservations/use-reservations-query";
 import { useHoldCountdown } from "@/features/reservations/use-hold-countdown";
 import { HttpError } from "@/shared/api/http-error";
+import { isHttpNotFound } from "@/shared/api/query-error";
 
 export function ReservationPayPage({ reservationId }: { reservationId: string }) {
   const { ready, user } = useRequireRole("CLIENT");
   const router = useRouter();
+  const reservationQuery = useReservationDetail(reservationId, ready);
+  const reservation = reservationQuery.data ?? null;
+  const eventQuery = useEventDetail(reservation?.event.id ?? "", Boolean(reservation));
+  const payMutation = usePayReservation(reservationId);
 
-  const [reservation, setReservation] = useState<ReservationDetail | null>(null);
-  const [event, setEvent] = useState<EventDetail | null>(null);
-  const [error, setError] = useState<"not-found" | "network" | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [submitting, setSubmitting] = useState<"APPROVED" | "REJECTED" | null>(
-    null,
-  );
   const [rejected, setRejected] = useState(false);
   const [blockedExpired, setBlockedExpired] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!ready) return;
-    let cancelled = false;
-    setIsLoading(true);
-    setError(null);
-    void (async () => {
-      try {
-        const data = await getReservation(reservationId);
-        if (cancelled) return;
-        setReservation(data);
-        try {
-          const detail = await getEventById(data.event.id);
-          if (!cancelled) setEvent(detail);
-        } catch {
-          if (!cancelled) setEvent(null);
-        }
-      } catch (err) {
-        if (cancelled) return;
-        if (err instanceof HttpError && err.status === 404) {
-          setError("not-found");
-          return;
-        }
-        setError("network");
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [ready, reservationId]);
 
   const remainingMs = useHoldCountdown(reservation?.expiresAt ?? null);
   const expiredByClock = remainingMs <= 0 || blockedExpired;
   const pending = reservation?.status === "PENDING";
   const canPay =
-    pending && !expiredByClock && !rejected && !submitting && !blockedExpired;
+    pending &&
+    !expiredByClock &&
+    !rejected &&
+    !payMutation.isPending &&
+    !blockedExpired;
 
   async function onPay(outcome: "APPROVED" | "REJECTED") {
-    setSubmitting(outcome);
     setPayError(null);
     try {
-      const paid = await payReservation(reservationId, outcome);
+      const paid = await payMutation.mutateAsync(outcome);
       if (outcome === "APPROVED") {
         const ticketId = paid.tickets[0]?.id;
         router.push(ticketId ? `/tickets/${ticketId}` : "/tickets");
         return;
       }
-      setReservation(paid);
       setRejected(true);
     } catch (err) {
       if (err instanceof HttpError && err.status === 400) {
         setBlockedExpired(true);
-        try {
-          const fresh = await getReservation(reservationId);
-          setReservation(fresh);
-        } catch {
-          // keep the expired copy from the current reservation
-        }
+        void reservationQuery.refetch();
         return;
       }
       setPayError(
         err instanceof Error ? err.message : "Não foi possível concluir.",
       );
-    } finally {
-      setSubmitting(null);
     }
   }
 
-  if (!ready || !user) {
-    return <PayShell><Pulse /></PayShell>;
+  if (!ready || !user || reservationQuery.isPending) {
+    return (
+      <PayShell>
+        <TicketRowSkeletonList count={2} />
+      </PayShell>
+    );
   }
+
+  const notFound =
+    reservationQuery.isError && isHttpNotFound(reservationQuery.error);
 
   return (
     <PayShell>
@@ -115,31 +82,29 @@ export function ReservationPayPage({ reservationId }: { reservationId: string })
         Evento
       </Link>
 
-      {isLoading ? <Pulse /> : null}
-
-      {error === "not-found" ? (
+      {notFound ? (
         <PageState
           title="Reserva não encontrada"
           body="Essa reserva não existe ou não está disponível."
         />
       ) : null}
 
-      {error === "network" ? (
+      {reservationQuery.isError && !notFound ? (
         <PageState
           title="Não foi possível carregar"
           body="Não foi possível carregar a reserva."
         />
       ) : null}
 
-      {reservation && !error ? (
+      {reservation && !reservationQuery.isError ? (
         <ReservationPayContent
           reservation={reservation}
-          imageUrl={event?.imageUrl ?? null}
+          imageUrl={eventQuery.data?.imageUrl ?? null}
           remainingMs={remainingMs}
           expiredByClock={expiredByClock}
           canPay={canPay}
           rejected={rejected}
-          submitting={submitting}
+          submitting={payMutation.isPending ? payMutation.variables ?? null : null}
           payError={payError}
           onPay={onPay}
           holderName={user.name?.trim() || "Cliente Um"}
@@ -157,8 +122,4 @@ function PayShell({ children }: { children: ReactNode }) {
       </div>
     </div>
   );
-}
-
-function Pulse() {
-  return <div className="h-48 animate-pulse rounded-lg bg-white/[0.04]" />;
 }

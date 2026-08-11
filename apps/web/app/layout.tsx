@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { AuthProvider } from "@/features/auth/components/auth-provider";
+import { AppProviders } from "@/app/providers";
 import { EvaluatorWidget } from "@/features/lab/evaluator-widget";
 import "./globals.css";
 
@@ -31,10 +31,10 @@ export default function RootLayout({
     >
       <body className="relative min-h-full flex flex-col">
         <div className="page-grain" aria-hidden />
-        <AuthProvider>
+        <AppProviders>
           {children}
           <EvaluatorWidget />
-        </AuthProvider>
+        </AppProviders>
       </body>
     </html>
   );

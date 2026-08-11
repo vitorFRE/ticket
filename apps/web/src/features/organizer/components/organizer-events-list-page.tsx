@@ -2,43 +2,28 @@
 
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { PageState } from "@/components/page-state";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import type { EventListItem } from "@/features/events/types";
-import {
-  listMyEvents,
-  publishEvent,
-} from "@/features/organizer/api/organizer-events-api";
 import { OrganizerEventTile } from "@/features/organizer/components/organizer-event-tile";
 import { OrganizerEventsSkeleton } from "@/features/organizer/components/organizer-events-skeleton";
 import { OrganizerShell } from "@/features/organizer/components/organizer-shell";
+import {
+  useOrganizerEvents,
+  usePublishEvent,
+} from "@/features/organizer/use-organizer-query";
+import { queryErrorMessage } from "@/shared/api/query-error";
 
 export function OrganizerEventsListPage() {
-  const [events, setEvents] = useState<EventListItem[]>([]);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [publishingId, setPublishingId] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    setIsLoading(true);
-    setLoadError(null);
-    try {
-      const data = await listMyEvents();
-      setEvents(data.items);
-    } catch (err) {
-      setLoadError(
-        err instanceof Error ? err.message : "Não foi possível carregar.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
+  const eventsQuery = useOrganizerEvents();
+  const publish = usePublishEvent();
+  const events = eventsQuery.data?.items ?? [];
+  const loadError = eventsQuery.isError
+    ? queryErrorMessage(eventsQuery.error, "Não foi possível carregar.")
+    : null;
+  const actionError = publish.isError
+    ? queryErrorMessage(publish.error, "Não foi possível publicar.")
+    : null;
 
   const sorted = useMemo(() => {
     return [...events].sort((a, b) => {
@@ -48,21 +33,6 @@ export function OrganizerEventsListPage() {
   }, [events]);
 
   const draftCount = events.filter((event) => event.status === "DRAFT").length;
-
-  async function onPublish(id: string) {
-    setPublishingId(id);
-    setActionError(null);
-    try {
-      await publishEvent(id);
-      await load();
-    } catch (err) {
-      setActionError(
-        err instanceof Error ? err.message : "Não foi possível publicar.",
-      );
-    } finally {
-      setPublishingId(null);
-    }
-  }
 
   return (
     <OrganizerShell>
@@ -79,7 +49,7 @@ export function OrganizerEventsListPage() {
           <h1 className="text-4xl font-semibold tracking-[-0.04em] md:text-5xl">
             Meus eventos
           </h1>
-          {!isLoading && events.length > 0 ? (
+          {!eventsQuery.isPending && events.length > 0 ? (
             <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
               {events.length === 1 ? "1 evento" : `${events.length} eventos`}
               {draftCount > 0
@@ -104,28 +74,28 @@ export function OrganizerEventsListPage() {
         <p className="mt-8 text-sm text-destructive">{actionError}</p>
       ) : null}
 
-      {isLoading ? (
+      {eventsQuery.isPending ? (
         <div className="mt-12">
           <OrganizerEventsSkeleton />
         </div>
       ) : null}
 
-      {!isLoading && !loadError && events.length === 0 ? (
+      {!eventsQuery.isPending && !loadError && events.length === 0 ? (
         <PageState
           title="Nenhum evento ainda"
           body="Use Novo evento para puxar um título do catálogo."
         />
       ) : null}
 
-      {!isLoading && sorted.length > 0 ? (
+      {!eventsQuery.isPending && sorted.length > 0 ? (
         <ul className="mt-10 grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
           {sorted.map((event, index) => (
             <li key={event.id}>
               <ScrollReveal delayMs={Math.min(index, 5) * 70}>
                 <OrganizerEventTile
                   event={event}
-                  publishing={publishingId === event.id}
-                  onPublish={onPublish}
+                  publishing={publish.isPending && publish.variables === event.id}
+                  onPublish={(id) => publish.mutate(id)}
                 />
               </ScrollReveal>
             </li>

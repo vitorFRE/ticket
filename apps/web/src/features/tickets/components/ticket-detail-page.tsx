@@ -2,54 +2,28 @@
 
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { PageState } from "@/components/page-state";
+import { TicketRowSkeletonList } from "@/components/skeletons/ticket-row-skeleton";
 import { useRequireRole } from "@/features/auth/use-require-role";
 import { formatDate } from "@/features/events/format";
-import { getTicket, shareTicket } from "@/features/tickets/api/tickets-api";
+import { shareTicket } from "@/features/tickets/api/tickets-api";
 import { TicketQr } from "@/features/tickets/components/ticket-qr";
 import {
   ticketPlace,
   ticketStatusLabel,
 } from "@/features/tickets/ticket-place";
-import type { Ticket } from "@/features/tickets/types";
-import { HttpError } from "@/shared/api/http-error";
+import { useTicketDetail } from "@/features/tickets/use-tickets-query";
+import { isHttpNotFound } from "@/shared/api/query-error";
 
 export function TicketDetailPage({ ticketId }: { ticketId: string }) {
   const { ready } = useRequireRole("CLIENT");
-
-  const [ticket, setTicket] = useState<Ticket | null>(null);
-  const [error, setError] = useState<"not-found" | "network" | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const query = useTicketDetail(ticketId, ready);
+  const ticket = query.data ?? null;
   const [shareState, setShareState] = useState<"idle" | "copying" | "copied">(
     "idle",
   );
   const [shareError, setShareError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!ready) return;
-    let cancelled = false;
-    setIsLoading(true);
-    setError(null);
-    void getTicket(ticketId)
-      .then((data) => {
-        if (!cancelled) setTicket(data);
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        if (err instanceof HttpError && err.status === 404) {
-          setError("not-found");
-          return;
-        }
-        setError("network");
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [ready, ticketId]);
 
   async function onShare() {
     if (!ticket) return;
@@ -68,14 +42,15 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
     }
   }
 
-  if (!ready) {
+  if (!ready || query.isPending) {
     return (
       <Shell>
-        <Pulse />
+        <TicketRowSkeletonList count={1} />
       </Shell>
     );
   }
 
+  const notFound = query.isError && isHttpNotFound(query.error);
   const used = ticket?.status === "USED";
   const voided = ticket?.status === "VOID";
 
@@ -89,23 +64,21 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
         Ingressos
       </Link>
 
-      {isLoading ? <Pulse /> : null}
-
-      {error === "not-found" ? (
+      {notFound ? (
         <PageState
           title="Ingresso não encontrado"
           body="Esse ingresso não existe ou não está disponível."
         />
       ) : null}
 
-      {error === "network" ? (
+      {query.isError && !notFound ? (
         <PageState
           title="Não foi possível carregar"
           body="Não foi possível carregar o ingresso."
         />
       ) : null}
 
-      {ticket && !error ? (
+      {ticket && !query.isError ? (
         <div className="max-w-xl space-y-12">
           <header className="flex items-start gap-4">
             {ticket.event.imageUrl ? (
@@ -176,8 +149,4 @@ function Shell({ children }: { children: ReactNode }) {
       </div>
     </div>
   );
-}
-
-function Pulse() {
-  return <div className="h-48 animate-pulse rounded-lg bg-white/[0.04]" />;
 }

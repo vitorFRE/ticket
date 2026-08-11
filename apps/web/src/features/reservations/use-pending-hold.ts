@@ -1,39 +1,19 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { useAuth } from "@/features/auth/components/auth-provider";
-import { listMyReservations } from "@/features/reservations/api/reservations-api";
-import type { ReservationDetail } from "@/features/reservations/types";
+import { useMyReservations } from "@/features/reservations/use-reservations-query";
 
 export function usePendingHold(eventId: string) {
   const { user, isLoading: authLoading } = useAuth();
-  const [pending, setPending] = useState<ReservationDetail | null>(null);
+  const enabled = !authLoading && user?.role === "CLIENT";
+  const query = useMyReservations(enabled);
 
-  useEffect(() => {
-    if (authLoading || user?.role !== "CLIENT") {
-      setPending(null);
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      try {
-        const { items } = await listMyReservations();
-        if (cancelled) return;
-        const now = Date.now();
-        const match = items.find((item) => {
-          if (item.eventId !== eventId || item.status !== "PENDING") return false;
-          if (!item.expiresAt) return true;
-          return new Date(item.expiresAt).getTime() > now;
-        });
-        setPending(match ?? null);
-      } catch {
-        if (!cancelled) setPending(null);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [authLoading, user?.role, eventId]);
+  if (!enabled || !query.data) return null;
 
-  return pending;
+  const now = Date.now();
+  return (
+    query.data.items.find((item) => {
+      if (item.eventId !== eventId || item.status !== "PENDING") return false;
+      if (!item.expiresAt) return true;
+      return new Date(item.expiresAt).getTime() > now;
+    }) ?? null
+  );
 }

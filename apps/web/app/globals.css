@@ -21,10 +21,14 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-xs: var(--radius);
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
+  --radius-4xl: var(--radius);
   --control-height: 2.75rem;
 }
 
@@ -45,7 +49,7 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.78 0.14 75);
-  --radius: 0.75rem;
+  --radius: 0.5rem;
   --grain-opacity: 0.04;
 }
 
@@ -87,8 +91,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background:
-      linear-gradient(
+    background: linear-gradient(
         to top,
         oklch(0.12 0.01 55 / 0.92) 0%,
         oklch(0.12 0.01 55 / 0.55) 42%,

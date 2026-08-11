@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { searchCatalog } from "@/features/organizer/api/catalog-api";
 import type { CatalogItem, CatalogSource } from "@/features/organizer/types";
+import { useCatalogSearch } from "@/features/organizer/use-catalog-query";
+import { queryErrorMessage } from "@/shared/api/query-error";
 
 const DEBOUNCE_MS = 350;
 
@@ -19,41 +20,19 @@ export function WizardSourceStep({
   onQuery: (query: string) => void;
   onPick: (item: CatalogItem) => void;
 }) {
-  const [items, setItems] = useState<CatalogItem[]>([]);
   const [debounced, setDebounced] = useState(query.trim());
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const id = window.setTimeout(() => setDebounced(query.trim()), DEBOUNCE_MS);
     return () => window.clearTimeout(id);
   }, [query]);
 
-  useEffect(() => {
-    if (!debounced) {
-      setItems([]);
-      setError(null);
-      return;
-    }
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    void searchCatalog(source, debounced)
-      .then((data) => {
-        if (!cancelled) setItems(data.items);
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        setItems([]);
-        setError(err instanceof Error ? err.message : "Busca indisponível.");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [source, debounced]);
+  const search = useCatalogSearch(source, debounced);
+  const items = debounced.length > 0 ? (search.data?.items ?? []) : [];
+  const loading = search.isFetching && debounced.length > 0;
+  const error = search.isError
+    ? queryErrorMessage(search.error, "Busca indisponível.")
+    : null;
 
   return (
     <div className="max-w-xl space-y-8">

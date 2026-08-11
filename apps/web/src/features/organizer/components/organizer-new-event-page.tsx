@@ -4,7 +4,6 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { createEvent } from "@/features/organizer/api/organizer-events-api";
 import { WizardConfirmStep } from "@/features/organizer/components/wizard-confirm-step";
 import { WizardDetailsStep } from "@/features/organizer/components/wizard-details-step";
 import { WizardInventoryStep } from "@/features/organizer/components/wizard-inventory-step";
@@ -18,6 +17,7 @@ import {
   toDatetimeLocal,
 } from "@/features/organizer/money";
 import type { CatalogItem, CreateEventBody } from "@/features/organizer/types";
+import { useCreateEvent } from "@/features/organizer/use-organizer-query";
 import {
   initialWizardState,
   type WizardState,
@@ -26,8 +26,8 @@ import {
 export function OrganizerNewEventPage() {
   const router = useRouter();
   const [state, setState] = useState<WizardState>(initialWizardState);
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const create = useCreateEvent();
 
   function patch(next: Partial<WizardState>) {
     setState((current) => ({ ...current, ...next }));
@@ -97,14 +97,12 @@ export function OrganizerNewEventPage() {
       body.sectors = sectors;
     }
 
-    setSubmitting(true);
     setError(null);
     try {
-      const created = await createEvent(body);
+      const created = await create.mutateAsync(body);
       router.push(`/organizer/events/${created.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível criar.");
-      setSubmitting(false);
     }
   }
 
@@ -183,7 +181,7 @@ export function OrganizerNewEventPage() {
           rows={state.rows}
           seatsPerRow={state.seatsPerRow}
           sectors={state.sectors}
-          submitting={submitting}
+          submitting={create.isPending}
           error={error}
           onBack={() => patch({ step: 4 })}
           onCreate={() => void onCreate()}
