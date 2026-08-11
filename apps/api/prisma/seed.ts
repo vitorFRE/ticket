@@ -137,7 +137,7 @@ async function main() {
       inventoryMode: InventoryMode.SEAT_MAP,
       externalSource: ExternalSource.TMDB,
       externalId: "movie:550",
-      imageUrl: "https://image.tmdb.org/t/p/w500/seed-fight-club.jpg",
+      imageUrl: "https://image.tmdb.org/t/p/w500/mCICnh7QBH0gzYaTQChBDDVIKdm.jpg",
       externalPayload: { seed: true, source: "tmdb" },
       seats: { createMany: { data: seats } },
     },
