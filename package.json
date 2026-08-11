@@ -26,7 +26,7 @@
     "test:watch": "turbo test:watch",
     "test:cov": "turbo test:cov",
     "test:e2e": "turbo test:e2e",
-    "setup:env": "bash scripts/setup-env.sh"
+    "setup:env": "node scripts/setup-env.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

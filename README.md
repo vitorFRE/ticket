@@ -33,29 +33,30 @@ Pagamento é simulado: **confirmar** gera ticket; **rejeitar** não gera.
 
 ## Setup local
 
-Node 20+ e [pnpm](https://pnpm.io).
+Node 20+ e [pnpm](https://pnpm.io) 10 (`corepack enable` já resolve a versão do repo).
 
 ```bash
+git clone <seu-fork>
+cd teste-ticket
+corepack enable
 pnpm install
 pnpm setup:env
 ```
 
-Preencha as keys de catálogo em `apps/api/.env` (`TMDB_API_KEY` ou `TMDB_ACCESS_TOKEN`, `TICKETMASTER_API_KEY`). Sem elas a seed ainda sobe eventos com pôster TMDb em fallback; a busca do organizador fica indisponível.
+`setup:env` copia `apps/*/.env.example` → `.env` (JWT e HMAC de dev já vêm preenchidos). Não precisa criar arquivo na mão.
 
-Em `apps/web/.env`:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
-```
+Catálogo é opcional. Sem `TMDB_API_KEY` / `TMDB_ACCESS_TOKEN` / `TICKETMASTER_API_KEY` em `apps/api/.env` a seed ainda sobe o cartaz (fallback); só a busca do organizador fica indisponível.
 
 ```bash
-pnpm --filter api prisma:migrate
+pnpm --filter api prisma:migrate:deploy
 pnpm --filter api prisma:seed
 pnpm start:dev
 ```
 
 - Web: [http://localhost:3000](http://localhost:3000)
 - API: [http://localhost:3001](http://localhost:3001)
+
+As mesmas contas da tabela acima funcionam no local (`Password123!`).
 
 Apps isolados: `pnpm dev:api` / `pnpm dev:web`.
 
