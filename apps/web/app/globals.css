@@ -61,24 +61,6 @@
 }
 
 @layer utilities {
-  .page-ambient {
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background:
-      radial-gradient(
-        ellipse 70% 50% at 15% 10%,
-        oklch(0.78 0.14 75 / 0.12),
-        transparent 55%
-      ),
-      radial-gradient(
-        ellipse 55% 45% at 90% 80%,
-        oklch(0.55 0.08 55 / 0.14),
-        transparent 50%
-      );
-  }
-
   .page-grain {
     pointer-events: none;
     position: fixed;

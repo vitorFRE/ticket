@@ -114,7 +114,15 @@ describe("EventsController (e2e)", () => {
       .get("/events?q=fight")
       .expect(200);
     expect(res.body.items).toHaveLength(1);
-    expect(eventsService.listPublished).toHaveBeenCalledWith("fight");
+    expect(eventsService.listPublished).toHaveBeenCalledWith("fight", undefined);
+  });
+
+  it("lists published events by catalog source", async () => {
+    const res = await request(app.getHttpServer())
+      .get("/events?source=tmdb")
+      .expect(200);
+    expect(res.body.items).toHaveLength(1);
+    expect(eventsService.listPublished).toHaveBeenCalledWith(undefined, "tmdb");
   });
 
   it("returns 403 for CLIENT creating event", async () => {

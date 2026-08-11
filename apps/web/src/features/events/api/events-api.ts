@@ -7,10 +7,16 @@ import type {
   EventsListResponse,
 } from "@/features/events/types";
 
-export async function listEvents(q?: string): Promise<EventsListResponse> {
+export async function listEvents(params?: {
+  q?: string;
+  source?: "tmdb" | "ticketmaster";
+}): Promise<EventsListResponse> {
   const url = new URL(`${getApiBaseUrl()}/events`);
-  if (q?.trim()) {
-    url.searchParams.set("q", q.trim());
+  if (params?.q?.trim()) {
+    url.searchParams.set("q", params.q.trim());
+  }
+  if (params?.source) {
+    url.searchParams.set("source", params.source);
   }
   const res = await fetch(url.toString(), {
     cache: "no-store",

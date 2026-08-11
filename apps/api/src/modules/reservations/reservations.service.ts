@@ -53,6 +53,7 @@ const reservationInclude = {
       priceCents: true,
       inventoryMode: true,
       status: true,
+      imageUrl: true,
     },
   },
   payment: true,

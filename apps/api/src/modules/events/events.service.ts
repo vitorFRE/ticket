@@ -38,10 +38,11 @@ export class EventsService {
     private readonly reservations: ReservationsService,
   ) {}
 
-  async listPublished(q?: string) {
+  async listPublished(q?: string, source?: CatalogSource) {
     const where: Prisma.EventWhereInput = {
       status: EventStatus.PUBLISHED,
       ...(q ? { title: { contains: q } } : {}),
+      ...(source ? { externalSource: SOURCE_TO_EXTERNAL[source] } : {}),
     };
 
     const events = await this.prisma.event.findMany({
@@ -50,7 +51,7 @@ export class EventsService {
       select: this.listSelect(),
     });
 
-    return { items: events };
+    return { items: events.map((event) => this.toListItem(event)) };
   }
 
   async listMine(organizerId: string) {
@@ -59,7 +60,7 @@ export class EventsService {
       orderBy: { updatedAt: "desc" },
       select: this.listSelect(),
     });
-    return { items: events };
+    return { items: events.map((event) => this.toListItem(event)) };
   }
 
   async getById(id: string, viewer: Viewer) {
@@ -334,12 +335,31 @@ export class EventsService {
       organizerId: true,
       createdAt: true,
       updatedAt: true,
+      _count: { select: { tickets: true } },
     } satisfies Prisma.EventSelect;
+  }
+
+  private toListItem<T extends { _count?: { tickets: number } }>(event: T) {
+    const { _count, ...rest } = event;
+    return { ...rest, ticketsSold: _count?.tickets ?? 0 };
   }
 
   private detailSelect() {
     return {
-      ...this.listSelect(),
+      id: true,
+      title: true,
+      description: true,
+      venue: true,
+      startsAt: true,
+      priceCents: true,
+      status: true,
+      inventoryMode: true,
+      externalSource: true,
+      externalId: true,
+      imageUrl: true,
+      organizerId: true,
+      createdAt: true,
+      updatedAt: true,
       externalPayload: true,
       _count: {
         select: {

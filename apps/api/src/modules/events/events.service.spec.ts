@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import {
   EventStatus,
+  ExternalSource,
   InventoryMode,
   UserRole,
 } from "../../generated/prisma/enums";
@@ -148,6 +149,22 @@ describe("EventsService", () => {
       }),
     );
     expect(result.items).toHaveLength(1);
+    expect(result.items[0]).toEqual(
+      expect.objectContaining({ ticketsSold: 0 }),
+    );
+  });
+
+  it("filters published list by catalog source", async () => {
+    prisma.event.findMany.mockResolvedValue([]);
+    await service.listPublished(undefined, "tmdb");
+    expect(prisma.event.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: EventStatus.PUBLISHED,
+          externalSource: ExternalSource.TMDB,
+        }),
+      }),
+    );
   });
 
   it("hides draft from non-owner", async () => {

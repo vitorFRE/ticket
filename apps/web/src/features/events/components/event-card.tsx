@@ -2,38 +2,16 @@
 
 import Link from "next/link";
 import { CalendarBlankIcon, MapPinIcon } from "@phosphor-icons/react";
+import { kindLabelFromSource } from "@/features/events/catalog-kind";
 import type { EventListItem } from "@/features/events/types";
-import {
-  formatDate,
-  formatPrice,
-  modeLabel,
-} from "@/features/events/format";
-import { glassInnerFlush, glassOuter } from "@/lib/glass-styles";
-import { cn } from "@/lib/utils";
+import { formatDate, formatPrice } from "@/features/events/format";
+import { glassInnerFlushCompact, glassOuterCompact } from "@/lib/glass-styles";
 
-export function EventCard({
-  event,
-  featured = false,
-}: {
-  event: EventListItem;
-  featured?: boolean;
-}) {
+export function EventCard({ event }: { event: EventListItem }) {
   return (
-    <Link
-      href={`/events/${event.id}`}
-      className={cn(
-        glassOuter,
-        "group block h-full",
-        featured && "md:col-span-2",
-      )}
-    >
-      <div className={cn(glassInnerFlush, "relative flex h-full flex-col")}>
-        <div
-          className={cn(
-            "relative overflow-hidden bg-muted",
-            featured ? "aspect-[21/9] md:aspect-[2.4/1]" : "aspect-[16/10]",
-          )}
-        >
+    <Link href={`/events/${event.id}`} className={`${glassOuterCompact} group block h-full`}>
+      <div className={`${glassInnerFlushCompact} relative flex h-full flex-col`}>
+        <div className="relative aspect-16/9 overflow-hidden bg-muted">
           {event.imageUrl ? (
             <>
               <img
@@ -49,40 +27,35 @@ export function EventCard({
             </>
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(ellipse_at_30%_20%,color-mix(in_oklch,var(--primary)_28%,transparent),transparent_55%)]">
-              <span className="text-2xl font-semibold tracking-tight text-muted-foreground">
+              <span className="text-xl font-semibold tracking-tight text-muted-foreground">
                 {event.title.slice(0, 1)}
               </span>
             </div>
           )}
-          <div className="absolute inset-x-0 bottom-0 z-[2] bg-gradient-to-t from-background/90 via-background/20 to-transparent p-4 pt-16">
-            <span className="inline-flex rounded-full border border-white/10 bg-black/30 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.14em] text-foreground/90 backdrop-blur-sm">
-              {modeLabel(event.inventoryMode)}
+          <div className="absolute inset-x-0 bottom-0 z-[2] bg-gradient-to-t from-background/90 via-background/20 to-transparent px-3 pt-10 pb-2.5">
+            <span className="inline-flex rounded-full border border-white/10 bg-black/30 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-foreground/90 backdrop-blur-sm">
+              {kindLabelFromSource(event.externalSource)}
             </span>
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col gap-3 p-5">
-          <h2
-            className={cn(
-              "font-semibold tracking-[-0.02em] text-balance",
-              featured ? "text-2xl md:text-3xl" : "text-lg",
-            )}
-          >
+        <div className="flex flex-1 flex-col gap-2 px-3.5 py-3">
+          <h2 className="text-[15px] font-semibold leading-snug tracking-[-0.02em] text-balance">
             {event.title}
           </h2>
 
-          <div className="mt-auto space-y-1.5 text-sm text-muted-foreground">
-            <p className="flex items-center gap-2">
-              <CalendarBlankIcon size={16} weight="bold" />
+          <div className="mt-auto space-y-1 text-xs text-muted-foreground">
+            <p className="flex items-center gap-1.5">
+              <CalendarBlankIcon size={14} weight="bold" />
               {formatDate(event.startsAt)}
             </p>
-            <p className="flex items-center gap-2">
-              <MapPinIcon size={16} weight="bold" />
+            <p className="flex items-center gap-1.5">
+              <MapPinIcon size={14} weight="bold" />
               <span className="truncate">{event.venue}</span>
             </p>
           </div>
 
-          <p className="pt-1 text-base font-semibold tracking-tight text-foreground">
+          <p className="pt-0.5 text-sm font-semibold tracking-tight text-foreground">
             a partir de {formatPrice(event.priceCents)}
           </p>
         </div>

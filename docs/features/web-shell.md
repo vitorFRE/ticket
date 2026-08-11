@@ -34,7 +34,7 @@ Checkout, pay e tickets (`CLIENT`) chamam o hook nas pages. Rotas org/gate não 
 | `ORGANIZER` | Área org |
 | `GATE` | Portaria |
 
-O link da área é uma pílula. Na própria área ele some (não compete com o título). O nome da conta não vai no header: contas seed tipo “Portaria Seed” colavam no link. **Sair** fica só ícone no `xs`.
+Barra `sticky` no topo, em fluxo (não pílula flutuante). O link da área é uma pílula. Na própria área ele some (não compete com o título). O nome da conta não vai no header: contas seed tipo “Portaria Seed” colavam no link. **Sair** fica só ícone no `xs`.
 
 ## Empty / erro
 

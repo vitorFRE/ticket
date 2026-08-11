@@ -11,6 +11,13 @@ export type ReservationCreated = {
   eventId: string;
 };
 
+export type ReservationStatus =
+  | "PENDING"
+  | "PAID"
+  | "FAILED"
+  | "EXPIRED"
+  | "CANCELLED";
+
 export type ReservationEvent = {
   id: string;
   title: string;
@@ -19,6 +26,14 @@ export type ReservationEvent = {
   priceCents: number;
   inventoryMode: "SEAT_MAP" | "GA_SECTOR";
   status: string;
+  imageUrl?: string | null;
+};
+
+export type ReservationPayment = {
+  id: string;
+  status: "APPROVED" | "REJECTED";
+  provider: string;
+  createdAt: string;
 };
 
 export type ReservationItem = {
@@ -48,12 +63,14 @@ export type ReservationTicket = {
 
 export type ReservationDetail = {
   id: string;
-  status: string;
+  status: ReservationStatus | string;
   expiresAt: string | null;
   eventId: string;
+  createdAt?: string;
   event: ReservationEvent;
   items: ReservationItem[];
   tickets: ReservationTicket[];
+  payment?: ReservationPayment | null;
 };
 
 export type ReservationsListResponse = {

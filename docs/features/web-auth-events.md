@@ -17,12 +17,12 @@ Shell / redirects: [web-shell.md](./web-shell.md).
 
 | Rota | Auth | Descrição |
 |------|------|-----------|
-| `/` | pública | Lista `GET /events` + busca `?q=` |
+| `/` | pública | Lista `GET /events` + busca `?q=` + filtro `?kind=filme|show` (Próximos / Populares) |
 | `/login` | guest | `?next=` interno após autenticar |
-| `/events/[id]` | pública | Detalhe + CTA Reservar |
+| `/events/[id]` | pública | Detalhe + CTA Reservar + também em cartaz |
 | `/events/[id]/checkout` | `CLIENT` | Mapa ou setores → `POST /reservations` |
 | `/reservations/[id]/pay` | `CLIENT` owner | Resumo + timer + `POST /reservations/:id/pay` |
-| `/tickets` | `CLIENT` | Lista `GET /tickets/mine` |
+| `/tickets` | `CLIENT` | Válidos / usados / pagamentos (`?tab=`) |
 | `/tickets/[id]` | `CLIENT` owner | QR + código + share |
 | `/t/[token]` | pública | `GET /public/tickets/:token` |
 
@@ -63,7 +63,7 @@ Shell / redirects: [web-shell.md](./web-shell.md).
 | `CLIENT` | lista e detalhe dos próprios |
 | Alheio / 404 | “Ingresso não encontrado” |
 
-- Lista: poster, evento, lugar, status (válido / usado)
+- Lista: abas Válidos, Usados e Pagamentos. Poster, evento, lugar; pagamento mostra valor e status
 - Detalhe: QR desenhado é `ticket.code` (UUID); código em mono; **Compartilhar** copia `POST /tickets/:id/share` → `url`
 - `USED`: “Já foi usado na porta”; QR com opacidade baixa
 - `/t/[token]`: evento + lugar + status; sem QR e sem dados de usuário

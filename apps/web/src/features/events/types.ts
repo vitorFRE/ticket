@@ -13,6 +13,7 @@ export type EventListItem = {
   organizerId: string;
   createdAt: string;
   updatedAt: string;
+  ticketsSold?: number;
 };
 
 export type EventsListResponse = {

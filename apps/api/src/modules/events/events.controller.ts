@@ -24,7 +24,7 @@ export class EventsController {
   @Public()
   @Get()
   list(@Query() query: ListEventsQueryDto) {
-    return this.eventsService.listPublished(query.q);
+    return this.eventsService.listPublished(query.q, query.source);
   }
 
   @Get("mine")

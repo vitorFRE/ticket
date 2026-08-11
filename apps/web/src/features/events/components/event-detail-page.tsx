@@ -8,7 +8,9 @@ import { MissingPage } from "@/components/missing-page";
 import { PageState } from "@/components/page-state";
 import { useAuth } from "@/features/auth/components/auth-provider";
 import { getEventById } from "@/features/events/api/events-api";
-import { formatDate, formatPrice, modeLabel } from "@/features/events/format";
+import { MoreEvents } from "@/features/events/components/more-events";
+import { kindLabelFromSource } from "@/features/events/catalog-kind";
+import { formatDate, formatPrice } from "@/features/events/format";
 import type { EventDetail } from "@/features/events/types";
 import { PendingHoldHint } from "@/features/reservations/components/pending-hold-hint";
 import { usePendingHold } from "@/features/reservations/use-pending-hold";
@@ -92,7 +94,7 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/75 to-background/25" />
 
-            <div className="relative mx-auto flex min-h-[78dvh] max-w-6xl flex-col justify-end px-4 pb-12 pt-28 md:px-6 md:pb-16 lg:px-8">
+            <div className="relative mx-auto flex min-h-[78dvh] max-w-6xl flex-col justify-end px-4 pb-12 pt-8 md:px-6 md:pb-16 lg:px-8">
               <Link
                 href="/"
                 className="mb-auto inline-flex w-fit items-center gap-2 text-sm text-white/70 transition-colors hover:text-white"
@@ -110,7 +112,7 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
                   <span className="mx-2 text-white/30">/</span>
                   {event.venue}
                   <span className="mx-2 text-white/30">/</span>
-                  {modeLabel(event.inventoryMode)}
+                  {kindLabelFromSource(event.externalSource)}
                 </p>
               </div>
 
@@ -153,6 +155,8 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
           ) : (
             <div className="h-16" />
           )}
+
+          <MoreEvents currentId={event.id} source={event.externalSource} />
         </>
       ) : null}
     </div>
@@ -167,7 +171,7 @@ function DetailSkeleton() {
 
 function DetailState({ title, body }: { title: string; body: string }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-32 pb-20 md:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 pt-10 pb-20 md:px-6 lg:px-8">
       <Link
         href="/"
         className="mb-10 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"

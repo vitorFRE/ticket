@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { ArrowUpRightIcon, SignOutIcon } from "@phosphor-icons/react";
 import { useAuth } from "@/features/auth/components/auth-provider";
 import type { AuthUser } from "@/features/auth/types";
-import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
   const { user, isLoading, logout } = useAuth();
@@ -22,13 +21,8 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-6 md:pt-6">
-      <div
-        className={cn(
-          "pointer-events-auto mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 sm:gap-4",
-          "rounded-full border border-border/80 bg-background/80 px-3 pl-5 shadow-[0_2px_16px_rgba(0,0,0,0.35)] backdrop-blur-md",
-        )}
-      >
+    <header className="sticky top-0 z-50 border-b border-white/8 bg-background/90 backdrop-blur-md">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4 md:px-6 lg:px-8">
         <Link
           href="/"
           className="text-sm font-semibold tracking-tight text-foreground transition-opacity hover:opacity-80"

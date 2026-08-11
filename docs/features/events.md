@@ -17,9 +17,9 @@ CRUD de eventos do organizador com inventário `SEAT_MAP` ou `GA_SECTOR`, snapsh
 
 ## Rotas
 
-### `GET /events?q=`
+### `GET /events?q=&source=`
 
-Lista só `PUBLISHED`. `q` filtra por título (`contains`).
+Lista só `PUBLISHED`. `q` filtra por título (`contains`). `source=tmdb|ticketmaster` filtra a origem (filme vs show). Cada item inclui `ticketsSold` (`Ticket` do evento).
 
 ### `GET /events/mine`
 

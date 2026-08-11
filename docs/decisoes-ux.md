@@ -44,6 +44,10 @@ A quantidade não pode ficar solta no fim da lista. Fica **dentro da linha do se
 - Rodapé: `Camarote x 2`, não só o nome
 - Trocar de setor zera a quantidade para 1 (já no checkout)
 
+## Header
+
+Barra fixa no topo (`sticky`), em fluxo. Não flutua sobre o hero nem usa a pílula `rounded-full` do shell antigo. O conteúdo começa abaixo dela.
+
 ## Tom visual
 
 Manter o editorial do ticketim (dark, âmbar, sem card de vidro extra):
@@ -59,6 +63,26 @@ Widget flutuante no canto inferior direito, sempre visível neste teste. Não é
 - Fecha e abre sem recarregar; o estado fica na sessão do browser.
 - Trocar de conta faz login com `Password123!` e manda para a home do papel (org → `/organizer/events`, portaria → `/gate`).
 - Senha e URL da API ficam no rodapé do painel, em mono, sem cartão extra.
+
+## Cartaz (filme vs show)
+
+Na home o filtro não é o modo de inventário. Filme = origem TMDb. Show = origem Ticketmaster. A URL usa `?kind=filme|show`.
+
+- **Próximos**: data mais perto.
+- **Populares**: mais `ticketsSold`. Some se ninguém comprou ainda.
+- Com busca (`?q=`), a grade vira uma lista só de **Resultados**.
+- No card e no detalhe, o selo é Filme / Show, não Assentos / Setores.
+- Rodapé do site: crédito obrigatório do TMDb e da Ticketmaster Discovery, sem afiliação.
+
+## Ingressos
+
+`/tickets` não mistura válido com usado. Abas no mesmo tom do filtro da home:
+
+- **Válidos**: ainda podem entrar. Ordenados pela data da sessão.
+- **Usados**: `USED` e `VOID`. Histórico da porta.
+- **Pagamentos**: `GET /reservations/mine`. Pendente leva ao pay; pago leva ao ingresso.
+
+A URL usa `?tab=usados` ou `?tab=pagamentos`. Sem `tab` é válidos.
 
 ## Portaria
 

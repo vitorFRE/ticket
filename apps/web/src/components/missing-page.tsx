@@ -21,7 +21,7 @@ export function MissingPage({
   ctaLabel?: string;
 }) {
   return (
-    <div className="relative z-10 min-h-[100dvh] overflow-hidden">
+    <div className="relative z-10 min-h-[calc(100dvh-3.5rem)] overflow-hidden">
       <img
         src={imageSrc}
         alt=""
@@ -29,7 +29,7 @@ export function MissingPage({
       />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/25" />
 
-      <div className="relative mx-auto flex min-h-[100dvh] max-w-6xl flex-col justify-end px-4 pb-16 pt-28 md:px-6 md:pb-20 lg:px-8">
+      <div className="relative mx-auto flex min-h-[calc(100dvh-3.5rem)] max-w-6xl flex-col justify-end px-4 pb-16 pt-8 md:px-6 md:pb-20 lg:px-8">
         <Link
           href={backHref}
           className="mb-auto inline-flex w-fit items-center gap-2 text-sm text-white/70 transition-colors hover:text-white"

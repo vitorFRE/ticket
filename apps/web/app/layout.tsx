@@ -30,7 +30,6 @@ export default function RootLayout({
       className={`dark ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="relative min-h-full flex flex-col">
-        <div className="page-ambient" aria-hidden />
         <div className="page-grain" aria-hidden />
         <AuthProvider>
           {children}
