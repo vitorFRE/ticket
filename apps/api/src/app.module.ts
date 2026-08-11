@@ -8,6 +8,7 @@ import { envConfig } from "./config/env.config";
 import { AuthModule } from "./modules/auth/auth.module";
 import { CatalogModule } from "./modules/catalog/catalog.module";
 import { EventsModule } from "./modules/events/events.module";
+import { GateModule } from "./modules/gate/gate.module";
 import { HealthModule } from "./modules/health/health.module";
 import { PrismaModule } from "./modules/prisma/prisma.module";
 import { ReservationsModule } from "./modules/reservations/reservations.module";
@@ -25,6 +26,7 @@ import { UsersModule } from "./modules/users/users.module";
     EventsModule,
     ReservationsModule,
     TicketsModule,
+    GateModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

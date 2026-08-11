@@ -106,6 +106,6 @@ pnpm --filter api test:e2e
 
 ## Limitações
 
-- Sem `POST /gate/validate` (próximo passo)
+- Gate: ver [gate.md](./gate.md) (`POST /gate/validate`)
 - API não renderiza imagem QR — devolve `qrPayload`/`code` para o front
 - Share aponta para rota web `/t/:token` (página ainda não existe)
