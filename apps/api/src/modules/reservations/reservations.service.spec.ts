@@ -10,6 +10,8 @@ import {
   SeatStatus,
 } from "../../generated/prisma/enums";
 import type { PrismaService } from "../prisma/prisma.service";
+import type { TicketsService } from "../tickets/tickets.service";
+import { PayOutcome } from "./dto/pay-reservation.dto";
 import { HOLD_TTL_MS, ReservationsService } from "./reservations.service";
 
 describe("ReservationsService", () => {
@@ -27,10 +29,18 @@ describe("ReservationsService", () => {
     reservation: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
+      findUniqueOrThrow: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
     },
+    payment: {
+      create: jest.fn(),
+    },
     $transaction: jest.fn(),
+  };
+
+  const ticketsService = {
+    createTicketsForReservation: jest.fn(),
   };
 
   let service: ReservationsService;
@@ -41,7 +51,10 @@ describe("ReservationsService", () => {
     prisma.$transaction.mockImplementation(
       async (fn: (tx: typeof prisma) => Promise<unknown>) => fn(prisma),
     );
-    service = new ReservationsService(prisma as unknown as PrismaService);
+    service = new ReservationsService(
+      prisma as unknown as PrismaService,
+      ticketsService as unknown as TicketsService,
+    );
   });
 
   it("creates SEAT_MAP reservation and holds seats", async () => {
@@ -223,5 +236,88 @@ describe("ReservationsService", () => {
     await expect(
       service.create("user-1", { eventId: "evt-1", seatIds: ["s1"] }),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it("approves payment, sells seats and creates tickets", async () => {
+    prisma.reservation.findMany.mockResolvedValue([]);
+    prisma.reservation.findUnique.mockResolvedValue({
+      id: "r1",
+      userId: "user-1",
+      eventId: "evt-1",
+      status: ReservationStatus.PENDING,
+      payment: null,
+      items: [{ seatId: "s1", sectorId: null, quantity: null }],
+    });
+    prisma.seat.updateMany.mockResolvedValue({ count: 1 });
+    prisma.reservation.findUniqueOrThrow.mockResolvedValue({
+      id: "r1",
+      status: ReservationStatus.PAID,
+      tickets: [{ id: "t1" }],
+    });
+    ticketsService.createTicketsForReservation.mockResolvedValue([
+      { id: "t1" },
+    ]);
+
+    const result = await service.pay("r1", "user-1", {
+      outcome: PayOutcome.APPROVED,
+    });
+
+    expect(prisma.seat.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ["s1"] }, status: SeatStatus.HELD },
+      data: { status: SeatStatus.SOLD },
+    });
+    expect(prisma.payment.create).toHaveBeenCalled();
+    expect(ticketsService.createTicketsForReservation).toHaveBeenCalled();
+    expect(result.status).toBe(ReservationStatus.PAID);
+  });
+
+  it("rejects payment and releases hold", async () => {
+    prisma.reservation.findMany.mockResolvedValue([]);
+    prisma.reservation.findUnique.mockResolvedValue({
+      id: "r1",
+      userId: "user-1",
+      eventId: "evt-1",
+      status: ReservationStatus.PENDING,
+      payment: null,
+      items: [
+        { seatId: "s1", sectorId: null, quantity: null },
+        { seatId: null, sectorId: "sec-1", quantity: 2 },
+      ],
+    });
+    prisma.reservation.findUniqueOrThrow.mockResolvedValue({
+      id: "r1",
+      status: ReservationStatus.FAILED,
+      tickets: [],
+    });
+
+    const result = await service.pay("r1", "user-1", {
+      outcome: PayOutcome.REJECTED,
+    });
+
+    expect(prisma.seat.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: ["s1"] }, status: SeatStatus.HELD },
+      data: { status: SeatStatus.AVAILABLE },
+    });
+    expect(prisma.sector.update).toHaveBeenCalledWith({
+      where: { id: "sec-1" },
+      data: { availableCount: { increment: 2 } },
+    });
+    expect(ticketsService.createTicketsForReservation).not.toHaveBeenCalled();
+    expect(result.status).toBe(ReservationStatus.FAILED);
+  });
+
+  it("rejects pay for non-pending reservation", async () => {
+    prisma.reservation.findMany.mockResolvedValue([]);
+    prisma.reservation.findUnique.mockResolvedValue({
+      id: "r1",
+      userId: "user-1",
+      status: ReservationStatus.PAID,
+      payment: { id: "p1" },
+      items: [],
+    });
+
+    await expect(
+      service.pay("r1", "user-1", { outcome: PayOutcome.APPROVED }),
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
 });

@@ -91,6 +91,18 @@ Detalhes em [docs/features/reservations.md](docs/features/reservations.md).
 - `POST /reservations` — hold 15 min (`seatIds` ou `sectorId`+`quantity`)
 - `GET /reservations/me`
 - `GET /reservations/:id`
+- `POST /reservations/:id/pay` — `{ outcome: "APPROVED" \| "REJECTED" }`
+
+### Tickets (CLIENT + público)
+
+Detalhes em [docs/features/payment-tickets.md](docs/features/payment-tickets.md).
+
+- `GET /tickets/me`
+- `GET /tickets/:id`
+- `POST /tickets/:id/share` → `{ token, url }`
+- `GET /public/tickets/:token` — público
+
+Env: `TICKET_HMAC_SECRET` (assinatura do QR).
 
 ## Scripts úteis
 

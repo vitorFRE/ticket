@@ -43,6 +43,21 @@ enum ReservationStatus {
   CANCELLED
 }
 
+enum PaymentStatus {
+  APPROVED
+  REJECTED
+}
+
+enum PaymentProvider {
+  SIMULATED
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  VOID
+}
+
 model User {
   id           String        @id @default(uuid())
   email        String        @unique
@@ -55,6 +70,7 @@ model User {
   updatedAt    DateTime      @updatedAt
   events       Event[]
   reservations Reservation[]
+  tickets      Ticket[]
 }
 
 model Event {
@@ -77,20 +93,22 @@ model Event {
   seats           Seat[]
   sectors         Sector[]
   reservations    Reservation[]
+  tickets         Ticket[]
 
   @@index([status])
   @@index([organizerId])
 }
 
 model Seat {
-  id                String            @id @default(uuid())
-  eventId           String
-  label             String
-  row               String
-  number            Int
-  status            SeatStatus        @default(AVAILABLE)
-  event             Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  reservationItems  ReservationItem[]
+  id               String            @id @default(uuid())
+  eventId          String
+  label            String
+  row              String
+  number           Int
+  status           SeatStatus        @default(AVAILABLE)
+  event            Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  reservationItems ReservationItem[]
+  tickets          Ticket[]
 
   @@unique([eventId, label])
   @@index([eventId])
@@ -105,6 +123,7 @@ model Sector {
   priceCents       Int?
   event            Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
   reservationItems ReservationItem[]
+  tickets          Ticket[]
 
   @@index([eventId])
 }
@@ -120,6 +139,8 @@ model Reservation {
   event     Event             @relation(fields: [eventId], references: [id])
   user      User              @relation(fields: [userId], references: [id])
   items     ReservationItem[]
+  payment   Payment?
+  tickets   Ticket[]
 
   @@index([userId])
   @@index([eventId, status])
@@ -139,4 +160,49 @@ model ReservationItem {
   @@index([reservationId])
   @@index([seatId])
   @@index([sectorId])
+}
+
+model Payment {
+  id            String          @id @default(uuid())
+  reservationId String          @unique
+  status        PaymentStatus
+  provider      PaymentProvider @default(SIMULATED)
+  raw           Json?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  reservation   Reservation     @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+}
+
+model Ticket {
+  id            String       @id @default(uuid())
+  reservationId String
+  userId        String
+  eventId       String
+  code          String       @unique
+  qrPayload     String
+  status        TicketStatus @default(VALID)
+  seatId        String?
+  sectorId      String?
+  validatedAt   DateTime?
+  validatedById String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  reservation   Reservation  @relation(fields: [reservationId], references: [id])
+  user          User         @relation(fields: [userId], references: [id])
+  event         Event        @relation(fields: [eventId], references: [id])
+  seat          Seat?        @relation(fields: [seatId], references: [id])
+  sector        Sector?      @relation(fields: [sectorId], references: [id])
+  share         TicketShare?
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([reservationId])
+}
+
+model TicketShare {
+  id          String   @id @default(uuid())
+  ticketId    String   @unique
+  publicToken String   @unique
+  createdAt   DateTime @default(now())
+  ticket      Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }

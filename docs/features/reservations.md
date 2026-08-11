@@ -1,6 +1,6 @@
 # Feature: Reservations (hold)
 
-Reserva de inventário com hold curto (TTL), concorrência para `SEAT_MAP` e `GA_SECTOR`, e expiração lazy. **Sem** payment/tickets neste passo.
+Reserva de inventário com hold curto (TTL), concorrência para `SEAT_MAP` e `GA_SECTOR`, e expiração lazy. Pagamento e tickets: [payment-tickets.md](./payment-tickets.md).
 
 ## Auth
 
@@ -96,6 +96,6 @@ pnpm --filter api test:e2e
 
 ## Limitações
 
-- Sem `POST /reservations/:id/pay` (próximo passo)
 - Sem job em background; só expiração lazy
 - Concorrência adequada para SQLite local; documentar limite em produção multi-instância
+- Payment + tickets: ver [payment-tickets.md](./payment-tickets.md)

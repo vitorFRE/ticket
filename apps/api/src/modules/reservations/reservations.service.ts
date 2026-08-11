@@ -8,11 +8,16 @@ import type { Prisma } from "../../generated/prisma/client";
 import {
   EventStatus,
   InventoryMode,
+  PaymentProvider,
+  PaymentStatus,
   ReservationStatus,
   SeatStatus,
 } from "../../generated/prisma/enums";
 import { PrismaService } from "../prisma/prisma.service";
+import type { TicketDraftInput } from "../tickets/tickets.service";
+import { TicketsService } from "../tickets/tickets.service";
 import type { CreateReservationDto } from "./dto/create-reservation.dto";
+import { PayOutcome, type PayReservationDto } from "./dto/pay-reservation.dto";
 
 export const HOLD_TTL_MS = 15 * 60 * 1000;
 
@@ -50,11 +55,25 @@ const reservationInclude = {
       status: true,
     },
   },
+  payment: true,
+  tickets: {
+    select: {
+      id: true,
+      code: true,
+      qrPayload: true,
+      status: true,
+      seatId: true,
+      sectorId: true,
+    },
+  },
 } satisfies Prisma.ReservationInclude;
 
 @Injectable()
 export class ReservationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly ticketsService: TicketsService,
+  ) {}
 
   async create(userId: string, dto: CreateReservationDto) {
     await this.expireOverdueReservations();
@@ -147,6 +166,38 @@ export class ReservationsService {
     return reservation;
   }
 
+  async pay(id: string, userId: string, dto: PayReservationDto) {
+    await this.expireOverdueReservations();
+
+    const reservation = await this.prisma.reservation.findUnique({
+      where: { id },
+      include: {
+        items: true,
+        payment: true,
+      },
+    });
+
+    if (!reservation || reservation.userId !== userId) {
+      throw new NotFoundException("Reserva não encontrada");
+    }
+
+    if (reservation.status !== ReservationStatus.PENDING) {
+      throw new BadRequestException(
+        "Só é possível pagar reservas PENDING não expiradas",
+      );
+    }
+
+    if (reservation.payment) {
+      throw new BadRequestException("Reserva já possui pagamento");
+    }
+
+    if (dto.outcome === PayOutcome.APPROVED) {
+      return this.approvePayment(reservation);
+    }
+
+    return this.rejectPayment(reservation);
+  }
+
   async expireOverdueReservations(): Promise<number> {
     const now = new Date();
     const overdue = await this.prisma.reservation.findMany({
@@ -202,6 +253,133 @@ export class ReservationsService {
     });
 
     return overdue.length;
+  }
+
+  private async approvePayment(reservation: {
+    id: string;
+    eventId: string;
+    userId: string;
+    items: Array<{
+      seatId: string | null;
+      sectorId: string | null;
+      quantity: number | null;
+    }>;
+  }) {
+    const seatIds = reservation.items
+      .map((item) => item.seatId)
+      .filter((id): id is string => !!id);
+
+    const drafts: TicketDraftInput[] = [];
+    for (const item of reservation.items) {
+      if (item.seatId) {
+        drafts.push({
+          reservationId: reservation.id,
+          userId: reservation.userId,
+          eventId: reservation.eventId,
+          seatId: item.seatId,
+        });
+      } else if (item.sectorId && item.quantity) {
+        for (let i = 0; i < item.quantity; i += 1) {
+          drafts.push({
+            reservationId: reservation.id,
+            userId: reservation.userId,
+            eventId: reservation.eventId,
+            sectorId: item.sectorId,
+          });
+        }
+      }
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      if (seatIds.length > 0) {
+        const sold = await tx.seat.updateMany({
+          where: {
+            id: { in: seatIds },
+            status: SeatStatus.HELD,
+          },
+          data: { status: SeatStatus.SOLD },
+        });
+        if (sold.count !== seatIds.length) {
+          throw new ConflictException(
+            "Assentos em hold inválidos para pagamento",
+          );
+        }
+      }
+
+      await tx.payment.create({
+        data: {
+          reservationId: reservation.id,
+          status: PaymentStatus.APPROVED,
+          provider: PaymentProvider.SIMULATED,
+          raw: { outcome: PayOutcome.APPROVED },
+        },
+      });
+
+      await tx.reservation.update({
+        where: { id: reservation.id },
+        data: { status: ReservationStatus.PAID },
+      });
+
+      await this.ticketsService.createTicketsForReservation(tx, drafts);
+
+      return tx.reservation.findUniqueOrThrow({
+        where: { id: reservation.id },
+        include: reservationInclude,
+      });
+    });
+  }
+
+  private async rejectPayment(reservation: {
+    id: string;
+    items: Array<{
+      seatId: string | null;
+      sectorId: string | null;
+      quantity: number | null;
+    }>;
+  }) {
+    return this.prisma.$transaction(async (tx) => {
+      const seatIds = reservation.items
+        .map((item) => item.seatId)
+        .filter((id): id is string => !!id);
+
+      if (seatIds.length > 0) {
+        await tx.seat.updateMany({
+          where: {
+            id: { in: seatIds },
+            status: SeatStatus.HELD,
+          },
+          data: { status: SeatStatus.AVAILABLE },
+        });
+      }
+
+      for (const item of reservation.items) {
+        if (item.sectorId && item.quantity) {
+          await tx.sector.update({
+            where: { id: item.sectorId },
+            data: { availableCount: { increment: item.quantity } },
+          });
+        }
+      }
+
+      await tx.payment.create({
+        data: {
+          reservationId: reservation.id,
+          status: PaymentStatus.REJECTED,
+          provider: PaymentProvider.SIMULATED,
+          raw: { outcome: PayOutcome.REJECTED },
+        },
+      });
+
+      await tx.reservation.update({
+        where: { id: reservation.id },
+        data: { status: ReservationStatus.FAILED },
+      });
+
+      return tx.reservation.findUniqueOrThrow({
+        where: { id: reservation.id },
+        include: reservationInclude,
+      });
+    });
   }
 
   private async createSeatReservation(

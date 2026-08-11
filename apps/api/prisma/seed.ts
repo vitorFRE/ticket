@@ -73,6 +73,23 @@ async function main() {
     where: { email: "organizer@ticket.local" },
   });
 
+  await prisma.ticketShare.deleteMany({
+    where: {
+      ticket: {
+        eventId: { in: [SEAT_MAP_EVENT_ID, GA_SECTOR_EVENT_ID] },
+      },
+    },
+  });
+  await prisma.ticket.deleteMany({
+    where: { eventId: { in: [SEAT_MAP_EVENT_ID, GA_SECTOR_EVENT_ID] } },
+  });
+  await prisma.payment.deleteMany({
+    where: {
+      reservation: {
+        eventId: { in: [SEAT_MAP_EVENT_ID, GA_SECTOR_EVENT_ID] },
+      },
+    },
+  });
   await prisma.reservationItem.deleteMany({
     where: {
       reservation: {

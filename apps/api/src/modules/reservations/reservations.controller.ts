@@ -3,6 +3,7 @@ import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { Roles } from "../../common/decorators/roles.decorator";
 import { UserRole } from "../../generated/prisma/enums";
 import { CreateReservationDto } from "./dto/create-reservation.dto";
+import { PayReservationDto } from "./dto/pay-reservation.dto";
 import { ReservationsService } from "./reservations.service";
 
 @Controller("reservations")
@@ -21,6 +22,15 @@ export class ReservationsController {
   @Get("mine")
   listMine(@CurrentUser("sub") userId: string) {
     return this.reservationsService.listMine(userId);
+  }
+
+  @Post(":id/pay")
+  pay(
+    @Param("id") id: string,
+    @CurrentUser("sub") userId: string,
+    @Body() dto: PayReservationDto,
+  ) {
+    return this.reservationsService.pay(id, userId, dto);
   }
 
   @Get(":id")
