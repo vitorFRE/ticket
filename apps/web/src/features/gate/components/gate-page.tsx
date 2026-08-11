@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { PageState } from "@/components/page-state";
 import { listEvents } from "@/features/events/api/events-api";
 import type { EventListItem } from "@/features/events/types";
 import { validateGate } from "@/features/gate/api/gate-api";
@@ -12,32 +13,31 @@ import {
   setStoredGateEventId,
 } from "@/features/gate/gate-event-storage";
 import type { GateValidateResponse } from "@/features/gate/types";
-import { useGateGuard } from "@/features/gate/use-gate-guard";
 
 export function GatePage() {
-  const { ready } = useGateGuard("/gate");
   const [events, setEvents] = useState<EventListItem[]>([]);
   const [eventId, setEventId] = useState<string | null>(null);
   const [picking, setPicking] = useState(false);
   const [code, setCode] = useState("");
   const [result, setResult] = useState<GateValidateResponse | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const busyRef = useRef(false);
 
   useEffect(() => {
-    if (!ready) return;
     setEventId(getStoredGateEventId());
     let cancelled = false;
     setLoadingEvents(true);
+    setLoadError(null);
     void listEvents()
       .then((data) => {
         if (!cancelled) setEvents(data.items);
       })
       .catch((err: unknown) => {
         if (!cancelled) {
-          setError(
+          setLoadError(
             err instanceof Error ? err.message : "Não foi possível carregar os eventos.",
           );
         }
@@ -48,7 +48,7 @@ export function GatePage() {
     return () => {
       cancelled = true;
     };
-  }, [ready]);
+  }, []);
 
   const selected = events.find((event) => event.id === eventId) ?? null;
   const showPicker = !selected || picking;
@@ -88,7 +88,7 @@ export function GatePage() {
   return (
     <div className="relative z-10 flex-1">
       <div className="mx-auto max-w-6xl px-4 pt-28 pb-20 md:px-6 lg:px-8 lg:pt-32">
-        {!ready || loadingEvents ? (
+        {loadingEvents ? (
           <div className="h-48 animate-pulse rounded-lg bg-white/[0.04]" />
         ) : (
           <div className="space-y-10">
@@ -114,9 +114,13 @@ export function GatePage() {
               )}
             </header>
 
+            {loadError ? (
+              <PageState title="Não foi possível carregar" body={loadError} />
+            ) : null}
+
             {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-            {showPicker ? (
+            {!loadError && showPicker ? (
               <GateEventPicker
                 events={events}
                 selectedId={eventId}

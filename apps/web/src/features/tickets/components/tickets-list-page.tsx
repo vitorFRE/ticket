@@ -4,7 +4,8 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { useAuth } from "@/features/auth/components/auth-provider";
+import { PageState } from "@/components/page-state";
+import { useRequireRole } from "@/features/auth/use-require-role";
 import { formatDate } from "@/features/events/format";
 import { listMyTickets } from "@/features/tickets/api/tickets-api";
 import {
@@ -15,25 +16,14 @@ import type { Ticket } from "@/features/tickets/types";
 import { HttpError } from "@/shared/api/http-error";
 
 export function TicketsListPage() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { ready } = useRequireRole("CLIENT");
   const router = useRouter();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [error, setError] = useState<"network" | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      router.replace(`/login?next=${encodeURIComponent("/tickets")}`);
-      return;
-    }
-    if (user.role !== "CLIENT") {
-      router.replace("/");
-    }
-  }, [authLoading, user, router]);
-
-  useEffect(() => {
-    if (authLoading || user?.role !== "CLIENT") return;
+    if (!ready) return;
     let cancelled = false;
     setIsLoading(true);
     setError(null);
@@ -54,9 +44,9 @@ export function TicketsListPage() {
     return () => {
       cancelled = true;
     };
-  }, [authLoading, user?.role, router]);
+  }, [ready, router]);
 
-  if (authLoading || !user || user.role !== "CLIENT") {
+  if (!ready) {
     return (
       <Shell>
         <Pulse />
@@ -79,18 +69,24 @@ export function TicketsListPage() {
       {isLoading ? <Pulse /> : null}
 
       {error ? (
-        <p className="mt-8 text-sm text-muted-foreground">
-          Não foi possível carregar seus ingressos.
-        </p>
+        <PageState
+          title="Não foi possível carregar"
+          body="Não foi possível carregar seus ingressos."
+        />
       ) : null}
 
       {!isLoading && !error && tickets.length === 0 ? (
-        <p className="mt-8 max-w-md text-sm leading-relaxed text-muted-foreground">
-          Nenhum ingresso ainda.{" "}
-          <Link href="/" className="text-foreground underline-offset-4 hover:underline">
+        <PageState
+          title="Nenhum ingresso ainda"
+          body="Reserve um evento para ver o QR aqui."
+        >
+          <Link
+            href="/"
+            className="mt-5 inline-block text-sm text-foreground underline-offset-4 hover:underline"
+          >
             Ver eventos
           </Link>
-        </p>
+        </PageState>
       ) : null}
 
       {!isLoading && tickets.length > 0 ? (

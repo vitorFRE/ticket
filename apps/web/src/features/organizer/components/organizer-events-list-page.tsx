@@ -3,6 +3,7 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { PageState } from "@/components/page-state";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import type { EventListItem } from "@/features/events/types";
 import {
@@ -12,23 +13,22 @@ import {
 import { OrganizerEventTile } from "@/features/organizer/components/organizer-event-tile";
 import { OrganizerEventsSkeleton } from "@/features/organizer/components/organizer-events-skeleton";
 import { OrganizerShell } from "@/features/organizer/components/organizer-shell";
-import { useOrganizerGuard } from "@/features/organizer/use-organizer-guard";
 
 export function OrganizerEventsListPage() {
-  const { ready } = useOrganizerGuard("/organizer/events");
   const [events, setEvents] = useState<EventListItem[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [publishingId, setPublishingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
+    setLoadError(null);
     try {
       const data = await listMyEvents();
       setEvents(data.items);
     } catch (err) {
-      setError(
+      setLoadError(
         err instanceof Error ? err.message : "Não foi possível carregar.",
       );
     } finally {
@@ -37,9 +37,8 @@ export function OrganizerEventsListPage() {
   }, []);
 
   useEffect(() => {
-    if (!ready) return;
     void load();
-  }, [ready, load]);
+  }, [load]);
 
   const sorted = useMemo(() => {
     return [...events].sort((a, b) => {
@@ -52,12 +51,14 @@ export function OrganizerEventsListPage() {
 
   async function onPublish(id: string) {
     setPublishingId(id);
-    setError(null);
+    setActionError(null);
     try {
       await publishEvent(id);
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível publicar.");
+      setActionError(
+        err instanceof Error ? err.message : "Não foi possível publicar.",
+      );
     } finally {
       setPublishingId(null);
     }
@@ -95,21 +96,28 @@ export function OrganizerEventsListPage() {
         </Link>
       </div>
 
-      {error ? <p className="mt-8 text-sm text-destructive">{error}</p> : null}
+      {loadError ? (
+        <PageState title="Não foi possível carregar" body={loadError} />
+      ) : null}
 
-      {!ready || isLoading ? (
+      {actionError ? (
+        <p className="mt-8 text-sm text-destructive">{actionError}</p>
+      ) : null}
+
+      {isLoading ? (
         <div className="mt-12">
           <OrganizerEventsSkeleton />
         </div>
       ) : null}
 
-      {ready && !isLoading && events.length === 0 ? (
-        <p className="mt-16 max-w-sm text-lg leading-relaxed text-muted-foreground">
-          Nenhum evento ainda. Use Novo evento para puxar um título do catálogo.
-        </p>
+      {!isLoading && !loadError && events.length === 0 ? (
+        <PageState
+          title="Nenhum evento ainda"
+          body="Use Novo evento para puxar um título do catálogo."
+        />
       ) : null}
 
-      {ready && !isLoading && sorted.length > 0 ? (
+      {!isLoading && sorted.length > 0 ? (
         <ul className="mt-10 grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
           {sorted.map((event, index) => (
             <li key={event.id}>

@@ -10,10 +10,7 @@ import { WizardDetailsStep } from "@/features/organizer/components/wizard-detail
 import { WizardInventoryStep } from "@/features/organizer/components/wizard-inventory-step";
 import { WizardPickStep } from "@/features/organizer/components/wizard-pick-step";
 import { WizardSourceStep } from "@/features/organizer/components/wizard-source-step";
-import {
-  OrganizerPulse,
-  OrganizerShell,
-} from "@/features/organizer/components/organizer-shell";
+import { OrganizerShell } from "@/features/organizer/components/organizer-shell";
 import {
   centsToReaisInput,
   fromDatetimeLocal,
@@ -21,14 +18,12 @@ import {
   toDatetimeLocal,
 } from "@/features/organizer/money";
 import type { CatalogItem, CreateEventBody } from "@/features/organizer/types";
-import { useOrganizerGuard } from "@/features/organizer/use-organizer-guard";
 import {
   initialWizardState,
   type WizardState,
 } from "@/features/organizer/wizard-state";
 
 export function OrganizerNewEventPage() {
-  const { ready } = useOrganizerGuard("/organizer/events/new");
   const router = useRouter();
   const [state, setState] = useState<WizardState>(initialWizardState);
   const [submitting, setSubmitting] = useState(false);
@@ -111,14 +106,6 @@ export function OrganizerNewEventPage() {
       setError(err instanceof Error ? err.message : "Não foi possível criar.");
       setSubmitting(false);
     }
-  }
-
-  if (!ready) {
-    return (
-      <OrganizerShell>
-        <OrganizerPulse />
-      </OrganizerShell>
-    );
   }
 
   return (

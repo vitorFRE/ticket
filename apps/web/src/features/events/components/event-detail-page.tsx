@@ -4,6 +4,7 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { PageState } from "@/components/page-state";
 import { useAuth } from "@/features/auth/components/auth-provider";
 import { getEventById } from "@/features/events/api/events-api";
 import { formatDate, formatPrice, modeLabel } from "@/features/events/format";
@@ -62,14 +63,14 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
       {isLoading ? <DetailSkeleton /> : null}
 
       {error === "not-found" ? (
-        <SimpleState
+        <DetailState
           title="Evento não encontrado"
           body="Esse evento não existe ou não está disponível."
         />
       ) : null}
 
       {error === "network" ? (
-        <SimpleState
+        <DetailState
           title="Não foi possível carregar"
           body="Verifique sua conexão e tente de novo."
         />
@@ -162,7 +163,7 @@ function DetailSkeleton() {
   );
 }
 
-function SimpleState({ title, body }: { title: string; body: string }) {
+function DetailState({ title, body }: { title: string; body: string }) {
   return (
     <div className="mx-auto max-w-6xl px-4 pt-32 pb-20 md:px-6 lg:px-8">
       <Link
@@ -172,10 +173,7 @@ function SimpleState({ title, body }: { title: string; body: string }) {
         <ArrowLeftIcon size={16} weight="bold" />
         Eventos
       </Link>
-      <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
-      <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-        {body}
-      </p>
+      <PageState title={title} body={body} />
     </div>
   );
 }

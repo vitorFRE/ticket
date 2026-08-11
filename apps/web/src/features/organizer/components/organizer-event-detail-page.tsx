@@ -3,6 +3,7 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { PageState } from "@/components/page-state";
 import { formatDate, formatPrice, modeLabel } from "@/features/events/format";
 import type { EventDetail } from "@/features/events/types";
 import {
@@ -21,11 +22,9 @@ import {
   reaisToCents,
   toDatetimeLocal,
 } from "@/features/organizer/money";
-import { useOrganizerGuard } from "@/features/organizer/use-organizer-guard";
 import { HttpError } from "@/shared/api/http-error";
 
 export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
-  const { ready } = useOrganizerGuard(`/organizer/events/${eventId}`);
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [error, setError] = useState<"not-found" | "network" | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
@@ -41,7 +40,6 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
-    if (!ready) return;
     let cancelled = false;
     setIsLoading(true);
     setError(null);
@@ -70,7 +68,7 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [ready, eventId]);
+  }, [eventId]);
 
   async function onSave(e: FormEvent) {
     e.preventDefault();
@@ -116,7 +114,7 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
     }
   }
 
-  if (!ready || isLoading) {
+  if (isLoading) {
     return (
       <OrganizerShell>
         <OrganizerPulse />
@@ -135,10 +133,16 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
       </Link>
 
       {error === "not-found" ? (
-        <p className="text-muted-foreground">Evento não encontrado.</p>
+        <PageState
+          title="Evento não encontrado"
+          body="Esse evento não existe ou não está disponível."
+        />
       ) : null}
       {error === "network" ? (
-        <p className="text-muted-foreground">Não foi possível carregar o evento.</p>
+        <PageState
+          title="Não foi possível carregar"
+          body="Não foi possível carregar o evento."
+        />
       ) : null}
 
       {event && !error ? (

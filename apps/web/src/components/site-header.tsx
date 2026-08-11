@@ -22,7 +22,7 @@ export function SiteHeader() {
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-6 md:pt-6">
       <div
         className={cn(
-          "pointer-events-auto mx-auto flex h-14 max-w-6xl items-center justify-between gap-4",
+          "pointer-events-auto mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 sm:gap-4",
           "rounded-full border border-border/80 bg-background/80 px-3 pl-5 shadow-[0_2px_16px_rgba(0,0,0,0.35)] backdrop-blur-md",
         )}
       >
@@ -33,7 +33,7 @@ export function SiteHeader() {
           ticketim
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           {isLoading ? (
             <span className="px-3 text-xs text-muted-foreground">...</span>
           ) : user ? (
@@ -41,7 +41,7 @@ export function SiteHeader() {
               {user.role === "CLIENT" ? (
                 <Link
                   href="/tickets"
-                  className="px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="px-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-2"
                 >
                   Ingressos
                 </Link>
@@ -49,7 +49,7 @@ export function SiteHeader() {
               {user.role === "ORGANIZER" ? (
                 <Link
                   href="/organizer/events"
-                  className="px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="px-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-2"
                 >
                   Área org
                 </Link>
@@ -57,7 +57,7 @@ export function SiteHeader() {
               {user.role === "GATE" ? (
                 <Link
                   href="/gate"
-                  className="px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="px-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-2"
                 >
                   Portaria
                 </Link>
@@ -68,10 +68,11 @@ export function SiteHeader() {
               <button
                 type="button"
                 onClick={() => void onLogout()}
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 text-xs font-medium text-foreground transition-colors hover:bg-white/[0.06] active:scale-[0.98]"
+                aria-label="Sair"
+                className="inline-flex size-9 items-center justify-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] text-xs font-medium text-foreground transition-colors hover:bg-white/[0.06] active:scale-[0.98] sm:h-9 sm:w-auto sm:px-3"
               >
                 <SignOutIcon size={14} weight="bold" />
-                Sair
+                <span className="hidden sm:inline">Sair</span>
               </button>
             </>
           ) : (

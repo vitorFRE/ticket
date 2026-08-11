@@ -7,6 +7,7 @@ import { AuthBackdrop } from "@/features/auth/components/auth-backdrop";
 import { AuthBrandPanel } from "@/features/auth/components/auth-brand-panel";
 import { useAuth } from "@/features/auth/components/auth-provider";
 import { LoginForm } from "@/features/auth/components/login-form";
+import { homeForRole } from "@/features/auth/lib/home-for-role";
 import { safeNextPath } from "@/features/auth/lib/safe-next-path";
 
 export function LoginPage() {
@@ -14,13 +15,12 @@ export function LoginPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextPath = safeNextPath(searchParams.get("next"));
+  const rawNext = searchParams.get("next");
 
   useEffect(() => {
-    if (!isLoading && user) {
-      router.replace(nextPath);
-    }
-  }, [isLoading, user, router, nextPath]);
+    if (isLoading || !user) return;
+    router.replace(rawNext ? safeNextPath(rawNext) : homeForRole(user.role));
+  }, [isLoading, user, router, rawNext]);
 
   if (isLoading || user) {
     return (

@@ -4,7 +4,8 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { useAuth } from "@/features/auth/components/auth-provider";
+import { PageState } from "@/components/page-state";
+import { useRequireRole } from "@/features/auth/use-require-role";
 import { getEventById } from "@/features/events/api/events-api";
 import type { EventDetail } from "@/features/events/types";
 import {
@@ -17,9 +18,8 @@ import { useHoldCountdown } from "@/features/reservations/use-hold-countdown";
 import { HttpError } from "@/shared/api/http-error";
 
 export function ReservationPayPage({ reservationId }: { reservationId: string }) {
-  const { user, isLoading: authLoading } = useAuth();
+  const { ready, user } = useRequireRole("CLIENT");
   const router = useRouter();
-  const payPath = `/reservations/${reservationId}/pay`;
 
   const [reservation, setReservation] = useState<ReservationDetail | null>(null);
   const [event, setEvent] = useState<EventDetail | null>(null);
@@ -33,18 +33,7 @@ export function ReservationPayPage({ reservationId }: { reservationId: string })
   const [payError, setPayError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      router.replace(`/login?next=${encodeURIComponent(payPath)}`);
-      return;
-    }
-    if (user.role !== "CLIENT") {
-      router.replace("/");
-    }
-  }, [authLoading, user, router, payPath]);
-
-  useEffect(() => {
-    if (authLoading || user?.role !== "CLIENT") return;
+    if (!ready) return;
     let cancelled = false;
     setIsLoading(true);
     setError(null);
@@ -73,7 +62,7 @@ export function ReservationPayPage({ reservationId }: { reservationId: string })
     return () => {
       cancelled = true;
     };
-  }, [authLoading, user?.role, reservationId]);
+  }, [ready, reservationId]);
 
   const remainingMs = useHoldCountdown(reservation?.expiresAt ?? null);
   const expiredByClock = remainingMs <= 0 || blockedExpired;
@@ -112,7 +101,7 @@ export function ReservationPayPage({ reservationId }: { reservationId: string })
     }
   }
 
-  if (authLoading || !user || user.role !== "CLIENT") {
+  if (!ready || !user) {
     return <PayShell><Pulse /></PayShell>;
   }
 
@@ -129,11 +118,17 @@ export function ReservationPayPage({ reservationId }: { reservationId: string })
       {isLoading ? <Pulse /> : null}
 
       {error === "not-found" ? (
-        <p className="text-muted-foreground">Reserva não encontrada.</p>
+        <PageState
+          title="Reserva não encontrada"
+          body="Essa reserva não existe ou não está disponível."
+        />
       ) : null}
 
       {error === "network" ? (
-        <p className="text-muted-foreground">Não foi possível carregar a reserva.</p>
+        <PageState
+          title="Não foi possível carregar"
+          body="Não foi possível carregar a reserva."
+        />
       ) : null}
 
       {reservation && !error ? (

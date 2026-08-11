@@ -2,7 +2,7 @@
 
 **Produto:** ticketim  
 **Escopo:** implementação do Next.js App Router sobre a API Nest já existente  
-**Status:** guia de implementação (API MVP pronta; web parcial)  
+**Status:** guia de implementação (API MVP pronta; web F1–F7 fechado; README/deploy pendente)  
 **Stack web:** Next.js 16, React 19, Tailwind v4, Phosphor, Bearer JWT (localStorage), pnpm
 
 Documento irmão: [prd.md](./prd.md) (produto completo).  
@@ -12,17 +12,9 @@ Fatias de API: [docs/features/](./features/).
 
 ## 1. Contexto
 
-A API cobre auth, catálogo, eventos/inventário, reservas, pagamento simulado, tickets/QR/share e gate. O web hoje tem só:
+A API cobre auth, catálogo, eventos/inventário, reservas, pagamento simulado, tickets/QR/share e gate. O web do MVP (F1–F7) está fechado: detalhe, checkout, pay, tickets, organizador, portaria e shell/roles. README/deploy ficam no passo 8 do PRD raiz.
 
-| Rota | Estado |
-|------|--------|
-| `/` | Listagem + busca debounced de eventos publicados |
-| `/login` | Login split + sessão |
-| `/events/[id]` | Stub (sem dados da API) |
-
-Marca e visual já definidos: **ticketim**, dark + âmbar, glass cards, header pill, login com imagem de plateia.
-
-Objetivo deste PRD: fechar os fluxos **CLIENT**, **ORGANIZER** e **GATE** na UI até os critérios de aceite do produto.
+Marca e visual: **ticketim**, dark + âmbar, glass cards, header pill, login com imagem de plateia.
 
 ---
 
@@ -224,15 +216,15 @@ Clients web: espelhar padrão `features/*/api/*-api.ts` + `authorizedFetch` onde
 
 ## 7. Critérios de aceite do front (rollup)
 
-- [ ] Detalhe de evento real (não stub)
-- [ ] CLIENT: SEAT_MAP reserva → pay APPROVED → ticket com QR
-- [ ] CLIENT: GA_SECTOR reserva → pay APPROVED
-- [ ] CLIENT: pay REJECTED sem ticket
-- [ ] Share `/t/[token]` sem login
-- [ ] ORGANIZER: criar via TMDb e via Ticketmaster + publish
-- [ ] GATE: VALID / INVALID / ALREADY_USED / WRONG_EVENT (manual; câmera se der tempo)
-- [ ] Redirect e nav por role
-- [ ] UI consistente com ticketim (âmbar/dark/glass), usabilidade simples (debounce, feedback de foco, erros claros)
+- [x] Detalhe de evento real (não stub)
+- [x] CLIENT: SEAT_MAP reserva → pay APPROVED → ticket com QR
+- [x] CLIENT: GA_SECTOR reserva → pay APPROVED
+- [x] CLIENT: pay REJECTED sem ticket
+- [x] Share `/t/[token]` sem login
+- [x] ORGANIZER: criar via TMDb e via Ticketmaster + publish
+- [x] GATE: VALID / INVALID / ALREADY_USED / WRONG_EVENT (manual; câmera se der tempo)
+- [x] Redirect e nav por role
+- [x] UI consistente com ticketim (âmbar/dark/glass), usabilidade simples (debounce, feedback de foco, erros claros)
 
 ---
 
@@ -279,7 +271,8 @@ Env: `NEXT_PUBLIC_API_URL=http://localhost:3001`, API com seed (+ opcional `node
 |------|-----|-----|
 | Auth | OK | Login OK |
 | Lista eventos | OK | OK |
-| Detalhe / checkout / pay / tickets | OK | Pendente |
-| Organizador | OK | Pendente |
-| Gate | OK | Pendente |
+| Detalhe / checkout / pay / tickets | OK | OK (F1–F4) |
+| Organizador | OK | OK (F5) |
+| Gate | OK | OK (F6) |
+| Shell / roles | — | OK (F7) |
 | README / deploy | Parcial | Pendente |

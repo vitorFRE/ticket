@@ -7,7 +7,7 @@ Criar eventos a partir de TMDb / Ticketmaster, editar draft e publicar.
 | Quem | Ação |
 |------|------|
 | Guest | `/login?next=` da rota |
-| `ORGANIZER` | lista, wizard, detalhe |
+| `ORGANIZER` | lista, wizard, detalhe (`organizer/layout`) |
 | `CLIENT` / `GATE` | `/` |
 
 ## Rotas

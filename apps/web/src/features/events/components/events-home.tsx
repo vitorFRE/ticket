@@ -3,6 +3,7 @@
 import { CircleNotchIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useId, useState } from "react";
+import { PageState } from "@/components/page-state";
 import { Input } from "@/components/ui/input";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { EventCard } from "@/features/events/components/event-card";
@@ -164,9 +165,7 @@ export function EventsHome() {
         </ScrollReveal>
 
         {error ? (
-          <div className='rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive'>
-            {error}
-          </div>
+          <PageState title="Não foi possível carregar" body={error} />
         ) : null}
 
         {showSkeleton ? (
@@ -179,25 +178,24 @@ export function EventsHome() {
         ) : null}
 
         {!showSkeleton && !error && items.length === 0 ? (
-          <div className='rounded-[2rem] border border-dashed border-white/15 px-6 py-20 text-center'>
-            <p className='text-base font-medium text-foreground'>
-              Nenhum evento encontrado
-            </p>
-            <p className='mt-2 text-sm text-muted-foreground'>
-              {debouncedQuery
+          <PageState
+            title="Nenhum evento encontrado"
+            body={
+              debouncedQuery
                 ? `Não achamos nada para "${debouncedQuery}". Tente outro nome.`
-                : "Tente outro termo ou volte mais tarde."}
-            </p>
+                : "Tente outro termo ou volte mais tarde."
+            }
+          >
             {debouncedQuery ? (
               <button
-                type='button'
+                type="button"
                 onClick={() => setQuery("")}
-                className='mt-5 inline-flex h-9 items-center rounded-full bg-primary px-4 text-xs font-medium text-primary-foreground hover:opacity-90'
+                className="mt-5 inline-flex h-9 items-center rounded-full bg-primary px-4 text-xs font-medium text-primary-foreground hover:opacity-90"
               >
                 Limpar busca
               </button>
             ) : null}
-          </div>
+          </PageState>
         ) : null}
 
         {!showSkeleton && featured ? (

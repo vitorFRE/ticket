@@ -1,3 +1,4 @@
+import { PageState } from "@/components/page-state";
 import { formatDate } from "@/features/events/format";
 import type { EventListItem } from "@/features/events/types";
 import { cn } from "@/lib/utils";
@@ -13,9 +14,10 @@ export function GateEventPicker({
 }) {
   if (events.length === 0) {
     return (
-      <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-        Nenhum evento publicado. A portaria precisa de um evento na lista.
-      </p>
+      <PageState
+        title="Nenhum evento publicado"
+        body="A portaria precisa de um evento na lista."
+      />
     );
   }
 

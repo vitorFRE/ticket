@@ -7,7 +7,7 @@ Validar ingresso na porta no contexto de um evento publicado.
 | Quem | Ação |
 |------|------|
 | Guest | `/login?next=/gate` |
-| `GATE` | `/gate` |
+| `GATE` | `/gate` (`gate/layout`) |
 | `CLIENT` / `ORGANIZER` | `/` |
 
 Login sem `next` manda `GATE` para `/gate`.

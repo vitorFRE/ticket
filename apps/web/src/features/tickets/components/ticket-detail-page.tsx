@@ -2,9 +2,9 @@
 
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { useAuth } from "@/features/auth/components/auth-provider";
+import { PageState } from "@/components/page-state";
+import { useRequireRole } from "@/features/auth/use-require-role";
 import { formatDate } from "@/features/events/format";
 import { getTicket, shareTicket } from "@/features/tickets/api/tickets-api";
 import { TicketQr } from "@/features/tickets/components/ticket-qr";
@@ -16,9 +16,7 @@ import type { Ticket } from "@/features/tickets/types";
 import { HttpError } from "@/shared/api/http-error";
 
 export function TicketDetailPage({ ticketId }: { ticketId: string }) {
-  const { user, isLoading: authLoading } = useAuth();
-  const router = useRouter();
-  const detailPath = `/tickets/${ticketId}`;
+  const { ready } = useRequireRole("CLIENT");
 
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [error, setError] = useState<"not-found" | "network" | null>(null);
@@ -29,18 +27,7 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
   const [shareError, setShareError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      router.replace(`/login?next=${encodeURIComponent(detailPath)}`);
-      return;
-    }
-    if (user.role !== "CLIENT") {
-      router.replace("/");
-    }
-  }, [authLoading, user, router, detailPath]);
-
-  useEffect(() => {
-    if (authLoading || user?.role !== "CLIENT") return;
+    if (!ready) return;
     let cancelled = false;
     setIsLoading(true);
     setError(null);
@@ -62,7 +49,7 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [authLoading, user?.role, ticketId]);
+  }, [ready, ticketId]);
 
   async function onShare() {
     if (!ticket) return;
@@ -81,7 +68,7 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
     }
   }
 
-  if (authLoading || !user || user.role !== "CLIENT") {
+  if (!ready) {
     return (
       <Shell>
         <Pulse />
@@ -105,11 +92,17 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
       {isLoading ? <Pulse /> : null}
 
       {error === "not-found" ? (
-        <p className="text-muted-foreground">Ingresso não encontrado.</p>
+        <PageState
+          title="Ingresso não encontrado"
+          body="Esse ingresso não existe ou não está disponível."
+        />
       ) : null}
 
       {error === "network" ? (
-        <p className="text-muted-foreground">Não foi possível carregar o ingresso.</p>
+        <PageState
+          title="Não foi possível carregar"
+          body="Não foi possível carregar o ingresso."
+        />
       ) : null}
 
       {ticket && !error ? (

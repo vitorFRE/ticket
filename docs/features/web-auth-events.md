@@ -3,7 +3,9 @@
 Login Bearer, listagem, detalhe, reserva (hold), pagamento simulado, QR e share público.
 
 Regras de produto pedidas na UI: [decisoes-ux.md](../decisoes-ux.md).  
-Organizador: [web-organizer.md](./web-organizer.md).
+Organizador: [web-organizer.md](./web-organizer.md).  
+Portaria: [web-gate.md](./web-gate.md).  
+Shell / redirects: [web-shell.md](./web-shell.md).
 
 ## Env
 
@@ -30,7 +32,7 @@ Organizador: [web-organizer.md](./web-organizer.md).
 |------|------|
 | Guest | `/login?next=/events/[id]/checkout` |
 | `CLIENT` | escolhe inventário e confirma hold (15 min) |
-| `ORGANIZER` / `GATE` | volta ao detalhe |
+| `ORGANIZER` / `GATE` | `/` |
 
 - `SEAT_MAP`: `GET /events/:id/seats` + `{ eventId, seatIds }`
 - `GA_SECTOR`: `GET /events/:id/sectors` + `{ eventId, sectorId, quantity }`
@@ -62,7 +64,7 @@ Organizador: [web-organizer.md](./web-organizer.md).
 | Alheio / 404 | “Ingresso não encontrado” |
 
 - Lista: poster, evento, lugar, status (válido / usado)
-- Detalhe: QR de `qrPayload`, código em mono, **Compartilhar** copia `POST /tickets/:id/share` → `url`
+- Detalhe: QR desenhado é `ticket.code` (UUID); código em mono; **Compartilhar** copia `POST /tickets/:id/share` → `url`
 - `USED`: “Já foi usado na porta”; QR com opacidade baixa
 - `/t/[token]`: evento + lugar + status; sem QR e sem dados de usuário
 - Header: link **Ingressos** só para `CLIENT`
@@ -83,5 +85,5 @@ pnpm --filter web build
 
 ## Limitações
 
-- Sem gate (F6)
-- Redirect pós-login por role e nav completa ficam no F7
+- Sem register / forgot password
+- README e deploy ficam fora deste doc (passo 8 do PRD raiz)

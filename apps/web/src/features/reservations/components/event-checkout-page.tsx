@@ -4,7 +4,8 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useAuth } from "@/features/auth/components/auth-provider";
+import { PageState } from "@/components/page-state";
+import { useRequireRole } from "@/features/auth/use-require-role";
 import {
   getEventById,
   getEventSeats,
@@ -29,9 +30,8 @@ import { usePendingHold } from "@/features/reservations/use-pending-hold";
 import { HttpError } from "@/shared/api/http-error";
 
 export function EventCheckoutPage({ eventId }: { eventId: string }) {
-  const { user, isLoading: authLoading } = useAuth();
+  const { ready } = useRequireRole("CLIENT");
   const router = useRouter();
-  const checkoutPath = `/events/${eventId}/checkout`;
 
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [seats, setSeats] = useState<EventSeat[]>([]);
@@ -52,17 +52,6 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
       }
     : null;
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      router.replace(`/login?next=${encodeURIComponent(checkoutPath)}`);
-      return;
-    }
-    if (user.role !== "CLIENT") {
-      router.replace(`/events/${eventId}`);
-    }
-  }, [authLoading, user, router, checkoutPath, eventId]);
-
   const loadInventory = useCallback(async (detail: EventDetail) => {
     if (detail.inventoryMode === "SEAT_MAP") {
       const data = await getEventSeats(detail.id);
@@ -76,7 +65,7 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
   }, []);
 
   useEffect(() => {
-    if (authLoading || user?.role !== "CLIENT") return;
+    if (!ready) return;
     let cancelled = false;
     setIsLoading(true);
     setError(null);
@@ -101,7 +90,7 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [authLoading, user?.role, eventId, loadInventory]);
+  }, [ready, eventId, loadInventory]);
 
   function toggleSeat(seat: EventSeat) {
     if (pendingHold || seat.status !== "AVAILABLE") return;
@@ -160,7 +149,7 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
     }
   }
 
-  if (authLoading || !user || user.role !== "CLIENT") {
+  if (!ready) {
     return (
       <div className="mx-auto max-w-6xl px-4 pt-28 pb-20 md:px-6 lg:px-8 lg:pt-32">
         <div className="h-64 animate-pulse rounded-lg bg-white/[0.04]" />
@@ -184,13 +173,17 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
         ) : null}
 
         {error === "not-found" ? (
-          <p className="text-muted-foreground">Evento não encontrado.</p>
+          <PageState
+            title="Evento não encontrado"
+            body="Esse evento não existe ou não está disponível."
+          />
         ) : null}
 
         {error === "network" ? (
-          <p className="text-muted-foreground">
-            Não foi possível carregar o inventário.
-          </p>
+          <PageState
+            title="Não foi possível carregar"
+            body="Não foi possível carregar o inventário."
+          />
         ) : null}
 
         {event && !error ? (

@@ -2,7 +2,7 @@
 
 Registro das regras de produto pedidas na implementação do checkout e do pagamento simulado. Não é o PRD: é o “porquê” das escolhas que a UI precisa respeitar.
 
-Relacionado: [features/web-auth-events.md](./features/web-auth-events.md), [features/web-gate.md](./features/web-gate.md), [prd-frontend.md](./prd-frontend.md).
+Relacionado: [features/web-auth-events.md](./features/web-auth-events.md), [features/web-gate.md](./features/web-gate.md), [features/web-shell.md](./features/web-shell.md), [prd-frontend.md](./prd-frontend.md).
 
 ## Hold pendente
 
