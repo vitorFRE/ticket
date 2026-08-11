@@ -9,22 +9,18 @@ export function gatePlace(ticket: GateTicketSummary | null): string | null {
 
 export function gateResultCopy(
   result: GateValidateResult,
-  ticket: GateTicketSummary | null,
+  _ticket: GateTicketSummary | null,
 ): { title: string; body: string } {
-  const place = gatePlace(ticket);
-
   if (result === "VALID") {
     return {
       title: "Pode entrar",
-      body: place ? place : "Ingresso válido.",
+      body: "Ingresso válido.",
     };
   }
   if (result === "ALREADY_USED") {
     return {
       title: "Já usado",
-      body: place
-        ? `${place} já passou nesta porta.`
-        : "Este ingresso já passou na porta.",
+      body: "Este ingresso já passou nesta porta.",
     };
   }
   if (result === "WRONG_EVENT") {

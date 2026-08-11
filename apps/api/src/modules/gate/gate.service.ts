@@ -18,6 +18,8 @@ const gateTicketSelect = {
   validatedAt: true,
   seat: { select: { label: true } },
   sector: { select: { name: true } },
+  user: { select: { name: true } },
+  event: { select: { id: true, title: true } },
 } satisfies Prisma.TicketSelect;
 
 type GateTicketRow = Prisma.TicketGetPayload<{ select: typeof gateTicketSelect }>;
@@ -108,6 +110,8 @@ export class GateService {
             eventId: ticket.eventId,
             seat: ticket.seat,
             sector: ticket.sector,
+            user: ticket.user,
+            event: ticket.event,
             validatedAt: ticket.validatedAt,
           }
         : null,

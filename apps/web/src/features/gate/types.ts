@@ -11,6 +11,8 @@ export type GateTicketSummary = {
   eventId: string;
   seat: { label: string } | null;
   sector: { name: string } | null;
+  user: { name: string | null } | null;
+  event: { id: string; title: string } | null;
   validatedAt: string | null;
 };
 

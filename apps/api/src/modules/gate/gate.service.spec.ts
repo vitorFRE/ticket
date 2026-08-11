@@ -25,6 +25,8 @@ describe("GateService", () => {
     validatedAt: null,
     seat: { label: "A1" },
     sector: null,
+    user: { name: "Cliente Um" },
+    event: { id: "event-1", title: "Interestelar" },
   };
 
   beforeEach(() => {
@@ -57,6 +59,8 @@ describe("GateService", () => {
     expect(res.result).toBe("VALID");
     expect(res.ticket?.status).toBe(TicketStatus.USED);
     expect(res.ticket?.seat).toEqual({ label: "A1" });
+    expect(res.ticket?.user).toEqual({ name: "Cliente Um" });
+    expect(res.ticket?.event).toEqual({ id: "event-1", title: "Interestelar" });
   });
 
   it("validates by HMAC qrPayload", async () => {
@@ -146,6 +150,7 @@ describe("GateService", () => {
 
     expect(res.result).toBe("ALREADY_USED");
     expect(res.ticket?.status).toBe(TicketStatus.USED);
+    expect(res.ticket?.validatedAt).toEqual(new Date("2026-01-01"));
     expect(prisma.ticket.updateMany).not.toHaveBeenCalled();
   });
 

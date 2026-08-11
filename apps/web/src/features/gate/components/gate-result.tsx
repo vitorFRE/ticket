@@ -1,3 +1,4 @@
+import { GateTicketRecord } from "@/features/gate/components/gate-ticket-record";
 import { gateResultCopy } from "@/features/gate/gate-result-copy";
 import type { GateValidateResponse } from "@/features/gate/types";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ export function GateResult({
       <p className="mt-4 max-w-[36ch] text-lg leading-relaxed text-white/55">
         {copy.body}
       </p>
+      {data.ticket ? <GateTicketRecord ticket={data.ticket} /> : null}
       <button
         type="button"
         onClick={onNext}

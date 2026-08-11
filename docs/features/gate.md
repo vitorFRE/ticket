@@ -44,6 +44,8 @@ HTTP **200** sempre para resultados de negócio. Resposta tipada:
     "eventId": "...",
     "seat": { "label": "A1" },
     "sector": null,
+    "user": { "name": "Cliente Um" },
+    "event": { "id": "...", "title": "Interestelar" },
     "validatedAt": "..."
   }
 }
