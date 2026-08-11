@@ -8,11 +8,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:opacity-90",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        outline:
-          "border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] text-foreground",
-        ghost: "hover:bg-white/[0.06] text-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        outline: "border border-white/10 bg-white/3 hover:bg-white/6 text-foreground",
+        ghost: "hover:bg-white/6 text-foreground",
       },
       size: {
         default: "h-11 px-4 rounded-md",
@@ -24,7 +22,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  },
+  }
 );
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &

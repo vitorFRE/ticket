@@ -77,18 +77,16 @@ export function EventsHome() {
   const popular = popularEvents(items);
 
   return (
-    <div className="relative z-10 flex-1">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 pt-10 pb-16 md:px-6 lg:px-8 lg:pt-12 lg:pb-24">
-        <ScrollReveal className="flex flex-col gap-8">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="max-w-2xl space-y-4">
-              <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+    <div className='relative z-10 flex-1'>
+      <div className='mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 pt-10 pb-16 md:px-6 lg:px-8 lg:pt-12 lg:pb-24'>
+        <ScrollReveal className='flex flex-col gap-8'>
+          <div className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
+            <div className='max-w-2xl space-y-4'>
+              <p className='text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground'>
                 Em cartaz
               </p>
-              <h1 className="hero-title text-balance">
-                O que está em cartaz
-              </h1>
-              <p className="max-w-md text-base leading-relaxed text-muted-foreground">
+              <h1 className='hero-title text-balance'>O que está em cartaz</h1>
+              <p className='max-w-md text-base leading-relaxed text-muted-foreground'>
                 Cinema e palco no mesmo lugar. Escolha uma sessão e reserve.
               </p>
             </div>
@@ -107,7 +105,7 @@ export function EventsHome() {
           <EventKindFilter value={kind} onChange={setKind} />
         </ScrollReveal>
 
-        {error ? <PageState title="Não foi possível carregar" body={error} /> : null}
+        {error ? <PageState title='Não foi possível carregar' body={error} /> : null}
 
         {showSkeleton ? <EventCardSkeletonGrid /> : null}
 
@@ -124,7 +122,7 @@ export function EventsHome() {
 
         {!showSkeleton && !error && isSearch && items.length > 0 ? (
           <EventSection
-            title="Resultados"
+            title='Resultados'
             subtitle={`Para “${debouncedQuery}”.`}
             events={items}
             searching={searching}
@@ -132,27 +130,27 @@ export function EventsHome() {
         ) : null}
 
         {!showSkeleton && !error && !isSearch && items.length > 0 ? (
-          <div className="flex flex-col gap-14">
+          <div className='flex flex-col gap-14'>
             <EventSection
-              title="Próximos"
+              title='Próximos'
               subtitle={
                 kind === "filme"
                   ? "Filmes com sessão mais perto."
                   : kind === "show"
-                    ? "Shows com data mais perto."
-                    : "As sessões com data mais perto."
+                  ? "Shows com data mais perto."
+                  : "As sessões com data mais perto."
               }
               events={upcoming}
               searching={searching}
             />
             <EventSection
-              title="Populares"
+              title='Populares'
               subtitle={
                 kind === "filme"
                   ? "Filmes com mais ingressos vendidos."
                   : kind === "show"
-                    ? "Shows com mais ingressos vendidos."
-                    : "O que mais vendeu ingresso."
+                  ? "Shows com mais ingressos vendidos."
+                  : "O que mais vendeu ingresso."
               }
               events={popular}
               searching={searching}
@@ -182,8 +180,8 @@ function HomeSearch({
   onFocus: (value: boolean) => void;
 }) {
   return (
-    <div className="w-full max-w-sm shrink-0 space-y-2">
-      <label htmlFor={searchId} className="sr-only">
+    <div className='w-full max-w-sm shrink-0 space-y-2'>
+      <label htmlFor={searchId} className='sr-only'>
         Buscar eventos pelo título
       </label>
       <div
@@ -191,15 +189,15 @@ function HomeSearch({
           glassSubtle,
           "relative transition-[box-shadow,border-color,background-color] duration-200",
           focused &&
-            "border-primary/50 bg-white/[0.06] shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary)_28%,transparent)]",
+            "border-primary/50 bg-white/6 shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary)_28%,transparent)]"
         )}
       >
         <MagnifyingGlassIcon
           size={18}
-          weight="bold"
+          weight='bold'
           className={cn(
             "pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 transition-colors",
-            focused ? "text-primary" : "text-muted-foreground",
+            focused ? "text-primary" : "text-muted-foreground"
           )}
         />
         <Input
@@ -208,42 +206,42 @@ function HomeSearch({
           onChange={(e) => onQuery(e.target.value)}
           onFocus={() => onFocus(true)}
           onBlur={() => onFocus(false)}
-          placeholder="Ex.: Duna, Interestelar..."
-          className="h-12 border-0 bg-transparent pr-11 pl-10 shadow-none focus-visible:ring-0"
-          aria-label="Buscar eventos pelo título"
+          placeholder='Ex.: Duna, Interestelar...'
+          className='h-12 border-0 bg-transparent pr-11 pl-10 shadow-none focus-visible:ring-0'
+          aria-label='Buscar eventos pelo título'
           aria-describedby={`${searchId}-hint`}
-          autoComplete="off"
+          autoComplete='off'
           spellCheck={false}
         />
         {searching && hasQuery ? (
           <CircleNotchIcon
             size={16}
-            weight="bold"
-            className="absolute top-1/2 right-3.5 -translate-y-1/2 animate-spin text-primary"
+            weight='bold'
+            className='absolute top-1/2 right-3.5 -translate-y-1/2 animate-spin text-primary'
             aria-hidden
           />
         ) : null}
         {!searching && hasQuery ? (
           <button
-            type="button"
+            type='button'
             onClick={() => onQuery("")}
-            className="absolute top-1/2 right-2.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/[0.08] hover:text-foreground"
-            aria-label="Limpar busca"
+            className='absolute top-1/2 right-2.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/8 hover:text-foreground'
+            aria-label='Limpar busca'
           >
-            <XIcon size={14} weight="bold" />
+            <XIcon size={14} weight='bold' />
           </button>
         ) : null}
       </div>
       <p
         id={`${searchId}-hint`}
-        className="px-1 text-xs text-muted-foreground"
-        aria-live="polite"
+        className='px-1 text-xs text-muted-foreground'
+        aria-live='polite'
       >
         {searching && hasQuery
           ? "Buscando..."
           : focused || hasQuery
-            ? "A lista atualiza enquanto você digita."
-            : "Busque pelo nome."}
+          ? "A lista atualiza enquanto você digita."
+          : "Busque pelo nome."}
       </p>
     </div>
   );
@@ -261,18 +259,18 @@ function EmptyCatalog({
   const body = query
     ? `Não achamos nada para “${query}”. Tente outro nome.`
     : kind === "filme"
-      ? "Nenhum filme publicado neste filtro."
-      : kind === "show"
-        ? "Nenhum show publicado neste filtro."
-        : "Tente outro termo ou volte mais tarde.";
+    ? "Nenhum filme publicado neste filtro."
+    : kind === "show"
+    ? "Nenhum show publicado neste filtro."
+    : "Tente outro termo ou volte mais tarde.";
 
   return (
-    <PageState title="Nenhum evento encontrado" body={body}>
+    <PageState title='Nenhum evento encontrado' body={body}>
       {query || kind ? (
         <button
-          type="button"
+          type='button'
           onClick={onClear}
-          className="mt-5 inline-flex h-9 items-center rounded-md bg-primary px-4 text-xs font-medium text-primary-foreground hover:opacity-90"
+          className='mt-5 inline-flex h-9 items-center rounded-md bg-primary px-4 text-xs font-medium text-primary-foreground hover:opacity-90'
         >
           Limpar filtros
         </button>
