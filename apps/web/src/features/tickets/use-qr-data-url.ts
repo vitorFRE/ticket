@@ -13,9 +13,9 @@ export function useQrDataUrl(payload: string | null) {
     }
     let cancelled = false;
     void QRCode.toDataURL(payload, {
-      margin: 1,
+      margin: 2,
       width: 280,
-      errorCorrectionLevel: "M",
+      errorCorrectionLevel: "H",
       color: { dark: "#1a1714", light: "#ffffff" },
     }).then((url) => {
       if (!cancelled) setSrc(url);

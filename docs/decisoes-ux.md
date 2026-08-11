@@ -66,5 +66,6 @@ A porta precisa de feedback imediato e grande, no mesmo espírito do pay recusad
 
 - Evento fica no contexto (sessão). Trocar não perde a tela.
 - `VALID` é o único estado colorido (verde). Os outros são tipografia.
-- Scan é o caminho da porta: viewfinder abre depois de escolher o evento. Colar código é reserva (sem câmera, permissão negada, ou para o avaliador).
-- **Próximo** religa a câmera. O evento não se perde.
+- Telemóvel: **Escanear** abre a câmera nativa. PC: webcam ao vivo. Colar código é reserva.
+- O QR do ingresso é o UUID curto. O payload HMAC continua válido se alguém colar.
+- **Próximo** volta ao Escanear. O evento não se perde.

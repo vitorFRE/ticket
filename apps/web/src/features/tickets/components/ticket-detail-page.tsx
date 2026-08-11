@@ -135,7 +135,7 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
           </header>
 
           <div>
-            <TicketQr payload={ticket.qrPayload} faded={used || voided} />
+            <TicketQr payload={ticket.code} faded={used || voided} />
             <p className="mt-5 font-mono text-sm tracking-wide text-white/70">
               {ticket.code}
             </p>

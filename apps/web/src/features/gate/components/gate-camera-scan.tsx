@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-function readResultText(result: { getText: () => string }) {
-  return result.getText().trim();
-}
+import { CameraIcon } from "@phosphor-icons/react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { GateLiveScan } from "@/features/gate/components/gate-live-scan";
+import { decodeQrFromFile, isPhoneDevice } from "@/features/gate/gate-scan-runtime";
 
 export function GateCameraScan({
   onDetect,
@@ -13,86 +13,60 @@ export function GateCameraScan({
   onDetect: (value: string) => void;
   locked: boolean;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const onDetectRef = useRef(onDetect);
-  const lockedRef = useRef(locked);
-  const [status, setStatus] = useState<"starting" | "live" | "error">("starting");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [phone, setPhone] = useState<boolean | null>(null);
+  const [reading, setReading] = useState(false);
+  const [fail, setFail] = useState(false);
 
   useEffect(() => {
-    onDetectRef.current = onDetect;
-  }, [onDetect]);
-
-  useEffect(() => {
-    lockedRef.current = locked;
-  }, [locked]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    let controls: { stop: () => void } | null = null;
-    let cancelled = false;
-
-    async function start() {
-      try {
-        const { BrowserQRCodeReader } = await import("@zxing/browser");
-        if (cancelled || !video) return;
-
-        const reader = new BrowserQRCodeReader(undefined, {
-          delayBetweenScanAttempts: 80,
-          delayBetweenScanSuccess: 1200,
-          tryPlayVideoTimeout: 8000,
-        });
-
-        const next = await reader.decodeFromConstraints(
-          { audio: false, video: { facingMode: { ideal: "environment" } } },
-          video,
-          (result) => {
-            if (!result || cancelled || lockedRef.current) return;
-            const text = readResultText(result);
-            if (text) onDetectRef.current(text);
-          },
-        );
-
-        if (cancelled) {
-          next.stop();
-          return;
-        }
-
-        controls = next;
-        setStatus("live");
-      } catch {
-        if (!cancelled) setStatus("error");
-      }
-    }
-
-    void start();
-    return () => {
-      cancelled = true;
-      controls?.stop();
-    };
+    setPhone(isPhoneDevice());
   }, []);
+
+  async function onPick(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || locked) return;
+    setReading(true);
+    setFail(false);
+    try {
+      const text = await decodeQrFromFile(file);
+      if (text) onDetect(text);
+      else setFail(true);
+    } catch {
+      setFail(true);
+    } finally {
+      setReading(false);
+    }
+  }
+
+  if (phone === null) return null;
+
+  if (!phone) {
+    return <GateLiveScan onDetect={onDetect} locked={locked} />;
+  }
 
   return (
     <div className="max-w-xl space-y-3">
-      <p className="text-sm text-muted-foreground">Aponte o QR do ingresso.</p>
-      <div className="relative overflow-hidden rounded-lg bg-black">
-        <video
-          ref={videoRef}
-          className="aspect-4/3 w-full object-cover"
-          muted
-          playsInline
-          autoPlay
-        />
-        {status === "starting" ? (
-          <p className="absolute inset-0 flex items-center justify-center text-sm text-white/50">
-            Abrindo câmera...
-          </p>
-        ) : null}
-      </div>
-      {status === "error" ? (
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="sr-only"
+        onChange={(e) => void onPick(e)}
+      />
+      <Button
+        type="button"
+        size="lg"
+        disabled={locked || reading}
+        onClick={() => inputRef.current?.click()}
+      >
+        <CameraIcon size={18} weight="bold" />
+        {reading ? "Lendo..." : "Escanear"}
+      </Button>
+      {fail ? (
         <p className="text-sm text-muted-foreground">
-          Não foi possível abrir a câmera. Cole o código abaixo.
+          Não deu para ler. Tenta de novo ou cola o código.
         </p>
       ) : null}
     </div>
