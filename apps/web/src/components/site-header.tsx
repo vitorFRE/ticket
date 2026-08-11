@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowUpRightIcon, SignOutIcon } from "@phosphor-icons/react";
+import { SiteBrand } from "@/components/site-brand";
+import { SiteHeaderAccount } from "@/components/site-header-account";
 import { useAuth } from "@/features/auth/components/auth-provider";
 import type { AuthUser } from "@/features/auth/types";
 
@@ -21,50 +22,26 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/8 bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4 md:px-6 lg:px-8">
-        <Link
-          href="/"
-          className="text-sm font-semibold tracking-tight text-foreground transition-opacity hover:opacity-80"
-        >
-          ticketim
-        </Link>
+    <header className="sticky top-0 z-50 border-b border-white/8 bg-background">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6 lg:px-8">
+        <SiteBrand />
 
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          {isLoading ? (
-            <span className="px-3 text-xs text-muted-foreground">...</span>
-          ) : user ? (
-            <>
-              {area && !onArea ? (
-                <Link
-                  href={area.href}
-                  className="inline-flex h-8 items-center rounded-md border border-white/12 bg-white/[0.05] px-3 text-xs font-medium text-foreground transition-colors hover:bg-white/[0.1] active:scale-[0.98]"
-                >
-                  {area.label}
-                </Link>
-              ) : null}
-              <button
-                type="button"
-                onClick={() => void onLogout()}
-                aria-label="Sair"
-                className="inline-flex size-9 items-center justify-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] text-xs font-medium text-foreground transition-colors hover:bg-white/[0.06] active:scale-[0.98] sm:h-9 sm:w-auto sm:px-3"
-              >
-                <SignOutIcon size={14} weight="bold" />
-                <span className="hidden sm:inline">Sair</span>
-              </button>
-            </>
-          ) : (
-            <button
-              type="button"
-              onClick={() => router.push("/login")}
-              className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3.5 text-xs font-medium text-primary-foreground transition-[transform,opacity] hover:opacity-90 active:scale-[0.98]"
+        <div className="flex items-center gap-1">
+          {area && !onArea ? (
+            <Link
+              href={area.href}
+              className="hidden h-10 items-center rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-white/5 sm:inline-flex"
             >
-              Entrar
-              <span className="flex size-5 items-center justify-center rounded-md bg-white/15">
-                <ArrowUpRightIcon size={12} weight="bold" />
-              </span>
-            </button>
-          )}
+              {area.label}
+            </Link>
+          ) : null}
+          <SiteHeaderAccount
+            user={user}
+            isLoading={isLoading}
+            area={area}
+            onLogin={() => router.push("/login")}
+            onLogout={() => void onLogout()}
+          />
         </div>
       </div>
     </header>

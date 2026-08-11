@@ -1,7 +1,7 @@
 export function EventDetailSkeleton() {
   return (
-    <div className="relative min-h-[calc(100dvh-3.5rem)] overflow-hidden bg-white/[0.03]">
-      <div className="mx-auto flex min-h-[calc(100dvh-3.5rem)] max-w-6xl flex-col justify-end px-4 pb-12 pt-8 md:px-6 md:pb-16 lg:px-8">
+    <div className="relative min-h-[calc(100dvh-4rem)] overflow-hidden bg-white/[0.03]">
+      <div className="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-6xl flex-col justify-end px-4 pb-12 pt-8 md:px-6 md:pb-16 lg:px-8">
         <div className="h-4 w-20 animate-pulse rounded bg-white/[0.06]" />
         <div className="mt-16 space-y-4">
           <div className="h-14 w-3/4 max-w-xl animate-pulse rounded bg-white/[0.07]" />

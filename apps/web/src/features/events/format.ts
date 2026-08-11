@@ -14,6 +14,15 @@ export function formatDate(iso: string) {
   }).format(new Date(iso));
 }
 
+export function formatCardDate(iso: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
+
 export function modeLabel(mode: EventListItem["inventoryMode"]) {
   return mode === "SEAT_MAP" ? "Assentos" : "Setores";
 }

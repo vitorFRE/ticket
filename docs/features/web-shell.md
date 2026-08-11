@@ -28,13 +28,13 @@ Checkout, pay e tickets (`CLIENT`) chamam o hook nas pages. Rotas org/gate não 
 
 ## Header
 
-| Role | Link (só fora da área) |
+| Role | Link (só fora da área, some no `xs`) |
 |------|------|
 | `CLIENT` | Ingressos |
 | `ORGANIZER` | Área org |
 | `GATE` | Portaria |
 
-Barra `sticky` no topo, em fluxo (não pílula flutuante). O link da área é uma pílula. Na própria área ele some (não compete com o título). O nome da conta não vai no header: contas seed tipo “Portaria Seed” colavam no link. **Sair** fica só ícone no `xs`.
+Barra `sticky` no topo, em fluxo, fundo sólido. Sem busca nem nav no meio. O link da área é texto, some na própria área. Conta: botão lista + inicial, menu com a área e **Sair**. Guest: só o menu, com **Entrar**. O nome da conta não vai no header: contas seed tipo “Portaria Seed” colavam no link.
 
 ## Empty / erro
 

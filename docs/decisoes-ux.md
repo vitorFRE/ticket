@@ -46,7 +46,9 @@ A quantidade não pode ficar solta no fim da lista. Fica **dentro da linha do se
 
 ## Header
 
-Barra fixa no topo (`sticky`), em fluxo. Não flutua sobre o hero nem usa a pílula `rounded-full` do shell antigo. O conteúdo começa abaixo dela.
+Barra fixa no topo (`sticky`), em fluxo, fundo sólido. Sem faixa do meio (sem busca nem categorias no header). Logo à esquerda, conta à direita. Embaixo de ticketim vai **elitedev**, de onde é o desafio.
+
+Não usa a pílula `rounded-full` do shell antigo. A conta abre um menu (lista + inicial). O link da área (Ingressos / Área org / Portaria) fica à esquerda do menu, some na própria área. Guest só vê o menu, com Entrar.
 
 ## Tom visual
 
@@ -71,8 +73,10 @@ Na home o filtro não é o modo de inventário. Filme = origem TMDb. Show = orig
 - **Próximos**: data mais perto.
 - **Populares**: mais `ticketsSold`. Some se ninguém comprou ainda.
 - Com busca (`?q=`), a grade vira uma lista só de **Resultados**.
-- No card e no detalhe, o selo é Filme / Show, não Assentos / Setores.
-- Rodapé do site: crédito obrigatório do TMDb e da Ticketmaster Discovery, sem afiliação.
+- No card e no detalhe, o tipo é Filme / Show, não Assentos / Setores.
+- Card do cartaz: foto quase quadrada, texto embaixo (título, tipo + local, data, preço). Sem caixa de vidro, sem ícone, sem selo em cima da imagem.
+- Cada bloco (Próximos, Populares, Resultados) é uma faixa só. Sem barra de scroll embaixo: setas à direita do título. Sem grade de 2 ou 4 colunas.
+- Rodapé do site: uma linha. Esquerda: © ticketim, TMDb e Ticketmaster. Direita: sem endosso. Sem bloco de marca nem lista em coluna. No mobile, `pb-24` para o Lab.
 
 ## Ingressos
 

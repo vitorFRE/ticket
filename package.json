@@ -25,6 +25,7 @@
     "test": "turbo test",
     "test:watch": "turbo test:watch",
     "test:cov": "turbo test:cov",
+    "test:e2e": "turbo test:e2e",
     "setup:env": "bash scripts/setup-env.sh"
   },
   "devDependencies": {

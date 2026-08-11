@@ -93,7 +93,8 @@ CORS da API: `FRONTEND_URL` com o origin **exato**, sem barra no fim (local e Ve
 | `pnpm --filter api prisma:seed` | Contas + cartaz real |
 | `pnpm build` | Build de todos os apps |
 | `pnpm check` | Lint + format (Biome) |
-| `pnpm test` | Testes unitários |
+| `pnpm test` | Jest (API) + Vitest (web) |
+| `pnpm --filter web test:e2e` | Playwright (sobe API+web se não estiverem no ar; **reseeda** o banco). Na primeira vez: `pnpm --filter web exec playwright install chromium` |
 
 ## Docs
 

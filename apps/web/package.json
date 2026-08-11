@@ -11,7 +11,11 @@
     "check": "biome check .",
     "lint:fix": "biome lint . --fix",
     "format:fix": "biome format . --write",
-    "check:fix": "biome check . --fix"
+    "check:fix": "biome check . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -29,13 +33,22 @@
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@teste-ticket/config": "workspace:*",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.3",
     "@types/node": "catalog:",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/coverage-v8": "^4.1.10",
+    "jsdom": "^30.0.1",
     "tailwindcss": "^4",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "^4.1.10"
   }
 }

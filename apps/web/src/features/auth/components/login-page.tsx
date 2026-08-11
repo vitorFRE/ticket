@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { SiteBrand } from "@/components/site-brand";
 import { AuthBackdrop } from "@/features/auth/components/auth-backdrop";
 import { AuthBrandPanel } from "@/features/auth/components/auth-brand-panel";
 import { useAuth } from "@/features/auth/components/auth-provider";
@@ -40,12 +40,7 @@ export function LoginPage() {
         </div>
 
         <header className='relative z-10 px-6 py-6 sm:px-10 lg:hidden'>
-          <Link
-            href='/'
-            className='text-base font-semibold tracking-tight transition-opacity hover:opacity-80'
-          >
-            ticketim
-          </Link>
+          <SiteBrand />
         </header>
 
         <main className='relative z-10 flex flex-1 items-center justify-center px-6 py-10 sm:px-10'>

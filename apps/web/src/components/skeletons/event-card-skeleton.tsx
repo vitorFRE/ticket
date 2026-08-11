@@ -1,15 +1,13 @@
-import { glassInnerFlushCompact, glassOuterCompact } from "@/lib/glass-styles";
+import { EVENT_CARD_ROW } from "@/features/events/components/event-card";
 
 export function EventCardSkeleton() {
   return (
-    <div className={glassOuterCompact}>
-      <div className={`${glassInnerFlushCompact} flex flex-col`}>
-        <div className="aspect-16/9 animate-pulse bg-white/[0.05]" />
-        <div className="space-y-2 px-3.5 py-3">
-          <div className="h-4 w-4/5 animate-pulse rounded bg-white/[0.06]" />
-          <div className="h-3 w-2/3 animate-pulse rounded bg-white/[0.04]" />
-          <div className="h-3 w-1/2 animate-pulse rounded bg-white/[0.04]" />
-        </div>
+    <div className="w-62 shrink-0 sm:w-68">
+      <div className="aspect-4/5 animate-pulse rounded-lg bg-white/5" />
+      <div className="mt-2.5 space-y-1.5">
+        <div className="h-4 w-4/5 animate-pulse rounded bg-white/6" />
+        <div className="h-3.5 w-2/3 animate-pulse rounded bg-white/4" />
+        <div className="h-3.5 w-1/2 animate-pulse rounded bg-white/4" />
       </div>
     </div>
   );
@@ -17,7 +15,7 @@ export function EventCardSkeleton() {
 
 export function EventCardSkeletonGrid({ count = 4 }: { count?: number }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className={EVENT_CARD_ROW}>
       {Array.from({ length: count }, (_, index) => (
         <EventCardSkeleton key={index} />
       ))}

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { SiteBrand } from "@/components/site-brand";
 import { AuthBackdrop } from "@/features/auth/components/auth-backdrop";
 
 export function AuthBrandPanel() {
@@ -17,12 +17,7 @@ export function AuthBrandPanel() {
       />
       <AuthBackdrop />
       <div className="relative z-10">
-        <Link
-          href="/"
-          className="text-base font-semibold tracking-tight transition-opacity hover:opacity-80"
-        >
-          ticketim
-        </Link>
+        <SiteBrand />
       </div>
 
       <div className="relative z-10 max-w-md space-y-5">
