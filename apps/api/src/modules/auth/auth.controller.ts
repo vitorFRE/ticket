@@ -7,8 +7,10 @@ import {
   Post,
   UseGuards,
 } from "@nestjs/common";
+import { SkipThrottle, Throttle } from "@nestjs/throttler";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { Public } from "../../common/decorators/public.decorator";
+import { THROTTLE_PRESETS } from "../../common/throttler/throttler.config";
 import type {
   JwtPayload,
   JwtPayloadWithRefresh,
@@ -23,12 +25,16 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
+  @SkipThrottle({ default: true })
+  @Throttle({ auth: THROTTLE_PRESETS.auth })
   @Post("register")
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
   @Public()
+  @SkipThrottle({ default: true })
+  @Throttle({ auth: THROTTLE_PRESETS.auth })
   @HttpCode(HttpStatus.OK)
   @Post("login")
   login(@Body() dto: LoginDto) {
@@ -36,6 +42,8 @@ export class AuthController {
   }
 
   @Public()
+  @SkipThrottle({ default: true })
+  @Throttle({ auth: THROTTLE_PRESETS.auth })
   @UseGuards(JwtRefreshGuard)
   @HttpCode(HttpStatus.OK)
   @Post("refresh")
