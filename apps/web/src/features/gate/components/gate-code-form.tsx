@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GateCameraScan } from "@/features/gate/components/gate-camera-scan";
+import { GateLiveScan } from "@/features/gate/components/gate-live-scan";
 
 export function GateCodeForm({
   code,
@@ -26,7 +26,7 @@ export function GateCodeForm({
 
   return (
     <div className="space-y-8">
-      <GateCameraScan onDetect={onSubmit} locked={busy} />
+      <GateLiveScan onDetect={onSubmit} locked={busy} />
 
       {pasteOpen ? (
         <form className="max-w-xl space-y-4" onSubmit={handleSubmit}>

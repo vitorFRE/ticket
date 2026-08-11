@@ -16,10 +16,6 @@ function createBarcodeDetector(): BarcodeDetectorLike | null {
   }
 }
 
-export function isPhoneDevice() {
-  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-}
-
 async function decodeFromSource(source: ImageBitmapSource): Promise<string | null> {
   const detector = createBarcodeDetector();
   if (detector) {
@@ -48,15 +44,6 @@ async function decodeFromSource(source: ImageBitmapSource): Promise<string | nul
   return jsQR(imageData.data, imageData.width, imageData.height)?.data.trim() || null;
 }
 
-export async function decodeQrFromFile(file: File): Promise<string | null> {
-  const bitmap = await createImageBitmap(file);
-  try {
-    return await decodeFromSource(bitmap);
-  } finally {
-    bitmap.close();
-  }
-}
-
 export function decodeQrFromVideo(video: HTMLVideoElement) {
   return decodeFromSource(video);
 }
@@ -64,7 +51,7 @@ export function decodeQrFromVideo(video: HTMLVideoElement) {
 export const GATE_VIDEO_CONSTRAINTS: MediaStreamConstraints = {
   audio: false,
   video: {
-    facingMode: { ideal: "user" },
+    facingMode: { ideal: "environment" },
     width: { ideal: 1280 },
     height: { ideal: 720 },
   },

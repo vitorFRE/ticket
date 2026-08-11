@@ -28,9 +28,9 @@ Login sem `next` manda `GATE` para `/gate`.
 ## UI
 
 1. Escolher o evento da entrada (fica na sessão do browser)
-2. Telemóvel: **Escanear** abre a câmera nativa. PC: webcam ao vivo (`BarcodeDetector` / `jsQR`)
-3. Sem leitura ou no desktop: escolher imagem, ou **Colar código** (UUID ou payload HMAC)
-4. Resultado vira o título da tela. **Próximo** volta ao botão Escanear, evento intacto
+2. Câmera ao vivo (`BarcodeDetector` / `jsQR`). No telemóvel pede a traseira
+3. Sem câmera: **Colar código** (UUID ou payload HMAC)
+4. Resultado vira o título da tela. **Próximo** volta ao scan, evento intacto
 
 O QR desenhado no ingresso é o UUID `Ticket.code`. A API aceita esse UUID e também o `qrPayload`.
 
@@ -45,7 +45,7 @@ O QR desenhado no ingresso é o UUID `Ticket.code`. A API aceita esse UUID e tam
 
 1. Lab → Portaria Seed (ou login `gate@ticket.local` / `Password123!`) → `/gate`
 2. Escolher o evento do ingresso
-3. Escanear o QR do ingresso (ou colar o código) de um ticket `VALID` → Pode entrar
+3. Apontar o QR do ingresso (ou colar o código) de um ticket `VALID` → Pode entrar
 4. Mesmo código de novo → Já usado
 5. Trocar para outro evento → Evento errado
 6. Texto adulterado → Ingresso inválido
