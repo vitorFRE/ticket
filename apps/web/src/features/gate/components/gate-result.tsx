@@ -1,6 +1,7 @@
 import {
   CheckCircleIcon,
   ClockCounterClockwiseIcon,
+  ClockIcon,
   WarningCircleIcon,
   XCircleIcon,
 } from "@phosphor-icons/react";
@@ -18,6 +19,7 @@ const toneClass = {
   used: "text-primary",
   wrong: "text-foreground",
   invalid: "text-destructive",
+  closed: "text-amber-300",
 } as const;
 
 export function GateResult({
@@ -27,7 +29,10 @@ export function GateResult({
   data: GateValidateResponse;
   onNext: () => void;
 }) {
-  const copy = gateResultCopy(data.result);
+  const copy = gateResultCopy(
+    data.result,
+    data.ticket?.event?.gateOpensHoursBefore,
+  );
   const tone = gateResultTone(data.result);
   const place = gatePlace(data.ticket);
   const Icon = resultIcon(tone);
@@ -85,5 +90,6 @@ function resultIcon(tone: keyof typeof toneClass) {
   if (tone === "ok") return CheckCircleIcon;
   if (tone === "used") return ClockCounterClockwiseIcon;
   if (tone === "wrong") return WarningCircleIcon;
+  if (tone === "closed") return ClockIcon;
   return XCircleIcon;
 }

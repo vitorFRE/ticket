@@ -4,6 +4,7 @@ export type EventListItem = {
   description: string | null;
   venue: string;
   startsAt: string;
+  gateOpensHoursBefore: number | null;
   priceCents: number;
   status: string;
   inventoryMode: "SEAT_MAP" | "GA_SECTOR";

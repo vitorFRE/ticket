@@ -1,4 +1,7 @@
-import type { GateTicketSummary, GateValidateResult } from "@/features/gate/types";
+import type {
+  GateTicketSummary,
+  GateValidateResult,
+} from "@/features/gate/types";
 
 export function gatePlace(ticket: GateTicketSummary | null): string | null {
   if (!ticket) return null;
@@ -7,16 +10,20 @@ export function gatePlace(ticket: GateTicketSummary | null): string | null {
   return null;
 }
 
-export type GateResultTone = "ok" | "used" | "wrong" | "invalid";
+export type GateResultTone = "ok" | "used" | "wrong" | "invalid" | "closed";
 
 export function gateResultTone(result: GateValidateResult): GateResultTone {
   if (result === "VALID") return "ok";
   if (result === "ALREADY_USED") return "used";
   if (result === "WRONG_EVENT") return "wrong";
+  if (result === "GATE_CLOSED") return "closed";
   return "invalid";
 }
 
-export function gateResultCopy(result: GateValidateResult): {
+export function gateResultCopy(
+  result: GateValidateResult,
+  hoursBefore?: number,
+): {
   title: string;
   body: string;
 } {
@@ -27,7 +34,20 @@ export function gateResultCopy(result: GateValidateResult): {
     return { title: "Já usado", body: "Este ingresso já passou nesta porta." };
   }
   if (result === "WRONG_EVENT") {
-    return { title: "Evento errado", body: "Este ingresso é de outra entrada." };
+    return {
+      title: "Evento errado",
+      body: "Este ingresso é de outra entrada.",
+    };
+  }
+  if (result === "GATE_CLOSED") {
+    const hours = hoursBefore ?? 0;
+    return {
+      title: "Ainda não abriu",
+      body:
+        hours === 1
+          ? "A portaria libera 1 hora antes do início."
+          : `A portaria libera ${hours} horas antes do início.`,
+    };
   }
   return { title: "Ingresso inválido", body: "O código não confere." };
 }

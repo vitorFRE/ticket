@@ -1,6 +1,7 @@
 "use client";
 
 import { modeLabel } from "@/features/events/format";
+import { gateHoursLabel } from "@/features/events/gate-window";
 import type { CatalogItem } from "@/features/organizer/types";
 import type { SectorDraft } from "@/features/organizer/wizard-state";
 
@@ -8,6 +9,7 @@ export function WizardConfirmStep({
   item,
   venue,
   startsAt,
+  gateOpensHoursBefore,
   priceLabel,
   mode,
   rows,
@@ -21,6 +23,7 @@ export function WizardConfirmStep({
   item: CatalogItem;
   venue: string;
   startsAt: string;
+  gateOpensHoursBefore: number | null;
   priceLabel: string;
   mode: "SEAT_MAP" | "GA_SECTOR";
   rows: string;
@@ -42,7 +45,9 @@ export function WizardConfirmStep({
           />
         ) : null}
         <div>
-          <h2 className="text-2xl font-semibold tracking-[-0.03em]">{item.title}</h2>
+          <h2 className="text-2xl font-semibold tracking-[-0.03em]">
+            {item.title}
+          </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {startsAt.replace("T", " ")}
             <span className="mx-2 text-white/25">/</span>
@@ -53,6 +58,12 @@ export function WizardConfirmStep({
 
       <div className="space-y-2 text-sm text-white/55">
         <p>{priceLabel}</p>
+        <p>
+          Portaria: {gateHoursLabel(gateOpensHoursBefore)}
+          {gateOpensHoursBefore === null || gateOpensHoursBefore === 0
+            ? ""
+            : " do início"}
+        </p>
         <p>{modeLabel(mode)}</p>
         {mode === "SEAT_MAP" ? (
           <p>

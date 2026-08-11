@@ -78,9 +78,10 @@ model Event {
   organizerId     String
   title           String
   description     String?
-  venue           String
-  startsAt        DateTime
-  priceCents      Int
+  venue                String
+  startsAt             DateTime
+  gateOpensHoursBefore Int?
+  priceCents           Int
   status          EventStatus    @default(DRAFT)
   inventoryMode   InventoryMode
   externalSource  ExternalSource

@@ -139,6 +139,7 @@ export class EventsService {
           description,
           venue,
           startsAt,
+          gateOpensHoursBefore: dto.gateOpensHoursBefore ?? null,
           priceCents: dto.priceCents,
           status: EventStatus.DRAFT,
           inventoryMode: dto.inventoryMode,
@@ -187,6 +188,9 @@ export class EventsService {
           : {}),
         ...(dto.venue !== undefined ? { venue: dto.venue.trim() } : {}),
         ...(startsAt !== undefined ? { startsAt } : {}),
+        ...(dto.gateOpensHoursBefore !== undefined
+          ? { gateOpensHoursBefore: dto.gateOpensHoursBefore }
+          : {}),
         ...(dto.priceCents !== undefined ? { priceCents: dto.priceCents } : {}),
         ...(dto.imageUrl !== undefined ? { imageUrl: dto.imageUrl } : {}),
       },
@@ -326,6 +330,7 @@ export class EventsService {
       description: true,
       venue: true,
       startsAt: true,
+      gateOpensHoursBefore: true,
       priceCents: true,
       status: true,
       inventoryMode: true,
@@ -351,6 +356,7 @@ export class EventsService {
       description: true,
       venue: true,
       startsAt: true,
+      gateOpensHoursBefore: true,
       priceCents: true,
       status: true,
       inventoryMode: true,

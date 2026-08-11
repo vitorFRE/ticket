@@ -39,6 +39,7 @@ Cria em `DRAFT`. Body:
   "externalId": "movie:550",
   "venue": "Cinema X",
   "startsAt": "2026-09-01T20:00:00.000Z",
+  "gateOpensHoursBefore": null,
   "priceCents": 3500,
   "inventoryMode": "SEAT_MAP",
   "title": "opcional",
@@ -56,6 +57,7 @@ Ou `GA_SECTOR`:
   "externalId": "evt-1",
   "venue": "Arena",
   "startsAt": "2026-10-01T21:00:00.000Z",
+  "gateOpensHoursBefore": 3,
   "priceCents": 8000,
   "inventoryMode": "GA_SECTOR",
   "sectors": [
@@ -70,11 +72,12 @@ Fluxo: `CatalogService.getDetail(source, externalId)` → merge com body → sna
 - `SEAT_MAP` default: fileiras `A`–`J` × 12 lugares (`A1`…`J12`), status `AVAILABLE`
 - `GA_SECTOR`: `sectors` obrigatório; `priceCents` null no setor herda o do evento na leitura
 - `venue` e `startsAt` finais obrigatórios (body ou catalog)
+- `gateOpensHoursBefore` opcional no create (`null` | `0`–`48`). `null` = sem limite (portaria sempre liberada). `0` = no horário do evento. Seed cria eventos sem limite.
 - Inventário **imutável** após create
 
 ### `PATCH /events/:id`
 
-Só owner + `DRAFT`. Campos: `title`, `description`, `venue`, `startsAt`, `priceCents`, `imageUrl`.
+Só owner + `DRAFT`. Campos: `title`, `description`, `venue`, `startsAt`, `gateOpensHoursBefore`, `priceCents`, `imageUrl`.
 
 ### `POST /events/:id/publish`
 

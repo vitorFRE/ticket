@@ -36,7 +36,7 @@ HTTP **200** sempre para resultados de negócio. Resposta tipada:
 
 ```json
 {
-  "result": "VALID" | "INVALID" | "ALREADY_USED" | "WRONG_EVENT",
+  "result": "VALID" | "INVALID" | "ALREADY_USED" | "WRONG_EVENT" | "GATE_CLOSED",
   "ticket": {
     "id": "...",
     "code": "...",
@@ -45,7 +45,7 @@ HTTP **200** sempre para resultados de negócio. Resposta tipada:
     "seat": { "label": "A1" },
     "sector": null,
     "user": { "name": "Cliente Um" },
-    "event": { "id": "...", "title": "Interestelar" },
+    "event": { "id": "...", "title": "Interestelar", "startsAt": "...", "gateOpensHoursBefore": 2 },
     "validatedAt": "..."
   }
 }
@@ -53,17 +53,19 @@ HTTP **200** sempre para resultados de negócio. Resposta tipada:
 
 | `result` | Quando | `ticket` |
 |----------|--------|----------|
-| `VALID` | Assinatura/existência ok, evento certo, `VALID → USED` | preenchido (status `USED`) |
+| `VALID` | Assinatura/existência ok, evento certo, janela aberta, `VALID → USED` | preenchido (status `USED`) |
 | `INVALID` | HMAC quebrado, ticket inexistente, mismatch payload, `VOID` | `null` |
 | `ALREADY_USED` | Já `USED` (ou race no `updateMany`) | resumido |
 | `WRONG_EVENT` | `ticket.eventId !== body.eventId` | resumido |
+| `GATE_CLOSED` | Ticket `VALID` mas `now < startsAt - N horas` | resumido (status `VALID`, sem write) |
 
 ## Regras
 
 1. Contexto de evento obrigatório no body (`eventId`)
-2. Transição atômica: `updateMany` onde `id` + `status = VALID` → `USED`, com `validatedAt` e `validatedById`
-3. Se `updateMany` retorna `count = 0` após leitura `VALID`, re-lê e devolve `ALREADY_USED`
-4. Sem UI neste passo — front de portaria no fluxo web
+2. Ordem: `INVALID` → `WRONG_EVENT` → `ALREADY_USED` → `GATE_CLOSED` → `VALID`
+3. Janela: se `gateOpensHoursBefore` é `null`, a porta está sempre aberta. Senão `gateOpensAt = startsAt - N horas`. Antes disso o ticket **não** vira `USED`
+4. Transição atômica: `updateMany` onde `id` + `status = VALID` → `USED`, com `validatedAt` e `validatedById`
+5. Se `updateMany` retorna `count = 0` após leitura `VALID`, re-lê e devolve `ALREADY_USED`
 
 ## Erros HTTP
 
@@ -81,6 +83,7 @@ apps/api/src/modules/gate/
   gate.controller.ts
   gate.service.ts
   gate.service.spec.ts
+  gate-window.ts
   dto/validate-gate.dto.ts
 ```
 

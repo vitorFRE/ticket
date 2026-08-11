@@ -26,7 +26,12 @@ describe("GateService", () => {
     seat: { label: "A1" },
     sector: null,
     user: { name: "Cliente Um" },
-    event: { id: "event-1", title: "Interestelar" },
+    event: {
+      id: "event-1",
+      title: "Interestelar",
+      startsAt: new Date("2020-01-01T20:00:00.000Z"),
+      gateOpensHoursBefore: 2,
+    },
   };
 
   beforeEach(() => {
@@ -60,7 +65,12 @@ describe("GateService", () => {
     expect(res.ticket?.status).toBe(TicketStatus.USED);
     expect(res.ticket?.seat).toEqual({ label: "A1" });
     expect(res.ticket?.user).toEqual({ name: "Cliente Um" });
-    expect(res.ticket?.event).toEqual({ id: "event-1", title: "Interestelar" });
+    expect(res.ticket?.event).toEqual({
+      id: "event-1",
+      title: "Interestelar",
+      startsAt: new Date("2020-01-01T20:00:00.000Z"),
+      gateOpensHoursBefore: 2,
+    });
   });
 
   it("validates by HMAC qrPayload", async () => {
@@ -72,11 +82,7 @@ describe("GateService", () => {
     prisma.ticket.findUnique.mockResolvedValue(baseTicket);
     prisma.ticket.updateMany.mockResolvedValue({ count: 1 });
 
-    const res = await service.validate(
-      "event-1",
-      "body.signature",
-      "gate-1",
-    );
+    const res = await service.validate("event-1", "body.signature", "gate-1");
 
     expect(qr.verifyPayload).toHaveBeenCalledWith("body.signature");
     expect(prisma.ticket.findUnique).toHaveBeenCalledWith({
@@ -168,5 +174,75 @@ describe("GateService", () => {
 
     expect(res.result).toBe("ALREADY_USED");
     expect(prisma.ticket.findUnique).toHaveBeenCalledTimes(2);
+  });
+
+  it("returns GATE_CLOSED before the opening window", async () => {
+    prisma.ticket.findUnique.mockResolvedValue({
+      ...baseTicket,
+      event: {
+        ...baseTicket.event,
+        startsAt: new Date(Date.now() + 5 * 60 * 60 * 1000),
+        gateOpensHoursBefore: 2,
+      },
+    });
+
+    const res = await service.validate("event-1", "code-uuid-1", "gate-1");
+
+    expect(res.result).toBe("GATE_CLOSED");
+    expect(res.ticket?.status).toBe(TicketStatus.VALID);
+    expect(prisma.ticket.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("validates at the opening instant", async () => {
+    const now = Date.now();
+    prisma.ticket.findUnique.mockResolvedValue({
+      ...baseTicket,
+      event: {
+        ...baseTicket.event,
+        startsAt: new Date(now + 2 * 60 * 60 * 1000),
+        gateOpensHoursBefore: 2,
+      },
+    });
+    prisma.ticket.updateMany.mockResolvedValue({ count: 1 });
+
+    const res = await service.validate("event-1", "code-uuid-1", "gate-1");
+
+    expect(res.result).toBe("VALID");
+    expect(prisma.ticket.updateMany).toHaveBeenCalled();
+  });
+
+  it("returns ALREADY_USED even when the gate is still closed", async () => {
+    prisma.ticket.findUnique.mockResolvedValue({
+      ...baseTicket,
+      status: TicketStatus.USED,
+      validatedAt: new Date("2026-01-01"),
+      event: {
+        ...baseTicket.event,
+        startsAt: new Date(Date.now() + 5 * 60 * 60 * 1000),
+        gateOpensHoursBefore: 2,
+      },
+    });
+
+    const res = await service.validate("event-1", "code-uuid-1", "gate-1");
+
+    expect(res.result).toBe("ALREADY_USED");
+    expect(prisma.ticket.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("validates before start when the event has no hour limit", async () => {
+    prisma.ticket.findUnique.mockResolvedValue({
+      ...baseTicket,
+      event: {
+        ...baseTicket.event,
+        startsAt: new Date(Date.now() + 5 * 60 * 60 * 1000),
+        gateOpensHoursBefore: null,
+      },
+    });
+    prisma.ticket.updateMany.mockResolvedValue({ count: 1 });
+
+    const res = await service.validate("event-1", "code-uuid-1", "gate-1");
+
+    expect(res.result).toBe("VALID");
+    expect(prisma.ticket.updateMany).toHaveBeenCalled();
   });
 });

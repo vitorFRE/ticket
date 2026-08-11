@@ -19,6 +19,7 @@ const ticketInclude = {
       title: true,
       venue: true,
       startsAt: true,
+      gateOpensHoursBefore: true,
       priceCents: true,
       imageUrl: true,
     },

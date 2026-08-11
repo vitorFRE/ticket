@@ -4,9 +4,11 @@ import {
   IsISO8601,
   IsOptional,
   IsString,
+  Max,
   Min,
   MinLength,
 } from "class-validator";
+import { TransformGateHours } from "./gate-hours";
 
 export class UpdateEventDto {
   @IsOptional()
@@ -26,6 +28,13 @@ export class UpdateEventDto {
   @IsOptional()
   @IsISO8601()
   startsAt?: string;
+
+  @IsOptional()
+  @TransformGateHours()
+  @IsInt()
+  @Min(0)
+  @Max(48)
+  gateOpensHoursBefore?: number | null;
 
   @IsOptional()
   @IsInt()

@@ -15,6 +15,8 @@ export type WizardState = {
   item: CatalogItem | null;
   venue: string;
   startsAt: string;
+  gateUnlimited: boolean;
+  gateOpensHoursBefore: string;
   price: string;
   inventoryMode: "SEAT_MAP" | "GA_SECTOR";
   rows: string;
@@ -29,6 +31,8 @@ export const initialWizardState: WizardState = {
   item: null,
   venue: "",
   startsAt: "",
+  gateUnlimited: true,
+  gateOpensHoursBefore: "2",
   price: "",
   inventoryMode: "SEAT_MAP",
   rows: "A,B,C,D,E,F,G,H,I,J",

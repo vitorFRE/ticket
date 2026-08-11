@@ -21,7 +21,7 @@ Login sem `next` manda `GATE` para `/gate`.
 ## APIs
 
 - `GET /events` (lista publicada, contexto da porta)
-- `POST /gate/validate` `{ eventId, code }` → `VALID` \| `INVALID` \| `ALREADY_USED` \| `WRONG_EVENT`
+- `POST /gate/validate` `{ eventId, code }` → `VALID` \| `INVALID` \| `ALREADY_USED` \| `WRONG_EVENT` \| `GATE_CLOSED`
 
 `code` aceita `qrPayload` (tem `.`) ou o UUID opaco do ticket.
 
@@ -39,7 +39,10 @@ O QR desenhado no ingresso é o UUID `Ticket.code`. A API aceita esse UUID e tam
 | `VALID` | Pode entrar |
 | `ALREADY_USED` | Já usado |
 | `WRONG_EVENT` | Evento errado |
+| `GATE_CLOSED` | Ainda não abriu |
 | `INVALID` | Ingresso inválido |
+
+No picker, evento com limite e ainda fechado mostra **Abre às HH:MM** (`startsAt - N horas`). Sem limite (`null`) a porta já está liberada.
 
 ## Como testar
 

@@ -16,6 +16,7 @@ function makeTicket(overrides: Partial<Ticket> = {}): Ticket {
       title: "Filme seed",
       venue: "Cinemark",
       startsAt: "2026-09-01T23:00:00.000Z",
+      gateOpensHoursBefore: null,
       priceCents: 3200,
       imageUrl: null,
     },

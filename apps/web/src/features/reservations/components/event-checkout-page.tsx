@@ -7,8 +7,9 @@ import { useState } from "react";
 import { PageState } from "@/components/page-state";
 import { PagePulse } from "@/components/skeletons/page-pulse";
 import { useRequireRole } from "@/features/auth/use-require-role";
-import type { EventSeat, EventSector } from "@/features/events/types";
+import { GateLimitNote } from "@/features/events/components/gate-limit-note";
 import { formatDate } from "@/features/events/format";
+import type { EventSeat, EventSector } from "@/features/events/types";
 import {
   useEventDetail,
   useEventSeats,
@@ -22,8 +23,8 @@ import {
   reservationLineItems,
   reservationTotalCents,
 } from "@/features/reservations/reservation-summary";
-import { useCreateReservation } from "@/features/reservations/use-reservations-query";
 import { usePendingHold } from "@/features/reservations/use-pending-hold";
+import { useCreateReservation } from "@/features/reservations/use-reservations-query";
 import { HttpError } from "@/shared/api/http-error";
 import { isHttpNotFound } from "@/shared/api/query-error";
 
@@ -33,10 +34,13 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
 
   const eventQuery = useEventDetail(eventId, ready);
   const event = eventQuery.data ?? null;
-  const seatsQuery = useEventSeats(eventId, ready && event?.inventoryMode === "SEAT_MAP");
+  const seatsQuery = useEventSeats(
+    eventId,
+    ready && event?.inventoryMode === "SEAT_MAP",
+  );
   const sectorsQuery = useEventSectors(
     eventId,
-    ready && event?.inventoryMode === "GA_SECTOR"
+    ready && event?.inventoryMode === "GA_SECTOR",
   );
 
   const [conflict, setConflict] = useState<string | null>(null);
@@ -59,19 +63,21 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
     event?.inventoryMode === "SEAT_MAP"
       ? seatsQuery.isPending
       : event?.inventoryMode === "GA_SECTOR"
-      ? sectorsQuery.isPending
-      : false;
+        ? sectorsQuery.isPending
+        : false;
   const isPending = eventQuery.isPending || inventoryPending;
   const notFound = eventQuery.isError && isHttpNotFound(eventQuery.error);
   const network =
-    (eventQuery.isError && !notFound) || seatsQuery.isError || sectorsQuery.isError;
+    (eventQuery.isError && !notFound) ||
+    seatsQuery.isError ||
+    sectorsQuery.isError;
 
   function toggleSeat(seat: EventSeat) {
     if (pendingHold || seat.status !== "AVAILABLE") return;
     setSelectedSeatIds((current) =>
       current.includes(seat.id)
         ? current.filter((id) => id !== seat.id)
-        : [...current, seat.id]
+        : [...current, seat.id],
     );
   }
 
@@ -100,7 +106,7 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
     } catch (err) {
       if (err instanceof HttpError && err.status === 409) {
         setConflict(
-          "Esses lugares acabaram de ser reservados. Atualize e tente de novo."
+          "Esses lugares acabaram de ser reservados. Atualize e tente de novo.",
         );
         setSelectedSeatIds([]);
         setSelectedSectorId(null);
@@ -113,66 +119,72 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
         return;
       }
       setConflict(
-        err instanceof Error ? err.message : "Não foi possível criar a reserva."
+        err instanceof Error
+          ? err.message
+          : "Não foi possível criar a reserva.",
       );
     }
   }
 
   if (!ready || isPending) {
     return (
-      <div className='mx-auto max-w-6xl px-4 pt-8 pb-20 md:px-6 lg:px-8 lg:pt-10'>
-        <PagePulse className='h-64' />
+      <div className="mx-auto max-w-6xl px-4 pt-8 pb-20 md:px-6 lg:px-8 lg:pt-10">
+        <PagePulse className="h-64" />
       </div>
     );
   }
 
   return (
-    <div className='relative z-10 flex-1'>
-      <div className='mx-auto max-w-6xl px-4 pt-8 pb-20 md:px-6 lg:px-8 lg:pt-10'>
+    <div className="relative z-10 flex-1">
+      <div className="mx-auto max-w-6xl px-4 pt-8 pb-20 md:px-6 lg:px-8 lg:pt-10">
         <Link
           href={`/events/${eventId}`}
-          className='mb-10 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
+          className="mb-10 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeftIcon size={16} weight='bold' />
+          <ArrowLeftIcon size={16} weight="bold" />
           Evento
         </Link>
 
         {notFound ? (
           <PageState
-            title='Evento não encontrado'
-            body='Esse evento não existe ou não está disponível.'
+            title="Evento não encontrado"
+            body="Esse evento não existe ou não está disponível."
           />
         ) : null}
 
         {network ? (
           <PageState
-            title='Não foi possível carregar'
-            body='Não foi possível carregar o inventário.'
+            title="Não foi possível carregar"
+            body="Não foi possível carregar o inventário."
           />
         ) : null}
 
         {event && !notFound && !network ? (
-          <div className='space-y-12'>
-            <div className='flex flex-wrap items-start justify-between gap-x-12 gap-y-8'>
-              <div className='flex min-w-0 items-start gap-4'>
+          <div className="space-y-12">
+            <div className="flex flex-wrap items-start justify-between gap-x-12 gap-y-8">
+              <div className="flex min-w-0 items-start gap-4">
                 {event.imageUrl ? (
                   <img
                     src={event.imageUrl}
-                    alt=''
-                    className='h-18 w-12 shrink-0 rounded-sm object-cover'
+                    alt=""
+                    className="h-18 w-12 shrink-0 rounded-sm object-cover"
                   />
                 ) : null}
-                <div className='min-w-0'>
-                  <h1 className='text-2xl font-semibold tracking-[-0.03em] md:text-3xl'>
+                <div className="min-w-0">
+                  <h1 className="text-2xl font-semibold tracking-[-0.03em] md:text-3xl">
                     {event.title}
                   </h1>
-                  <p className='mt-1 text-sm text-muted-foreground'>
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {formatDate(event.startsAt)}
-                    <span className='mx-2 text-white/25'>/</span>
+                    <span className="mx-2 text-white/25">/</span>
                     {event.venue}
                   </p>
+                  <GateLimitNote
+                    hoursBefore={event.gateOpensHoursBefore}
+                    className="mt-2"
+                  />
                   {pendingHold ? null : (
-                    <p className='mt-2 text-xs text-white/40'>
+                    <p className="mt-2 text-xs text-white/40">
                       Os lugares ficam reservados por 15 minutos.
                     </p>
                   )}
@@ -180,11 +192,13 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
               </div>
 
               {pendingHold ? (
-                <PendingHoldNotice reservation={pendingHold} align='end' />
+                <PendingHoldNotice reservation={pendingHold} align="end" />
               ) : null}
             </div>
 
-            {conflict ? <p className='text-sm text-destructive'>{conflict}</p> : null}
+            {conflict ? (
+              <p className="text-sm text-destructive">{conflict}</p>
+            ) : null}
 
             {event.inventoryMode === "SEAT_MAP" ? (
               <SeatMapPicker

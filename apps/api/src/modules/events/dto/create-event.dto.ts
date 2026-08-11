@@ -7,12 +7,14 @@ import {
   IsISO8601,
   IsOptional,
   IsString,
+  Max,
   Min,
   MinLength,
   ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { InventoryMode } from "../../../generated/prisma/enums";
+import { TransformGateHours } from "./gate-hours";
 
 export class SeatMapConfigDto {
   @IsOptional()
@@ -71,6 +73,13 @@ export class CreateEventDto {
   @IsOptional()
   @IsISO8601()
   startsAt?: string;
+
+  @IsOptional()
+  @TransformGateHours()
+  @IsInt()
+  @Min(0)
+  @Max(48)
+  gateOpensHoursBefore?: number | null;
 
   @IsInt()
   @Min(0)

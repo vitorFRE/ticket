@@ -27,5 +27,10 @@ describe("gate-result-copy", () => {
     expect(gateResultCopy("WRONG_EVENT").title).toBe("Evento errado");
     expect(gateResultTone("INVALID")).toBe("invalid");
     expect(gateResultCopy("INVALID").title).toBe("Ingresso inválido");
+    expect(gateResultTone("GATE_CLOSED")).toBe("closed");
+    expect(gateResultCopy("GATE_CLOSED", 2)).toEqual({
+      title: "Ainda não abriu",
+      body: "A portaria libera 2 horas antes do início.",
+    });
   });
 });

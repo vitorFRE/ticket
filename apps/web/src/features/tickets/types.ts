@@ -5,6 +5,7 @@ export type TicketEvent = {
   title: string;
   venue: string;
   startsAt: string;
+  gateOpensHoursBefore: number | null;
   priceCents: number;
   imageUrl: string | null;
 };

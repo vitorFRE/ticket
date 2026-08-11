@@ -15,6 +15,7 @@ export function makeEvent(
     description: null,
     venue: "Cinemark",
     startsAt: "2026-09-01T23:00:00.000Z",
+    gateOpensHoursBefore: null,
     priceCents: 3200,
     status: "PUBLISHED",
     inventoryMode: "SEAT_MAP",

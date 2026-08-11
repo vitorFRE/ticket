@@ -1,25 +1,42 @@
 "use client";
 
+import { parseGateHours } from "@/features/events/gate-window";
+import { GateHoursField } from "@/features/organizer/components/gate-hours-field";
+
 export function WizardDetailsStep({
   venue,
   startsAt,
+  gateUnlimited,
+  gateOpensHoursBefore,
   price,
   onVenue,
   onStartsAt,
+  onGateUnlimited,
+  onGateOpensHoursBefore,
   onPrice,
   onBack,
   onNext,
 }: {
   venue: string;
   startsAt: string;
+  gateUnlimited: boolean;
+  gateOpensHoursBefore: string;
   price: string;
   onVenue: (value: string) => void;
   onStartsAt: (value: string) => void;
+  onGateUnlimited: (value: boolean) => void;
+  onGateOpensHoursBefore: (value: string) => void;
   onPrice: (value: string) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
-  const canNext = venue.trim().length > 0 && startsAt.length > 0 && price.trim().length > 0;
+  const hoursOk =
+    gateUnlimited || parseGateHours(gateOpensHoursBefore) !== null;
+  const canNext =
+    venue.trim().length > 0 &&
+    startsAt.length > 0 &&
+    price.trim().length > 0 &&
+    hoursOk;
 
   return (
     <div className="max-w-xl space-y-6">
@@ -40,6 +57,12 @@ export function WizardDetailsStep({
           className={fieldClass}
         />
       </label>
+      <GateHoursField
+        unlimited={gateUnlimited}
+        hours={gateOpensHoursBefore}
+        onUnlimited={onGateUnlimited}
+        onHours={onGateOpensHoursBefore}
+      />
       <label className="block">
         <span className="text-[13px] text-white/40">Preço base (R$)</span>
         <input

@@ -76,6 +76,7 @@ describe("EventsService", () => {
       externalId: "movie:550",
       venue: "Cinema X",
       startsAt: "2026-09-01T20:00:00.000Z",
+      gateOpensHoursBefore: 2,
       priceCents: 3500,
       inventoryMode: InventoryMode.SEAT_MAP,
     });
@@ -86,6 +87,7 @@ describe("EventsService", () => {
     expect(args.data.organizerId).toBe("org-1");
     expect(args.data.title).toBe("Fight Club");
     expect(args.data.venue).toBe("Cinema X");
+    expect(args.data.gateOpensHoursBefore).toBe(2);
     expect(args.data.externalSource).toBe("TMDB");
     expect(args.data.seats.createMany.data).toHaveLength(120);
     expect(result).toEqual(created);
@@ -102,6 +104,7 @@ describe("EventsService", () => {
       externalId: "tm-1",
       venue: "Arena",
       startsAt: "2026-10-01T21:00:00.000Z",
+      gateOpensHoursBefore: 3,
       priceCents: 8000,
       inventoryMode: InventoryMode.GA_SECTOR,
       sectors: [{ name: "Pista", capacity: 50 }],
@@ -118,6 +121,7 @@ describe("EventsService", () => {
       service.create("org-1", {
         source: "tmdb",
         externalId: "movie:550",
+        gateOpensHoursBefore: 2,
         priceCents: 100,
         inventoryMode: InventoryMode.SEAT_MAP,
       }),
@@ -131,6 +135,7 @@ describe("EventsService", () => {
         externalId: "1",
         venue: "X",
         startsAt: "2026-01-01T00:00:00.000Z",
+        gateOpensHoursBefore: 2,
         priceCents: 100,
         inventoryMode: InventoryMode.SEAT_MAP,
       }),

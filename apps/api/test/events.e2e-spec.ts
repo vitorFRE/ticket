@@ -134,6 +134,7 @@ describe("EventsController (e2e)", () => {
         externalId: "movie:550",
         venue: "Cinema",
         startsAt: "2026-09-01T20:00:00.000Z",
+        gateOpensHoursBefore: 2,
         priceCents: 3500,
         inventoryMode: InventoryMode.SEAT_MAP,
       })
@@ -149,6 +150,7 @@ describe("EventsController (e2e)", () => {
         externalId: "movie:550",
         venue: "Cinema",
         startsAt: "2026-09-01T20:00:00.000Z",
+        gateOpensHoursBefore: 2,
         priceCents: 3500,
         inventoryMode: InventoryMode.SEAT_MAP,
       })
@@ -178,6 +180,7 @@ describe("EventsController (e2e)", () => {
         externalId: "tm-1",
         venue: "Arena",
         startsAt: "2026-10-01T21:00:00.000Z",
+        gateOpensHoursBefore: 3,
         priceCents: 8000,
         inventoryMode: InventoryMode.GA_SECTOR,
         sectors: [{ name: "Pista", capacity: 50 }],
@@ -202,6 +205,7 @@ describe("EventsController (e2e)", () => {
         externalId: "movie:550",
         venue: "Cinema",
         startsAt: "2026-09-01T20:00:00.000Z",
+        gateOpensHoursBefore: 2,
         priceCents: 3500,
         inventoryMode: InventoryMode.GA_SECTOR,
       })

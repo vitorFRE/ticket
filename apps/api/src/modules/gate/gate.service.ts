@@ -3,12 +3,14 @@ import type { Prisma } from "../../generated/prisma/client";
 import { TicketStatus } from "../../generated/prisma/enums";
 import { PrismaService } from "../prisma/prisma.service";
 import { TicketQrService } from "../tickets/ticket-qr.service";
+import { isGateOpen } from "./gate-window";
 
 export type GateValidateResult =
   | "VALID"
   | "INVALID"
   | "ALREADY_USED"
-  | "WRONG_EVENT";
+  | "WRONG_EVENT"
+  | "GATE_CLOSED";
 
 const gateTicketSelect = {
   id: true,
@@ -19,10 +21,19 @@ const gateTicketSelect = {
   seat: { select: { label: true } },
   sector: { select: { name: true } },
   user: { select: { name: true } },
-  event: { select: { id: true, title: true } },
+  event: {
+    select: {
+      id: true,
+      title: true,
+      startsAt: true,
+      gateOpensHoursBefore: true,
+    },
+  },
 } satisfies Prisma.TicketSelect;
 
-type GateTicketRow = Prisma.TicketGetPayload<{ select: typeof gateTicketSelect }>;
+type GateTicketRow = Prisma.TicketGetPayload<{
+  select: typeof gateTicketSelect;
+}>;
 
 @Injectable()
 export class GateService {
@@ -47,6 +58,13 @@ export class GateService {
 
     if (ticket.status === TicketStatus.USED) {
       return this.response("ALREADY_USED", ticket);
+    }
+
+    if (
+      !ticket.event ||
+      !isGateOpen(ticket.event.startsAt, ticket.event.gateOpensHoursBefore)
+    ) {
+      return this.response("GATE_CLOSED", ticket);
     }
 
     const now = new Date();

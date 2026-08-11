@@ -4,12 +4,13 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { parseGateHours } from "@/features/events/gate-window";
+import { OrganizerShell } from "@/features/organizer/components/organizer-shell";
 import { WizardConfirmStep } from "@/features/organizer/components/wizard-confirm-step";
 import { WizardDetailsStep } from "@/features/organizer/components/wizard-details-step";
 import { WizardInventoryStep } from "@/features/organizer/components/wizard-inventory-step";
 import { WizardPickStep } from "@/features/organizer/components/wizard-pick-step";
 import { WizardSourceStep } from "@/features/organizer/components/wizard-source-step";
-import { OrganizerShell } from "@/features/organizer/components/organizer-shell";
 import {
   centsToReaisInput,
   fromDatetimeLocal,
@@ -46,8 +47,16 @@ export function OrganizerNewEventPage() {
     if (!state.item) return;
     const priceCents = reaisToCents(state.price);
     const startsAt = fromDatetimeLocal(state.startsAt);
-    if (priceCents === null || !startsAt || !state.venue.trim()) {
-      setError("Preencha local, data e preço.");
+    const gateOpensHoursBefore = state.gateUnlimited
+      ? null
+      : parseGateHours(state.gateOpensHoursBefore);
+    if (
+      priceCents === null ||
+      !startsAt ||
+      !state.venue.trim() ||
+      (!state.gateUnlimited && gateOpensHoursBefore === null)
+    ) {
+      setError("Preencha local, data, portaria e preço.");
       return;
     }
 
@@ -56,6 +65,7 @@ export function OrganizerNewEventPage() {
       externalId: state.item.externalId,
       venue: state.venue.trim(),
       startsAt,
+      gateOpensHoursBefore,
       priceCents,
       inventoryMode: state.inventoryMode,
       title: state.item.title,
@@ -78,7 +88,11 @@ export function OrganizerNewEventPage() {
         .map((sector) => {
           const capacity = Number(sector.capacity);
           const extra = reaisToCents(sector.price);
-          if (!sector.name.trim() || !Number.isFinite(capacity) || capacity < 1) {
+          if (
+            !sector.name.trim() ||
+            !Number.isFinite(capacity) ||
+            capacity < 1
+          ) {
             return null;
           }
           return {
@@ -143,9 +157,15 @@ export function OrganizerNewEventPage() {
         <WizardDetailsStep
           venue={state.venue}
           startsAt={state.startsAt}
+          gateUnlimited={state.gateUnlimited}
+          gateOpensHoursBefore={state.gateOpensHoursBefore}
           price={state.price}
           onVenue={(venue) => patch({ venue })}
           onStartsAt={(startsAt) => patch({ startsAt })}
+          onGateUnlimited={(gateUnlimited) => patch({ gateUnlimited })}
+          onGateOpensHoursBefore={(gateOpensHoursBefore) =>
+            patch({ gateOpensHoursBefore })
+          }
           onPrice={(price) => patch({ price })}
           onBack={() => patch({ step: 2 })}
           onNext={() => patch({ step: 4 })}
@@ -172,6 +192,11 @@ export function OrganizerNewEventPage() {
           item={state.item}
           venue={state.venue}
           startsAt={state.startsAt}
+          gateOpensHoursBefore={
+            state.gateUnlimited
+              ? null
+              : parseGateHours(state.gateOpensHoursBefore)
+          }
           priceLabel={
             reaisToCents(state.price) !== null
               ? `R$ ${centsToReaisInput(reaisToCents(state.price) ?? 0)}`

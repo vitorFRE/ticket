@@ -2,10 +2,12 @@
 
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { type FormEvent, type ReactNode, useEffect, useState } from "react";
 import { PageState } from "@/components/page-state";
 import { PagePulse } from "@/components/skeletons/page-pulse";
 import { formatDate, formatPrice, modeLabel } from "@/features/events/format";
+import { gateHoursLabel, parseGateHours } from "@/features/events/gate-window";
+import { GateHoursField } from "@/features/organizer/components/gate-hours-field";
 import { OrganizerShell } from "@/features/organizer/components/organizer-shell";
 import { eventStatusLabel } from "@/features/organizer/event-status";
 import {
@@ -32,6 +34,8 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
   const [description, setDescription] = useState("");
   const [venue, setVenue] = useState("");
   const [startsAt, setStartsAt] = useState("");
+  const [gateUnlimited, setGateUnlimited] = useState(true);
+  const [gateOpensHoursBefore, setGateOpensHoursBefore] = useState("2");
   const [price, setPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
 
@@ -41,6 +45,12 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
     setDescription(event.description ?? "");
     setVenue(event.venue);
     setStartsAt(toDatetimeLocal(event.startsAt));
+    setGateUnlimited(event.gateOpensHoursBefore === null);
+    setGateOpensHoursBefore(
+      event.gateOpensHoursBefore === null
+        ? "2"
+        : String(event.gateOpensHoursBefore),
+    );
     setPrice(centsToReaisInput(event.priceCents));
     setImageUrl(event.imageUrl ?? "");
   }, [event]);
@@ -50,8 +60,15 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
     if (!event) return;
     const priceCents = reaisToCents(price);
     const iso = fromDatetimeLocal(startsAt);
-    if (priceCents === null || !iso || !title.trim() || !venue.trim()) {
-      setFormError("Preencha título, local, data e preço.");
+    const hours = gateUnlimited ? null : parseGateHours(gateOpensHoursBefore);
+    if (
+      priceCents === null ||
+      !iso ||
+      !title.trim() ||
+      !venue.trim() ||
+      (!gateUnlimited && hours === null)
+    ) {
+      setFormError("Preencha título, local, data, portaria e preço.");
       return;
     }
     setFormError(null);
@@ -61,6 +78,7 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
         description: description.trim() || null,
         venue: venue.trim(),
         startsAt: iso,
+        gateOpensHoursBefore: hours,
         priceCents,
         imageUrl: imageUrl.trim() || null,
       });
@@ -139,6 +157,9 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
                 <span className="mx-2 text-white/25">/</span>
                 {event.venue}
               </p>
+              <p className="text-sm text-muted-foreground">
+                Portaria: {gateHoursLabel(event.gateOpensHoursBefore)}
+              </p>
               <p className="text-2xl font-semibold tracking-tight">
                 {formatPrice(event.priceCents)}
               </p>
@@ -173,6 +194,12 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
                   className={fieldClass}
                 />
               </Field>
+              <GateHoursField
+                unlimited={gateUnlimited}
+                hours={gateOpensHoursBefore}
+                onUnlimited={setGateUnlimited}
+                onHours={setGateOpensHoursBefore}
+              />
               <Field label="Preço (R$)">
                 <input
                   value={price}
@@ -226,13 +253,7 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
 const fieldClass =
   "mt-1.5 w-full border-0 border-b border-white/12 bg-transparent px-0 py-2 text-sm outline-none";
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
       <span className="text-[13px] text-white/40">{label}</span>

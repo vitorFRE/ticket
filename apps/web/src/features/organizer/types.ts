@@ -19,6 +19,7 @@ export type CreateEventBody = {
   externalId: string;
   venue: string;
   startsAt: string;
+  gateOpensHoursBefore: number | null;
   priceCents: number;
   inventoryMode: "SEAT_MAP" | "GA_SECTOR";
   title?: string;
@@ -33,6 +34,7 @@ export type UpdateEventBody = {
   description?: string | null;
   venue?: string;
   startsAt?: string;
+  gateOpensHoursBefore?: number | null;
   priceCents?: number;
   imageUrl?: string | null;
 };

@@ -128,6 +128,7 @@ function eventFields(planned: PlannedEvent, source: ExternalSource) {
     description: planned.item.description,
     venue: planned.venue,
     startsAt: planned.startsAt,
+    gateOpensHoursBefore: null,
     priceCents: planned.priceCents,
     status: EventStatus.PUBLISHED,
     externalSource: source,

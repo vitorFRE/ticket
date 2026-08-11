@@ -2,7 +2,8 @@ export type GateValidateResult =
   | "VALID"
   | "INVALID"
   | "ALREADY_USED"
-  | "WRONG_EVENT";
+  | "WRONG_EVENT"
+  | "GATE_CLOSED";
 
 export type GateTicketSummary = {
   id: string;
@@ -12,7 +13,12 @@ export type GateTicketSummary = {
   seat: { label: string } | null;
   sector: { name: string } | null;
   user: { name: string | null } | null;
-  event: { id: string; title: string } | null;
+  event: {
+    id: string;
+    title: string;
+    startsAt?: string;
+    gateOpensHoursBefore?: number | null;
+  } | null;
   validatedAt: string | null;
 };
 
