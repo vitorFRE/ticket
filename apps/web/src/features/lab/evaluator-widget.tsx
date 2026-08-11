@@ -184,6 +184,7 @@ export function EvaluatorWidget() {
                   <LabChip href="/">Início</LabChip>
                   <LabChip href="/tickets">Ingressos</LabChip>
                   <LabChip href="/organizer/events">Área org</LabChip>
+                  <LabChip href="/gate">Portaria</LabChip>
                   {SEED_EVENT_LINKS.map((link) => (
                     <LabChip key={link.href} href={link.href} hint={link.hint}>
                       {link.label}

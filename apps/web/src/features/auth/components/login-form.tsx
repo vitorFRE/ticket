@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/features/auth/components/auth-provider";
+import { homeForRole } from "@/features/auth/lib/home-for-role";
 import { safeNextPath } from "@/features/auth/lib/safe-next-path";
 import { loginSchema } from "@/features/auth/schemas/login-schema";
 
@@ -57,8 +58,11 @@ export function LoginForm() {
     setFieldErrors({});
     setIsPending(true);
     try {
-      await login(parsed.data.email, parsed.data.password);
-      router.replace(nextPath);
+      const user = await login(parsed.data.email, parsed.data.password);
+      const dest = searchParams.get("next")
+        ? nextPath
+        : homeForRole(user.role);
+      router.replace(dest);
     } catch (err) {
       setSubmitError(
         err instanceof Error ? err.message : "Erro ao entrar. Tente novamente.",

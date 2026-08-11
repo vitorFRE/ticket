@@ -1,4 +1,7 @@
+import { homeForRole } from "@/features/auth/lib/home-for-role";
 import type { AuthUser } from "@/features/auth/types";
+
+export { homeForRole };
 
 export const SEED_PASSWORD = "Password123!";
 
@@ -53,12 +56,6 @@ export const SEED_EVENT_LINKS = [
     hint: "Setores GA",
   },
 ] as const;
-
-export function homeForRole(role: AuthUser["role"]): string {
-  if (role === "ORGANIZER") return "/organizer/events";
-  if (role === "GATE") return "/";
-  return "/";
-}
 
 export function roleLabel(role: AuthUser["role"]): string {
   if (role === "ORGANIZER") return "Organizador";

@@ -2,7 +2,7 @@
 
 Registro das regras de produto pedidas na implementação do checkout e do pagamento simulado. Não é o PRD: é o “porquê” das escolhas que a UI precisa respeitar.
 
-Relacionado: [features/web-auth-events.md](./features/web-auth-events.md), [prd-frontend.md](./prd-frontend.md).
+Relacionado: [features/web-auth-events.md](./features/web-auth-events.md), [features/web-gate.md](./features/web-gate.md), [prd-frontend.md](./prd-frontend.md).
 
 ## Hold pendente
 
@@ -57,5 +57,14 @@ Manter o editorial do ticketim (dark, âmbar, sem card de vidro extra):
 Widget flutuante no canto inferior direito, sempre visível neste teste. Não é produto: é atalho para trocar as contas seed, ver a sessão e pular para cinema / show / área org.
 
 - Fecha e abre sem recarregar; o estado fica na sessão do browser.
-- Trocar de conta faz login com `Password123!` e manda para a home do papel (org → `/organizer/events`).
+- Trocar de conta faz login com `Password123!` e manda para a home do papel (org → `/organizer/events`, portaria → `/gate`).
 - Senha e URL da API ficam no rodapé do painel, em mono, sem cartão extra.
+
+## Portaria
+
+A porta precisa de feedback imediato e grande, no mesmo espírito do pay recusado: o resultado é o título, não um toast.
+
+- Evento fica no contexto (sessão). Trocar não perde a tela.
+- `VALID` é o único estado colorido (verde). Os outros são tipografia.
+- Scan é o caminho da porta: viewfinder abre depois de escolher o evento. Colar código é reserva (sem câmera, permissão negada, ou para o avaliador).
+- **Próximo** religa a câmera. O evento não se perde.

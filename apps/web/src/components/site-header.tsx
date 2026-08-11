@@ -54,6 +54,14 @@ export function SiteHeader() {
                   Área org
                 </Link>
               ) : null}
+              {user.role === "GATE" ? (
+                <Link
+                  href="/gate"
+                  className="px-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Portaria
+                </Link>
+              ) : null}
               <span className="hidden max-w-[10rem] truncate px-2 text-xs text-muted-foreground sm:inline">
                 {user.name ?? user.email}
               </span>
