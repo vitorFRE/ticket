@@ -4,6 +4,7 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { MissingPage } from "@/components/missing-page";
 import { PageState } from "@/components/page-state";
 import { useAuth } from "@/features/auth/components/auth-provider";
 import { getEventById } from "@/features/events/api/events-api";
@@ -63,9 +64,10 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
       {isLoading ? <DetailSkeleton /> : null}
 
       {error === "not-found" ? (
-        <DetailState
+        <MissingPage
           title="Evento não encontrado"
-          body="Esse evento não existe ou não está disponível."
+          body="Essa sessão saiu de cartaz ou o link não existe."
+          imageSrc="/images/event-missing.jpg"
         />
       ) : null}
 

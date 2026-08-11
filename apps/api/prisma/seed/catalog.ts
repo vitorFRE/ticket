@@ -141,7 +141,8 @@ async function searchTicketmaster(
 
 function showScore(item: CatalogSnapshot): number {
   let score = 0;
-  if (/tour|festival|lollapalooza/i.test(item.title)) score += 8;
+  if (/tour/i.test(item.title)) score += 8;
+  if (item.imageUrl?.includes("_SOURCE")) score += 10;
   if (item.imageUrl) score += 1;
   return score;
 }
@@ -151,7 +152,7 @@ function isUsableShow(item: CatalogSnapshot): boolean {
   if (!item.imageUrl || !item.venue) return false;
   if (title.length < 8 || title.length > 48) return false;
   if (
-    /performing on|tribute|cover band|ultimate |revisited|canta |ticket \+ hotel/i.test(
+    /performing on|tribute|cover band|ultimate |revisited|canta |ticket \+ hotel|suhai|interlagos|edição moto/i.test(
       title,
     )
   ) {

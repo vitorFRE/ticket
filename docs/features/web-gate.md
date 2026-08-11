@@ -30,7 +30,7 @@ Login sem `next` manda `GATE` para `/gate`.
 1. Escolher o evento da entrada (fica na sessão do browser)
 2. Câmera ao vivo (`BarcodeDetector` / `jsQR`). No telemóvel pede a traseira
 3. Sem câmera: **Colar código** (UUID ou payload HMAC)
-4. Resultado vira o título da tela. Com ticket: registro (lugar, titular, código, evento, **Passou em**). **Próximo** volta ao scan, evento intacto
+4. Resultado: veredito + lugar em destaque. Registro com titular, **Passou em** (já usado) e código. Evento só em **Evento errado**. **Próximo** volta ao scan.
 
 O QR desenhado no ingresso é o UUID `Ticket.code`. A API aceita esse UUID e também o `qrPayload`.
 

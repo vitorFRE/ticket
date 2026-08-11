@@ -4,12 +4,15 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowUpRightIcon, SignOutIcon } from "@phosphor-icons/react";
 import { useAuth } from "@/features/auth/components/auth-provider";
+import type { AuthUser } from "@/features/auth/types";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
   const { user, isLoading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const area = user ? areaForRole(user.role) : null;
+  const onArea = area ? isOnArea(pathname, area.href) : false;
 
   async function onLogout() {
     await logout();
@@ -33,38 +36,19 @@ export function SiteHeader() {
           ticketim
         </Link>
 
-        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           {isLoading ? (
             <span className="px-3 text-xs text-muted-foreground">...</span>
           ) : user ? (
             <>
-              {user.role === "CLIENT" ? (
+              {area && !onArea ? (
                 <Link
-                  href="/tickets"
-                  className="px-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-2"
+                  href={area.href}
+                  className="inline-flex h-8 items-center rounded-full border border-white/12 bg-white/[0.05] px-3 text-xs font-medium text-foreground transition-colors hover:bg-white/[0.1] active:scale-[0.98]"
                 >
-                  Ingressos
+                  {area.label}
                 </Link>
               ) : null}
-              {user.role === "ORGANIZER" ? (
-                <Link
-                  href="/organizer/events"
-                  className="px-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-2"
-                >
-                  Área org
-                </Link>
-              ) : null}
-              {user.role === "GATE" ? (
-                <Link
-                  href="/gate"
-                  className="px-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-2"
-                >
-                  Portaria
-                </Link>
-              ) : null}
-              <span className="hidden max-w-[10rem] truncate px-2 text-xs text-muted-foreground sm:inline">
-                {user.name ?? user.email}
-              </span>
               <button
                 type="button"
                 onClick={() => void onLogout()}
@@ -91,4 +75,20 @@ export function SiteHeader() {
       </div>
     </header>
   );
+}
+
+function areaForRole(role: AuthUser["role"]): { href: string; label: string } {
+  if (role === "CLIENT") return { href: "/tickets", label: "Ingressos" };
+  if (role === "ORGANIZER") return { href: "/organizer/events", label: "Área org" };
+  return { href: "/gate", label: "Portaria" };
+}
+
+function isOnArea(pathname: string, href: string) {
+  if (href === "/tickets") {
+    return pathname === "/tickets" || pathname.startsWith("/tickets/");
+  }
+  if (href.startsWith("/organizer")) {
+    return pathname.startsWith("/organizer");
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
 }

@@ -1,7 +1,24 @@
+import {
+  CheckCircleIcon,
+  ClockCounterClockwiseIcon,
+  WarningCircleIcon,
+  XCircleIcon,
+} from "@phosphor-icons/react";
 import { GateTicketRecord } from "@/features/gate/components/gate-ticket-record";
-import { gateResultCopy } from "@/features/gate/gate-result-copy";
+import {
+  gatePlace,
+  gateResultCopy,
+  gateResultTone,
+} from "@/features/gate/gate-result-copy";
 import type { GateValidateResponse } from "@/features/gate/types";
 import { cn } from "@/lib/utils";
+
+const toneClass = {
+  ok: "text-emerald-300",
+  used: "text-primary",
+  wrong: "text-foreground",
+  invalid: "text-destructive",
+} as const;
 
 export function GateResult({
   data,
@@ -10,30 +27,63 @@ export function GateResult({
   data: GateValidateResponse;
   onNext: () => void;
 }) {
-  const copy = gateResultCopy(data.result, data.ticket);
-  const ok = data.result === "VALID";
+  const copy = gateResultCopy(data.result);
+  const tone = gateResultTone(data.result);
+  const place = gatePlace(data.ticket);
+  const Icon = resultIcon(tone);
 
   return (
     <div className="max-w-xl">
-      <h2
-        className={cn(
-          "text-4xl font-semibold tracking-[-0.04em] md:text-6xl",
-          ok && "text-emerald-300",
-        )}
-      >
-        {copy.title}
-      </h2>
-      <p className="mt-4 max-w-[36ch] text-lg leading-relaxed text-white/55">
+      {place ? (
+        <>
+          <p className={cn("flex items-center gap-2 text-sm", toneClass[tone])}>
+            <Icon size={18} weight="fill" />
+            {copy.title}
+          </p>
+          <h2
+            className={cn(
+              "mt-3 text-5xl font-semibold tracking-[-0.04em] md:text-7xl",
+              toneClass[tone],
+            )}
+          >
+            {place}
+          </h2>
+        </>
+      ) : (
+        <h2
+          className={cn(
+            "flex items-center gap-3 text-4xl font-semibold tracking-[-0.04em] md:text-6xl",
+            toneClass[tone],
+          )}
+        >
+          <Icon size={36} weight="fill" />
+          {copy.title}
+        </h2>
+      )}
+      <p className="mt-4 max-w-[36ch] text-base leading-relaxed text-white/55">
         {copy.body}
       </p>
-      {data.ticket ? <GateTicketRecord ticket={data.ticket} /> : null}
+      {data.ticket ? (
+        <GateTicketRecord
+          ticket={data.ticket}
+          showEvent={data.result === "WRONG_EVENT"}
+          highlightValidatedAt={data.result === "ALREADY_USED"}
+        />
+      ) : null}
       <button
         type="button"
         onClick={onNext}
-        className="mt-10 inline-flex h-11 items-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground transition-[transform,opacity] hover:opacity-90 active:scale-[0.98]"
+        className="mt-10 inline-flex h-12 w-full items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground transition-[transform,opacity] hover:opacity-90 active:scale-[0.98] sm:w-auto"
       >
         Próximo
       </button>
     </div>
   );
+}
+
+function resultIcon(tone: keyof typeof toneClass) {
+  if (tone === "ok") return CheckCircleIcon;
+  if (tone === "used") return ClockCounterClockwiseIcon;
+  if (tone === "wrong") return WarningCircleIcon;
+  return XCircleIcon;
 }

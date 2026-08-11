@@ -93,20 +93,16 @@ export function GatePage() {
         ) : (
           <div className="space-y-10">
             <header className="space-y-2">
-              <h1 className="text-4xl font-semibold tracking-[-0.04em] md:text-5xl">
-                Portaria
-              </h1>
+              {!(result && selected && !picking) ? (
+                <h1 className="text-4xl font-semibold tracking-[-0.04em] md:text-5xl">
+                  Portaria
+                </h1>
+              ) : null}
               {selected && !picking ? (
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <p className="text-sm text-muted-foreground">{selected.title}</p>
-                  <button
-                    type="button"
-                    onClick={() => setPicking(true)}
-                    className="text-sm text-foreground underline-offset-4 hover:underline"
-                  >
-                    Trocar
-                  </button>
-                </div>
+                <EventStrip
+                  title={selected.title}
+                  onChange={() => setPicking(true)}
+                />
               ) : (
                 <p className="text-sm text-muted-foreground">
                   Escolha o evento desta entrada.
@@ -143,6 +139,21 @@ export function GatePage() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function EventStrip({ title, onChange }: { title: string; onChange: () => void }) {
+  return (
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <p className="text-sm text-muted-foreground">{title}</p>
+      <button
+        type="button"
+        onClick={onChange}
+        className="text-sm text-foreground underline-offset-4 hover:underline"
+      >
+        Trocar
+      </button>
     </div>
   );
 }
