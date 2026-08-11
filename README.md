@@ -1,128 +1,127 @@
-# teste-ticket
+# ticketim
 
-Monorepo de uma plataforma de eventos e ingressos (desafio Verzel Elite Dev).
+Plataforma de eventos e ingressos (desafio Verzel Elite Dev).
 
-**desafio:** ver o [PRD](docs/prd.md) — personas, fluxos, modelo de dados, API e ordem de implementação.
+O front do MVP está fechado (auth, catálogo, reserva, pagamento simulado, QR, organizador e portaria). Este README é o caminho do avaliador.
 
-## Stack
+## Avaliação (já no ar)
 
-- **pnpm** workspaces
-- **Turborepo** para orquestrar tasks
-- **NestJS** (`apps/api`) + Prisma 7 (SQLite local / Turso em produção) + JWT auth
-- **Next.js** (`apps/web`)
-- **`@teste-ticket/config`** — Biome, TypeScript e Jest compartilhados
+O deploy foi feito para facilitar a correção. Dá para percorrer o fluxo sem subir o projeto.
 
-## Quick start
+**Web:** [https://ticket-web-murex.vercel.app](https://ticket-web-murex.vercel.app)
+
+No canto inferior: **Lab avaliador** troca de conta sem digitar senha.
+
+### Contas seed
+
+Senha de todas: `Password123!`
+
+| Email | Role | O que testar |
+| --- | --- | --- |
+| `client1@ticket.local` | `CLIENT` | Reservar, pagar, ver QR, compartilhar |
+| `client2@ticket.local` | `CLIENT` | Segundo cliente (holds cruzados) |
+| `organizer@ticket.local` | `ORGANIZER` | Área org, catálogo TMDb/Ticketmaster, publicar |
+| `gate@ticket.local` | `GATE` | Portaria: validar QR / código |
+
+### Percurso sugerido
+
+1. **Cliente** — home → um filme (mapa) ou um show (setores) → reservar → confirmar pagamento → ingresso com QR → Compartilhar (`/t/...` abre sem login).
+2. **Organizador** — Área org → Novo evento → TMDb ou Ticketmaster → publicar. O evento aparece na home.
+3. **Portaria** — escolher o evento do ingresso → apontar o QR (ou colar o código) → Pode entrar; de novo → Já usado.
+
+Pagamento é simulado: **confirmar** gera ticket; **rejeitar** não gera.
+
+## Setup local
+
+Node 20+ e [pnpm](https://pnpm.io).
 
 ```bash
 pnpm install
 pnpm setup:env
+```
+
+Preencha as keys de catálogo em `apps/api/.env` (`TMDB_API_KEY` ou `TMDB_ACCESS_TOKEN`, `TICKETMASTER_API_KEY`). Sem elas a seed ainda sobe eventos com pôster TMDb em fallback; a busca do organizador fica indisponível.
+
+Em `apps/web/.env`:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
+
+```bash
 pnpm --filter api prisma:migrate
 pnpm --filter api prisma:seed
 pnpm start:dev
 ```
 
-Apps individuais:
+- Web: [http://localhost:3000](http://localhost:3000)
+- API: [http://localhost:3001](http://localhost:3001)
 
-```bash
-pnpm dev:api   # http://localhost:3001
-pnpm dev:web   # http://localhost:3000
-```
+Apps isolados: `pnpm dev:api` / `pnpm dev:web`.
 
-### Database
+### Seed
 
-| Ambiente | Variáveis                              | Onde                   |
-| -------- | -------------------------------------- | ---------------------- |
-| Local    | `LOCAL_DATABASE_URL`                   | SQLite (`file:dev.db`) |
-| Produção | `DATABASE_URL` + `DATABASE_AUTH_TOKEN` | Turso (libSQL)         |
+`pnpm --filter api prisma:seed` recria as 4 contas e o cartaz do organizer.
 
-Em produção defina `NODE_ENV=production` e as variáveis do Turso. Migrations locais usam `LOCAL_DATABASE_URL`; para aplicar no Turso, rode `prisma migrate deploy` com `LOCAL_DATABASE_URL` apontando para a URL do Turso (mesmo padrão do Sellow no `prisma.config.ts`).
+- Filmes vêm do **TMDb** (título, sinopse, pôster). Sessões com datas à frente da data atual, cinemas de São Paulo, mapa de assentos.
+- Shows vêm do **Ticketmaster** (nome, imagem, local e data reais quando a API devolve). Setores Pista + Camarote.
+- IDs estáveis para o Lab: cinema `...0001` (mapa) e show `...0002` (GA).
 
-### Seed (usuários + eventos)
+Rodar de novo apaga os eventos do organizer seed e os tickets/reservas ligados a eles.
 
-`pnpm --filter api prisma:seed` — senha de todos: `Password123!`
+### Banco
 
-| Email                    | Role        |
-| ------------------------ | ----------- |
-| `organizer@ticket.local` | `ORGANIZER` |
-| `client1@ticket.local`   | `CLIENT`    |
-| `client2@ticket.local`   | `CLIENT`    |
-| `gate@ticket.local`      | `GATE`      |
+| Ambiente | Variáveis | Onde |
+| --- | --- | --- |
+| Local | `LOCAL_DATABASE_URL` | SQLite (`file:dev.db`) |
+| Produção | `DATABASE_URL` + `DATABASE_AUTH_TOKEN` | Turso (libSQL) |
 
-Também cria 2 eventos **PUBLISHED** do organizer (mapa de assentos + setores GA). Detalhes em [docs/features/events.md](docs/features/events.md).
+CORS da API: `FRONTEND_URL` com o origin **exato**, sem barra no fim (local e Vercel podem ir separados por vírgula).
 
-Registro público (`POST /auth/register`) sempre cria `CLIENT`. Roles especiais vêm do seed (ou criação interna).
+## Stack
 
-### API auth (exemplos)
+- **pnpm** workspaces + **Turborepo**
+- **NestJS** (`apps/api`) + Prisma 7 (SQLite / Turso) + JWT Bearer
+- **Next.js** (`apps/web`) — ticketim, dark + âmbar
+- **`@teste-ticket/config`** — Biome, TypeScript, Jest
 
-- `POST /auth/register` — `{ email, password, name? }` → role `CLIENT`
-- `POST /auth/login`
-- `POST /auth/refresh` — Bearer refresh token
-- `GET /auth/me` — Bearer access token
-- `POST /auth/logout`
-- `GET /health` — público
+## Scripts
 
-### Catalog (ORGANIZER)
+| Comando | Descrição |
+| --- | --- |
+| `pnpm start:dev` | API + web |
+| `pnpm --filter api prisma:seed` | Contas + cartaz real |
+| `pnpm build` | Build de todos os apps |
+| `pnpm check` | Lint + format (Biome) |
+| `pnpm test` | Testes unitários |
 
-Detalhes em [docs/features/catalog.md](docs/features/catalog.md).
+## Docs
 
-- `GET /catalog/tmdb/search?q=`
-- `GET /catalog/ticketmaster/search?q=`
-- `GET /catalog/:source/:externalId` — `source`: `tmdb` \| `ticketmaster`
+| Doc | Conteúdo |
+| --- | --- |
+| [docs/prd.md](docs/prd.md) | PRD do desafio |
+| [docs/prd-frontend.md](docs/prd-frontend.md) | Fatias do web (F1–F7) |
+| [docs/features/web-shell.md](docs/features/web-shell.md) | Redirects e roles |
+| [docs/features/web-auth-events.md](docs/features/web-auth-events.md) | Login, checkout, tickets |
+| [docs/features/web-organizer.md](docs/features/web-organizer.md) | Área org |
+| [docs/features/web-gate.md](docs/features/web-gate.md) | Portaria |
+| [docs/decisoes-ux.md](docs/decisoes-ux.md) | Regras de produto na UI |
 
-Env: `TMDB_API_KEY` (ou `TMDB_ACCESS_TOKEN`), `TICKETMASTER_API_KEY`.
+## Limitações conhecidas
 
-### Events + inventário
-
-Detalhes em [docs/features/events.md](docs/features/events.md).
-
-- `GET /events?q=` — público (só publicados)
-- `GET /events/:id` — público / owner vê draft
-- `GET /events/mine` — ORGANIZER
-- `POST /events` — ORGANIZER (a partir do catalog + inventário)
-- `PATCH /events/:id` — ORGANIZER (só DRAFT)
-- `POST /events/:id/publish` — ORGANIZER
-- `GET /events/:id/seats` | `/sectors` — inventário
-
-### Reservations (CLIENT)
-
-Detalhes em [docs/features/reservations.md](docs/features/reservations.md).
-
-- `POST /reservations` — hold 15 min (`seatIds` ou `sectorId`+`quantity`)
-- `GET /reservations/me`
-- `GET /reservations/:id`
-- `POST /reservations/:id/pay` — `{ outcome: "APPROVED" \| "REJECTED" }`
-
-### Tickets (CLIENT + público)
-
-Detalhes em [docs/features/payment-tickets.md](docs/features/payment-tickets.md).
-
-- `GET /tickets/me`
-- `GET /tickets/:id`
-- `POST /tickets/:id/share` → `{ token, url }`
-- `GET /public/tickets/:token` — público
-
-Env: `TICKET_HMAC_SECRET` (assinatura do QR).
-
-## Scripts úteis
-
-| Comando          | Descrição                      |
-| ---------------- | ------------------------------ |
-| `pnpm build`     | Build de todos os pacotes/apps |
-| `pnpm check`     | Lint + format check (Biome)    |
-| `pnpm check:fix` | Aplica fixes do Biome          |
-| `pnpm test`      | Testes unitários               |
-
-## Docker
-
-Há um `docker-compose.yaml` stub para evoluir depois. O fluxo principal de desenvolvimento é local com pnpm.
+- Sem tela de cadastro / forgot password. Roles `ORGANIZER` e `GATE` vêm do seed.
+- Pagamento é `APPROVED` / `REJECTED` na própria UI, sem gateway.
+- Hold de 15 minutos; voltar no browser não cancela.
+- O QR desenhado no ingresso é o UUID `ticket.code`. A API ainda aceita o payload HMAC.
+- Câmera da portaria pede permissão (no telemóvel, HTTPS).
+- Inventário não muda depois de criar o evento.
 
 ## Estrutura
 
 ```
 apps/
   api/     NestJS API
-  web/     Next.js frontend
+  web/     Next.js (ticketim)
 packages/
-  config/  Configs compartilhadas (Biome, TS, Jest)
+  config/  Biome, TypeScript, Jest
 ```

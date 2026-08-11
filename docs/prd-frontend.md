@@ -261,7 +261,7 @@ Dependência forte: F1 → F2 → F3 → F4. F5 e F6 podem paralelizar após F1 
 3. Login `organizer@ticket.local` → criar evento TMDb + Ticketmaster → publicar  
 4. Login `gate@ticket.local` → selecionar evento → validar código/QR (válido depois já usado)
 
-Env: `NEXT_PUBLIC_API_URL=http://localhost:3001`, API com seed (+ opcional `node apps/api/scripts/populate-demo-events.mjs`).
+Env: `NEXT_PUBLIC_API_URL=http://localhost:3001`. Seed: `pnpm --filter api prisma:seed` (TMDb + Ticketmaster).
 
 ---
 
@@ -275,4 +275,4 @@ Env: `NEXT_PUBLIC_API_URL=http://localhost:3001`, API com seed (+ opcional `node
 | Organizador | OK | OK (F5) |
 | Gate | OK | OK (F6) |
 | Shell / roles | — | OK (F7) |
-| README / deploy | Parcial | Pendente |
+| README / deploy | OK | Web em Vercel; README do avaliador |

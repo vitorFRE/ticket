@@ -1,5 +1,6 @@
 /**
- * Popula eventos demo via catalog APIs reais (API local precisa estar rodando).
+ * @deprecated Use `pnpm --filter api prisma:seed` — a seed já puxa TMDb/Ticketmaster.
+ * Mantido só se a API estiver no ar e você quiser acrescentar eventos extras.
  * Uso: node apps/api/scripts/populate-demo-events.mjs
  */
 const API = process.env.API_URL ?? "http://localhost:3001";

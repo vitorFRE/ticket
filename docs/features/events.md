@@ -117,12 +117,12 @@ pnpm --filter api test:e2e
 
 ## Seed
 
-`pnpm --filter api prisma:seed` cria 2 eventos publicados do organizer:
+`pnpm --filter api prisma:seed` recria contas e o cartaz do organizer. Filmes vêm do TMDb (pôster + sinopse); shows do Ticketmaster quando a key existe. Datas são à frente de hoje.
 
-| ID | Modo | external |
+| ID estável | Modo | Origem |
 |----|------|----------|
-| `00000000-0000-4000-8000-000000000001` | `SEAT_MAP` | TMDB `movie:550` |
-| `00000000-0000-4000-8000-000000000002` | `GA_SECTOR` | TICKETMASTER `seed-tm-event-1` |
+| `00000000-0000-4000-8000-000000000001` | `SEAT_MAP` | TMDb (Interestelar) |
+| `00000000-0000-4000-8000-000000000002` | `GA_SECTOR` | Ticketmaster (ou fallback TMDb) |
 
 ## Limitações (este passo)
 
