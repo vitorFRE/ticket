@@ -23,7 +23,7 @@ export function GateEventPicker({
   }
 
   return (
-    <ul className="max-w-xl divide-y divide-white/6">
+    <ul className="max-w-xl divide-y divide-border">
       {events.map((event) => {
         const active = event.id === selectedId;
         const closed = !isGateOpen(event.startsAt, event.gateOpensHoursBefore);
@@ -46,7 +46,7 @@ export function GateEventPicker({
               </span>
               <span className="text-sm text-muted-foreground">
                 {formatDate(event.startsAt)}
-                <span className="mx-2 text-white/20">/</span>
+                <span className="mx-2 text-foreground/20">/</span>
                 {event.venue}
               </span>
               {closed && opensAt ? (

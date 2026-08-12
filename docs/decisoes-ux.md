@@ -52,11 +52,12 @@ Não usa a pílula `rounded-full` do shell antigo. A conta abre um menu (lista +
 
 ## Tom visual
 
-Manter o editorial do ticketim (dark, âmbar, sem card de vidro extra):
+Manter o editorial do ticketim (âmbar, sem card de vidro extra). Tema **light** é o default; dark opcional via toggle no header/login (`next-themes`, classe `.dark`).
 
 - Hold no detalhe do evento = uma linha, não um widget no lugar do Reservar.
 - Hold no checkout = o bloco forte.
 - Status de recusa/expirado = tipografia grande no fluxo, sem alerta vermelho de canto.
+- Imagens de marca/erro: pares `-light` / `-dark` em `/public/images` (login, page-missing, event-missing).
 
 ## Lab (avaliador)
 

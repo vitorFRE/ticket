@@ -176,7 +176,7 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
                   </h1>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {formatDate(event.startsAt)}
-                    <span className="mx-2 text-white/25">/</span>
+                    <span className="mx-2 text-foreground/25">/</span>
                     {event.venue}
                   </p>
                   <GateLimitNote
@@ -184,7 +184,7 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
                     className="mt-2"
                   />
                   {pendingHold ? null : (
-                    <p className="mt-2 text-xs text-white/40">
+                    <p className="mt-2 text-xs text-muted-foreground">
                       Os lugares ficam reservados por 15 minutos.
                     </p>
                   )}

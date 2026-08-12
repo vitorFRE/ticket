@@ -104,7 +104,7 @@ export function EventsAdvancedFilters({
       {open ? (
         <div
           id={panelId}
-          className="grid gap-4 border-t border-white/8 pt-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-4 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-4"
         >
           <FilterField label="De">
             <input
@@ -171,7 +171,7 @@ function FilterField({
 }) {
   return (
     <label className={cn("block space-y-1.5", className)}>
-      <span className="text-[11px] uppercase tracking-[0.14em] text-white/40">
+      <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
         {label}
       </span>
       {children}
@@ -180,7 +180,7 @@ function FilterField({
 }
 
 const inputClass =
-  "h-10 w-full border-0 border-b border-white/12 bg-transparent px-0 text-sm outline-none transition-colors placeholder:text-white/25 focus:border-primary/50";
+  "h-10 w-full border-0 border-b border-border bg-transparent px-0 text-sm outline-none transition-colors placeholder:text-foreground/25 focus:border-primary/50";
 
 function countActive(filters: AdvancedEventFilters) {
   let n = 0;

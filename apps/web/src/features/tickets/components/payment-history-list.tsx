@@ -16,7 +16,7 @@ export function PaymentHistoryList({
   reservations: ReservationDetail[];
 }) {
   return (
-    <ul className='max-w-xl divide-y divide-white/10'>
+    <ul className='max-w-xl divide-y divide-border'>
       {reservations.map((reservation) => {
         const href = reservationHref(reservation);
         const body = (
@@ -28,18 +28,18 @@ export function PaymentHistoryList({
                 className='h-18 w-12 shrink-0 rounded-sm object-cover'
               />
             ) : (
-              <div className='h-18 w-12 shrink-0 rounded-sm bg-white/6' />
+              <div className='h-18 w-12 shrink-0 rounded-sm bg-accent' />
             )}
             <div className='min-w-0 flex-1'>
               <p className='font-medium tracking-tight'>{reservation.event.title}</p>
               <p className='mt-1 text-sm text-muted-foreground'>
                 {formatDate(reservation.createdAt ?? reservation.event.startsAt)}
-                <span className='mx-2 text-white/25'>/</span>
+                <span className='mx-2 text-foreground/25'>/</span>
                 {reservationLineItems(reservation) || reservation.event.venue}
               </p>
-              <p className='mt-2 text-sm text-white/55'>
+              <p className='mt-2 text-sm text-muted-foreground'>
                 {formatPrice(reservationTotalCents(reservation))}
-                <span className='mx-2 text-white/25'>/</span>
+                <span className='mx-2 text-foreground/25'>/</span>
                 {reservationStatusLabel(reservation.status)}
               </p>
             </div>

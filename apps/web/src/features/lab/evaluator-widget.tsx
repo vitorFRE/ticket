@@ -73,10 +73,10 @@ export function EvaluatorWidget() {
           <aside
             className={cn(
               "w-[min(calc(100vw-2rem),20.5rem)] overflow-hidden rounded-lg",
-              "border border-white/10 bg-background/92 shadow-[0_16px_48px_rgba(0,0,0,0.45)] backdrop-blur-md"
+              "border border-border bg-background/92 shadow-[0_16px_48px_rgba(0,0,0,0.45)] backdrop-blur-md"
             )}
           >
-            <header className='flex items-start justify-between gap-3 border-b border-white/6 px-4 py-3'>
+            <header className='flex items-start justify-between gap-3 border-b border-border px-4 py-3'>
               <div>
                 <p className='text-[10px] font-medium uppercase tracking-[0.18em] text-primary'>
                   Lab avaliador
@@ -86,7 +86,7 @@ export function EvaluatorWidget() {
               <button
                 type='button'
                 onClick={() => toggle(false)}
-                className='flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-white/6 hover:text-foreground'
+                className='flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground'
                 aria-label='Fechar lab avaliador'
               >
                 <XIcon size={16} weight='bold' />
@@ -126,7 +126,7 @@ export function EvaluatorWidget() {
                         className={cn(
                           "flex w-full items-center justify-between gap-3 rounded-xl px-2.5 py-2 text-left transition-colors",
                           "disabled:opacity-50",
-                          active ? "bg-primary/12 text-foreground" : "hover:bg-white/5"
+                          active ? "bg-primary/12 text-foreground" : "hover:bg-accent"
                         )}
                       >
                         <span>
@@ -165,7 +165,7 @@ export function EvaluatorWidget() {
                 </button>
               ) : null}
 
-              <section className='border-t border-white/6 pt-3'>
+              <section className='border-t border-border pt-3'>
                 <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>
                   Atalhos
                 </p>
@@ -182,7 +182,7 @@ export function EvaluatorWidget() {
                 </div>
               </section>
 
-              <p className='border-t border-white/6 pt-3 font-mono text-[11px] leading-relaxed text-muted-foreground'>
+              <p className='border-t border-border pt-3 font-mono text-[11px] leading-relaxed text-muted-foreground'>
                 senha {SEED_PASSWORD}
                 <br />
                 api {getApiBaseUrl()}
@@ -195,9 +195,9 @@ export function EvaluatorWidget() {
           type='button'
           onClick={() => toggle(!open)}
           className={cn(
-            "inline-flex h-11 items-center gap-2 rounded-full border border-white/12 bg-background/90 px-3.5",
+            "inline-flex h-11 items-center gap-2 rounded-full border border-border bg-background/90 px-3.5",
             "text-sm font-medium text-foreground shadow-[0_8px_24px_rgba(0,0,0,0.4)] backdrop-blur-md",
-            "transition-[transform,background-color] hover:bg-white/6 active:scale-[0.98]"
+            "transition-[transform,background-color] hover:bg-accent active:scale-[0.98]"
           )}
           aria-expanded={open}
           aria-label={open ? "Fechar lab avaliador" : "Abrir lab avaliador"}
@@ -231,7 +231,7 @@ function LabChip({
     <Link
       href={href}
       title={hint}
-      className='rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted-foreground transition-colors hover:border-white/20 hover:text-foreground'
+      className='rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground transition-colors hover:border-border hover:text-foreground'
     >
       {children}
     </Link>

@@ -41,7 +41,7 @@ export function WizardDetailsStep({
   return (
     <div className="max-w-xl space-y-6">
       <label className="block">
-        <span className="text-[13px] text-white/40">Local</span>
+        <span className="text-[13px] text-muted-foreground">Local</span>
         <input
           value={venue}
           onChange={(e) => onVenue(e.target.value)}
@@ -49,7 +49,7 @@ export function WizardDetailsStep({
         />
       </label>
       <label className="block">
-        <span className="text-[13px] text-white/40">Data e hora</span>
+        <span className="text-[13px] text-muted-foreground">Data e hora</span>
         <input
           type="datetime-local"
           value={startsAt}
@@ -64,7 +64,7 @@ export function WizardDetailsStep({
         onHours={onGateOpensHoursBefore}
       />
       <label className="block">
-        <span className="text-[13px] text-white/40">Preço base (R$)</span>
+        <span className="text-[13px] text-muted-foreground">Preço base (R$)</span>
         <input
           value={price}
           onChange={(e) => onPrice(e.target.value)}
@@ -83,7 +83,7 @@ export function WizardDetailsStep({
         <button
           type="button"
           onClick={onBack}
-          className="text-sm text-white/50 underline-offset-4 hover:text-foreground hover:underline"
+          className="text-sm text-foreground/50 underline-offset-4 hover:text-foreground hover:underline"
         >
           Voltar
         </button>
@@ -93,4 +93,4 @@ export function WizardDetailsStep({
 }
 
 const fieldClass =
-  "mt-1.5 w-full border-0 border-b border-white/12 bg-transparent px-0 py-2 text-sm outline-none";
+  "mt-1.5 w-full border-0 border-b border-border bg-transparent px-0 py-2 text-sm outline-none";

@@ -11,8 +11,13 @@ describe("OrganizerEventTicketsList", () => {
   });
 
   it("shows loading state", () => {
-    render(<OrganizerEventTicketsList items={[]} loading />);
-    expect(screen.getByText("Carregando...")).toBeInTheDocument();
+    const { container } = render(
+      <OrganizerEventTicketsList items={[]} loading />,
+    );
+    expect(container.querySelector('[aria-hidden="true"]')).toBeTruthy();
+    expect(
+      screen.queryByText("Carregando..."),
+    ).not.toBeInTheDocument();
   });
 
   it("renders ticket rows with seat and status", () => {

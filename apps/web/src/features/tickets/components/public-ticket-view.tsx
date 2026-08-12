@@ -38,7 +38,7 @@ export function PublicTicketView({ ticket }: { ticket: PublicTicket }) {
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 {formatDate(ticket.event.startsAt)}
-                <span className="mx-2 text-white/25">/</span>
+                <span className="mx-2 text-foreground/25">/</span>
                 {ticket.event.venue}
               </p>
               <GateLimitNote
@@ -52,19 +52,19 @@ export function PublicTicketView({ ticket }: { ticket: PublicTicket }) {
             <p className="text-3xl font-semibold tracking-[-0.03em]">
               {ticketPlace(ticket)}
             </p>
-            <p className="mt-2 text-sm text-white/50">
+            <p className="mt-2 text-sm text-foreground/50">
               {ticketStatusLabel(ticket.status)}
             </p>
-            <p className="mt-4 font-mono text-sm tracking-wide text-white/40">
+            <p className="mt-4 font-mono text-sm tracking-wide text-muted-foreground">
               {ticket.code}
             </p>
             {used ? (
-              <p className="mt-4 text-sm text-white/45">
+              <p className="mt-4 text-sm text-muted-foreground">
                 Já foi usado na porta.
               </p>
             ) : null}
             {voided ? (
-              <p className="mt-4 text-sm text-white/45">
+              <p className="mt-4 text-sm text-muted-foreground">
                 Este ingresso foi anulado.
               </p>
             ) : null}

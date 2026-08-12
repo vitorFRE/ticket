@@ -43,16 +43,16 @@ function SeatButton({
         "h-8 w-7 shrink-0 rounded-t-md rounded-b-[3px] border text-[10px] font-medium transition-colors",
         taken &&
           !heldByYou &&
-          "cursor-not-allowed border-transparent bg-white/[0.06] text-white/20",
+          "cursor-not-allowed border-transparent bg-muted text-foreground/20",
         heldByYou &&
           "cursor-not-allowed border-primary/50 bg-primary/25 text-primary",
         locked &&
           !taken &&
           !heldByYou &&
-          "cursor-not-allowed border-white/8 bg-transparent text-white/25",
+          "cursor-not-allowed border-border bg-transparent text-foreground/25",
         !blocked &&
           !active &&
-          "border-white/12 bg-white/[0.04] text-white/70 hover:border-primary/70 hover:bg-primary/15 hover:text-foreground",
+          "border-border bg-card/60 text-muted-foreground hover:border-primary/70 hover:bg-primary/15 hover:text-foreground",
         active && "border-primary bg-primary text-primary-foreground",
       )}
       aria-pressed={active}
@@ -95,8 +95,8 @@ export function SeatMapPicker({
     <div className="space-y-10">
       <div className="mx-auto w-full max-w-xl">
         <div className="mb-8 px-8">
-          <div className="h-1.5 rounded-full bg-gradient-to-r from-transparent via-white/45 to-transparent" />
-          <p className="mt-3 text-center text-[11px] tracking-[0.28em] text-white/40">
+          <div className="h-1.5 rounded-full bg-gradient-to-r from-transparent via-foreground/40 to-transparent" />
+          <p className="mt-3 text-center text-[11px] tracking-[0.28em] text-muted-foreground">
             TELA
           </p>
         </div>
@@ -111,7 +111,7 @@ export function SeatMapPicker({
                 key={row}
                 className="flex items-center justify-center gap-3"
               >
-                <span className="w-4 text-right text-[11px] text-white/35">
+                <span className="w-4 text-right text-[11px] text-foreground/35">
                   {row}
                 </span>
                 <div className="flex items-center gap-1.5">
@@ -139,15 +139,15 @@ export function SeatMapPicker({
                     />
                   ))}
                 </div>
-                <span className="w-4 text-[11px] text-white/35">{row}</span>
+                <span className="w-4 text-[11px] text-foreground/35">{row}</span>
               </div>
             );
           })}
         </div>
 
-        <ul className="mt-8 flex flex-wrap items-center justify-center gap-5 text-[11px] text-white/50">
+        <ul className="mt-8 flex flex-wrap items-center justify-center gap-5 text-[11px] text-foreground/50">
           <li className="flex items-center gap-2">
-            <span className="h-3 w-3 rounded-t-sm border border-white/12 bg-white/[0.04]" />
+            <span className="h-3 w-3 rounded-t-sm border border-border bg-card/60" />
             Livre
           </li>
           {locked ? null : (
@@ -163,13 +163,13 @@ export function SeatMapPicker({
             </li>
           ) : null}
           <li className="flex items-center gap-2">
-            <span className="h-3 w-3 rounded-t-sm bg-white/[0.06]" />
+            <span className="h-3 w-3 rounded-t-sm bg-muted" />
             Ocupado
           </li>
         </ul>
       </div>
 
-      <div className="flex flex-wrap items-end justify-between gap-4 border-t border-white/10 pt-6">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-t border-border pt-6">
         <div>
           <p className="text-xs text-muted-foreground">
             {locked

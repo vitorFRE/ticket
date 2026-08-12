@@ -50,13 +50,13 @@ export function WizardConfirmStep({
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {startsAt.replace("T", " ")}
-            <span className="mx-2 text-white/25">/</span>
+            <span className="mx-2 text-foreground/25">/</span>
             {venue}
           </p>
         </div>
       </div>
 
-      <div className="space-y-2 text-sm text-white/55">
+      <div className="space-y-2 text-sm text-muted-foreground">
         <p>{priceLabel}</p>
         <p>
           Portaria: {gateHoursLabel(gateOpensHoursBefore)}
@@ -97,7 +97,7 @@ export function WizardConfirmStep({
         <button
           type="button"
           onClick={onBack}
-          className="text-sm text-white/50 underline-offset-4 hover:text-foreground hover:underline"
+          className="text-sm text-foreground/50 underline-offset-4 hover:text-foreground hover:underline"
         >
           Voltar
         </button>

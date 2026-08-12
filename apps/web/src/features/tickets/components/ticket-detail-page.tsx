@@ -95,7 +95,7 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 {formatDate(ticket.event.startsAt)}
-                <span className="mx-2 text-white/25">/</span>
+                <span className="mx-2 text-foreground/25">/</span>
                 {ticket.event.venue}
               </p>
               <GateLimitNote
@@ -107,21 +107,21 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
 
           <div>
             <TicketQr payload={ticket.code} faded={used || voided} />
-            <p className="mt-5 font-mono text-sm tracking-wide text-white/70">
+            <p className="mt-5 font-mono text-sm tracking-wide text-muted-foreground">
               {ticket.code}
             </p>
-            <p className="mt-2 text-sm text-white/50">
+            <p className="mt-2 text-sm text-foreground/50">
               {ticketPlace(ticket)}
-              <span className="mx-2 text-white/25">/</span>
+              <span className="mx-2 text-foreground/25">/</span>
               {ticketStatusLabel(ticket.status)}
             </p>
             {used ? (
-              <p className="mt-4 text-sm text-white/45">
+              <p className="mt-4 text-sm text-muted-foreground">
                 Já foi usado na porta.
               </p>
             ) : null}
             {voided ? (
-              <p className="mt-4 text-sm text-white/45">
+              <p className="mt-4 text-sm text-muted-foreground">
                 Este ingresso foi anulado.
               </p>
             ) : null}
@@ -132,7 +132,7 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
               type="button"
               onClick={() => void onShare()}
               disabled={shareState === "copying"}
-              className="text-sm text-white/70 underline-offset-4 transition-colors hover:text-foreground hover:underline disabled:opacity-40"
+              className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline disabled:opacity-40"
             >
               {shareState === "copied"
                 ? "Link copiado"

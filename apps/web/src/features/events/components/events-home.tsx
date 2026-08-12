@@ -245,7 +245,7 @@ function HomeSearch({
           glassSubtle,
           "relative transition-[box-shadow,border-color,background-color] duration-200",
           focused &&
-            "border-primary/50 bg-white/6 shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary)_28%,transparent)]",
+            "border-primary/50 bg-accent shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary)_28%,transparent)]",
         )}
       >
         <MagnifyingGlassIcon
@@ -281,7 +281,7 @@ function HomeSearch({
           <button
             type="button"
             onClick={() => onQuery("")}
-            className="absolute top-1/2 right-2.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-white/8 hover:text-foreground"
+            className="absolute top-1/2 right-2.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             aria-label="Limpar busca"
           >
             <XIcon size={14} weight="bold" />

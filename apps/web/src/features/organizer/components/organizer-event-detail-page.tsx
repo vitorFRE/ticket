@@ -154,7 +154,7 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 {eventStatusLabel(event.status)}
-                <span className="mx-2 text-white/25">/</span>
+                <span className="mx-2 text-foreground/25">/</span>
                 {modeLabel(event.inventoryMode)}
               </p>
             </div>
@@ -165,7 +165,7 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
                   {formatDate(event.startsAt)}
-                  <span className="mx-2 text-white/25">/</span>
+                  <span className="mx-2 text-foreground/25">/</span>
                   {event.venue}
                 </p>
                 <p className="text-sm text-muted-foreground">
@@ -189,9 +189,12 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
                   Não foi possível carregar as métricas.
                 </p>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  Carregando métricas...
-                </p>
+                <div className="grid grid-cols-2 gap-6 sm:grid-cols-4" aria-hidden>
+                  <div className="h-14 animate-pulse rounded-md bg-muted" />
+                  <div className="h-14 animate-pulse rounded-md bg-muted" />
+                  <div className="h-14 animate-pulse rounded-md bg-muted" />
+                  <div className="h-14 animate-pulse rounded-md bg-muted" />
+                </div>
               )}
 
               <OrganizerEventTicketsList
@@ -266,7 +269,7 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
                   type="button"
                   disabled={publish.isPending}
                   onClick={() => void onPublish()}
-                  className="text-sm text-white/70 underline-offset-4 hover:text-foreground hover:underline disabled:opacity-40"
+                  className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline disabled:opacity-40"
                 >
                   {publish.isPending ? "Publicando..." : "Publicar"}
                 </button>
@@ -280,12 +283,12 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
 }
 
 const fieldClass =
-  "mt-1.5 w-full border-0 border-b border-white/12 bg-transparent px-0 py-2 text-sm outline-none";
+  "mt-1.5 w-full border-0 border-b border-border bg-transparent px-0 py-2 text-sm outline-none";
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="text-[13px] text-white/40">{label}</span>
+      <span className="text-[13px] text-muted-foreground">{label}</span>
       {children}
     </label>
   );

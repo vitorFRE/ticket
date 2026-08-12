@@ -32,13 +32,13 @@ export function PendingHoldNotice({
         </p>
       ) : null}
       <p
-        className={`mt-1 text-sm leading-relaxed text-white/40 ${end ? "ml-auto max-w-[22ch]" : "max-w-[28ch]"}`}
+        className={`mt-1 text-sm leading-relaxed text-muted-foreground ${end ? "ml-auto max-w-[22ch]" : "max-w-[28ch]"}`}
       >
         Se não pagar, esses lugares voltam à lista.
       </p>
       <Link
         href={`/reservations/${reservation.id}/pay`}
-        className="mt-4 inline-block text-sm text-white/70 underline-offset-4 transition-colors hover:text-foreground hover:underline"
+        className="mt-4 inline-block text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
       >
         Pagar agora
       </Link>

@@ -49,23 +49,23 @@ export function OrganizerEventTile({
         </h2>
         <p className="mt-1 truncate text-xs text-muted-foreground">
           {formatDate(event.startsAt)}
-          <span className="mx-1.5 text-white/20">/</span>
+          <span className="mx-1.5 text-foreground/20">/</span>
           {event.venue}
         </p>
       </Link>
 
-      <p className="mt-2 text-xs tabular-nums text-white/55">
+      <p className="mt-2 text-xs tabular-nums text-muted-foreground">
         {sold} vendido{sold === 1 ? "" : "s"}
-        <span className="mx-1.5 text-white/20">/</span>
+        <span className="mx-1.5 text-foreground/20">/</span>
         {Math.round(occupancy * 100)}%
-        <span className="mx-1.5 text-white/20">/</span>
+        <span className="mx-1.5 text-foreground/20">/</span>
         {formatPrice(revenue)}
       </p>
 
       <div className="mt-1.5 flex items-baseline justify-between gap-3">
-        <p className="text-xs text-white/45">
+        <p className="text-xs text-muted-foreground">
           {eventStatusLabel(event.status)}
-          <span className="mx-2 text-white/20">/</span>
+          <span className="mx-2 text-foreground/20">/</span>
           {modeLabel(event.inventoryMode)}
         </p>
         {draft ? (

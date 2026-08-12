@@ -87,8 +87,8 @@ export function ReservationPayContent({
 
       {pending ? (
         <div className="max-w-xl">
-          <div className="flex items-end justify-between gap-6 border-t border-white/10 pt-6">
-            <p className="text-sm text-white/50">{items || "Reserva"}</p>
+          <div className="flex items-end justify-between gap-6 border-t border-border pt-6">
+            <p className="text-sm text-foreground/50">{items || "Reserva"}</p>
             <p className="text-3xl font-semibold tracking-tight">{total}</p>
           </div>
           <div className="mt-10 space-y-8">
@@ -111,7 +111,7 @@ export function ReservationPayContent({
                 type="button"
                 disabled={!canPay}
                 onClick={() => onPay("REJECTED")}
-                className="text-sm text-white/40 underline-offset-4 transition-colors hover:text-white/70 hover:underline disabled:opacity-30"
+                className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-muted-foreground hover:underline disabled:opacity-30"
               >
                 {submitting === "REJECTED" ? "Recusando..." : "Simular rejeição"}
               </button>
@@ -145,7 +145,7 @@ function EventHeading({
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {formatDate(reservation.event.startsAt)}
-          <span className="mx-2 text-white/25">/</span>
+          <span className="mx-2 text-foreground/25">/</span>
           {reservation.event.venue}
         </p>
       </div>
@@ -159,7 +159,7 @@ function HoldClock({ remainingMs }: { remainingMs: number }) {
       <p className="font-mono text-[2.25rem] leading-none font-medium tracking-tight tabular-nums text-primary">
         {formatCountdown(remainingMs)}
       </p>
-      <p className="mt-3 ml-auto max-w-[22ch] text-sm leading-relaxed text-white/40">
+      <p className="mt-3 ml-auto max-w-[22ch] text-sm leading-relaxed text-muted-foreground">
         Se não pagar, esses lugares voltam à lista.
       </p>
     </div>
@@ -186,12 +186,12 @@ function ResultBlock({
       <h2 className="text-3xl font-semibold tracking-[-0.03em] md:text-4xl">
         {title}
       </h2>
-      <p className="mt-3 max-w-[40ch] text-base leading-relaxed text-white/55">
+      <p className="mt-3 max-w-[40ch] text-base leading-relaxed text-muted-foreground">
         {body}
       </p>
-      <div className="mt-10 flex items-end justify-between gap-6 border-t border-white/10 pt-6">
-        <p className="text-sm text-white/40">{items || "Reserva"}</p>
-        <p className="text-2xl font-semibold tracking-tight text-white/70">{total}</p>
+      <div className="mt-10 flex items-end justify-between gap-6 border-t border-border pt-6">
+        <p className="text-sm text-muted-foreground">{items || "Reserva"}</p>
+        <p className="text-2xl font-semibold tracking-tight text-muted-foreground">{total}</p>
       </div>
       {actionHref && actionLabel ? (
         <Link

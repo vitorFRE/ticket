@@ -86,7 +86,7 @@ export function GateLiveScan({
           autoPlay
         />
         {status === "starting" ? (
-          <p className="absolute inset-0 flex items-center justify-center text-sm text-white/50">
+          <p className="absolute inset-0 flex items-center justify-center text-sm text-foreground/50">
             Abrindo câmera...
           </p>
         ) : null}

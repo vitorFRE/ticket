@@ -15,7 +15,7 @@ export function GateLimitNote({
   return (
     <p
       className={cn(
-        "flex items-center gap-1.5 text-sm tracking-[-0.01em] text-white/50",
+        "flex items-center gap-1.5 text-sm tracking-[-0.01em] text-foreground/50",
         className,
       )}
     >

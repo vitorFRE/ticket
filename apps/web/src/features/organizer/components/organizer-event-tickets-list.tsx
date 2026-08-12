@@ -18,11 +18,15 @@ export function OrganizerEventTicketsList({
 }) {
   return (
     <section className="space-y-4">
-      <h2 className="text-sm font-medium tracking-tight text-white/50">
+      <h2 className="text-sm font-medium tracking-tight text-foreground/50">
         Ingressos
       </h2>
       {loading ? (
-        <p className="text-sm text-muted-foreground">Carregando...</p>
+        <div className="space-y-3" aria-hidden>
+          <div className="h-10 animate-pulse rounded-md bg-muted" />
+          <div className="h-10 animate-pulse rounded-md bg-muted" />
+          <div className="h-10 w-2/3 animate-pulse rounded-md bg-muted" />
+        </div>
       ) : null}
       {!loading && items.length === 0 ? (
         <p className="text-sm text-muted-foreground">
@@ -30,7 +34,7 @@ export function OrganizerEventTicketsList({
         </p>
       ) : null}
       {!loading && items.length > 0 ? (
-        <ul className="divide-y divide-white/8 border-t border-white/8">
+        <ul className="divide-y divide-border border-t border-border">
           {items.map((ticket) => (
             <li
               key={ticket.id}
@@ -40,7 +44,7 @@ export function OrganizerEventTicketsList({
                 <p className="font-medium tracking-tight">
                   {ticket.seatLabel ?? ticket.sectorName ?? "Ingresso"}
                 </p>
-                <p className="mt-0.5 truncate font-mono text-xs text-white/40">
+                <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
                   {ticket.code}
                 </p>
               </div>

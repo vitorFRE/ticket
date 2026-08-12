@@ -65,7 +65,7 @@ export function GateResult({
           {copy.title}
         </h2>
       )}
-      <p className="mt-4 max-w-[36ch] text-base leading-relaxed text-white/55">
+      <p className="mt-4 max-w-[36ch] text-base leading-relaxed text-muted-foreground">
         {copy.body}
       </p>
       {data.ticket ? (

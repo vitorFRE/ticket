@@ -42,14 +42,14 @@ export function WizardInventoryStep({
         <button
           type="button"
           onClick={() => onMode("SEAT_MAP")}
-          className={mode === "SEAT_MAP" ? "text-foreground underline underline-offset-4" : "text-white/40"}
+          className={mode === "SEAT_MAP" ? "text-foreground underline underline-offset-4" : "text-muted-foreground"}
         >
           Mapa de assentos
         </button>
         <button
           type="button"
           onClick={() => onMode("GA_SECTOR")}
-          className={mode === "GA_SECTOR" ? "text-foreground underline underline-offset-4" : "text-white/40"}
+          className={mode === "GA_SECTOR" ? "text-foreground underline underline-offset-4" : "text-muted-foreground"}
         >
           Setores
         </button>
@@ -58,7 +58,7 @@ export function WizardInventoryStep({
       {mode === "SEAT_MAP" ? (
         <div className="space-y-5">
           <label className="block">
-            <span className="text-[13px] text-white/40">Fileiras</span>
+            <span className="text-[13px] text-muted-foreground">Fileiras</span>
             <input
               value={rows}
               onChange={(e) => onRows(e.target.value)}
@@ -66,7 +66,7 @@ export function WizardInventoryStep({
             />
           </label>
           <label className="block">
-            <span className="text-[13px] text-white/40">Lugares por fileira</span>
+            <span className="text-[13px] text-muted-foreground">Lugares por fileira</span>
             <input
               value={seatsPerRow}
               onChange={(e) => onSeatsPerRow(e.target.value)}
@@ -77,9 +77,9 @@ export function WizardInventoryStep({
       ) : (
         <div className="space-y-6">
           {sectors.map((sector, index) => (
-            <div key={index} className="space-y-3 border-b border-white/10 pb-5">
+            <div key={index} className="space-y-3 border-b border-border pb-5">
               <label className="block">
-                <span className="text-[13px] text-white/40">Nome</span>
+                <span className="text-[13px] text-muted-foreground">Nome</span>
                 <input
                   value={sector.name}
                   onChange={(e) => updateSector(index, { name: e.target.value })}
@@ -88,7 +88,7 @@ export function WizardInventoryStep({
               </label>
               <div className="grid grid-cols-2 gap-6">
                 <label className="block">
-                  <span className="text-[13px] text-white/40">Capacidade</span>
+                  <span className="text-[13px] text-muted-foreground">Capacidade</span>
                   <input
                     value={sector.capacity}
                     onChange={(e) =>
@@ -98,7 +98,7 @@ export function WizardInventoryStep({
                   />
                 </label>
                 <label className="block">
-                  <span className="text-[13px] text-white/40">Preço (opcional)</span>
+                  <span className="text-[13px] text-muted-foreground">Preço (opcional)</span>
                   <input
                     value={sector.price}
                     onChange={(e) => updateSector(index, { price: e.target.value })}
@@ -114,7 +114,7 @@ export function WizardInventoryStep({
               onClick={() =>
                 onSectors([...sectors, { name: "", capacity: "", price: "" }])
               }
-              className="inline-flex items-center gap-1 text-sm text-white/60 hover:text-foreground"
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
             >
               <PlusIcon size={14} weight="bold" />
               Setor
@@ -123,7 +123,7 @@ export function WizardInventoryStep({
               <button
                 type="button"
                 onClick={() => onSectors(sectors.slice(0, -1))}
-                className="inline-flex items-center gap-1 text-sm text-white/40 hover:text-foreground"
+                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
               >
                 <MinusIcon size={14} weight="bold" />
                 Remover último
@@ -145,7 +145,7 @@ export function WizardInventoryStep({
         <button
           type="button"
           onClick={onBack}
-          className="text-sm text-white/50 underline-offset-4 hover:text-foreground hover:underline"
+          className="text-sm text-foreground/50 underline-offset-4 hover:text-foreground hover:underline"
         >
           Voltar
         </button>
@@ -155,4 +155,4 @@ export function WizardInventoryStep({
 }
 
 const fieldClass =
-  "mt-1.5 w-full border-0 border-b border-white/12 bg-transparent px-0 py-2 text-sm outline-none";
+  "mt-1.5 w-full border-0 border-b border-border bg-transparent px-0 py-2 text-sm outline-none";

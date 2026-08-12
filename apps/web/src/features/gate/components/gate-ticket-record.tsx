@@ -30,14 +30,14 @@ export function GateTicketRecord({
   rows.push({ label: "Código", value: ticket.code, mono: true });
 
   return (
-    <dl className="mt-8 max-w-md space-y-3 border-t border-white/10 pt-6 text-sm">
+    <dl className="mt-8 max-w-md space-y-3 border-t border-border pt-6 text-sm">
       {rows.map((row) => (
         <div key={row.label} className="flex flex-wrap gap-x-4 gap-y-0.5">
           <dt className="w-20 shrink-0 text-muted-foreground">{row.label}</dt>
           <dd
             className={
               row.mono
-                ? "font-mono text-xs break-all text-white/55"
+                ? "font-mono text-xs break-all text-muted-foreground"
                 : row.strong
                   ? "font-medium text-foreground"
                   : undefined

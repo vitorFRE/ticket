@@ -113,7 +113,7 @@ function NavButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="inline-flex size-8 items-center justify-center rounded-md border border-white/12 text-foreground transition-colors hover:bg-white/5 disabled:pointer-events-none disabled:opacity-30 active:scale-[0.98]"
+      className="inline-flex size-8 items-center justify-center rounded-md border border-border text-foreground transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-30 active:scale-[0.98]"
     >
       {children}
     </button>

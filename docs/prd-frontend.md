@@ -14,7 +14,7 @@ Fatias de API: [docs/features/](./features/).
 
 A API cobre auth, catálogo, eventos/inventário, reservas, pagamento simulado, tickets/QR/share e gate. O web do MVP (F1–F7) está fechado: detalhe, checkout, pay, tickets, organizador, portaria e shell/roles. README/deploy ficam no passo 8 do PRD raiz.
 
-Marca e visual: **ticketim**, dark + âmbar, glass cards, header pill, login com imagem de plateia.
+Marca e visual: **ticketim**, light default + dark opcional, âmbar, glass cards, login com imagem de plateia.
 
 ---
 
@@ -39,8 +39,8 @@ Seed (senha `Password123!`): `client1@` / `client2@` / `organizer@` / `gate@` �
 
 ## 3. Design system (já em uso — manter)
 
-- Dark-first, primary âmbar (`oklch` ~75), ambient + grain
-- Header flutuante `rounded-full`, cards glass (`rounded-[2rem]`)
+- Light default / dark via toggle (`next-themes`), primary âmbar (`oklch`), ambient + grain
+- Header sticky, cards glass / tokens semânticos
 - Ícones: `@phosphor-icons/react` apenas
 - Motion leve (reveal / hover); debounce em buscas
 - Sem register UI no MVP; sem cookies httpOnly nesta fase

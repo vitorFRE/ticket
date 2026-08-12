@@ -133,7 +133,7 @@ export function OrganizerNewEventPage() {
       <h1 className="mb-2 text-3xl font-semibold tracking-[-0.03em]">
         Novo evento
       </h1>
-      <p className="mb-10 text-sm text-white/40">Passo {state.step} de 5</p>
+      <p className="mb-10 text-sm text-muted-foreground">Passo {state.step} de 5</p>
 
       {state.step === 1 ? (
         <WizardSourceStep

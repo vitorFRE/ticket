@@ -6,7 +6,7 @@ import type { EventStats } from "@/features/organizer/types";
 export function OrganizerEventStats({ stats }: { stats: EventStats }) {
   return (
     <section className="space-y-6">
-      <h2 className="text-sm font-medium tracking-tight text-white/50">
+      <h2 className="text-sm font-medium tracking-tight text-foreground/50">
         Métricas
       </h2>
       <dl className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
@@ -26,16 +26,16 @@ export function OrganizerEventStats({ stats }: { stats: EventStats }) {
         </p>
       ) : null}
       {stats.seats ? (
-        <p className="text-xs text-white/45">
+        <p className="text-xs text-muted-foreground">
           Assentos: {stats.seats.available} livres
-          <span className="mx-1.5 text-white/20">/</span>
+          <span className="mx-1.5 text-foreground/20">/</span>
           {stats.seats.held} em hold
-          <span className="mx-1.5 text-white/20">/</span>
+          <span className="mx-1.5 text-foreground/20">/</span>
           {stats.seats.sold} vendidos
         </p>
       ) : null}
       {stats.sectors && stats.sectors.length > 0 ? (
-        <ul className="space-y-2 border-t border-white/8 pt-4">
+        <ul className="space-y-2 border-t border-border pt-4">
           {stats.sectors.map((sector) => (
             <li
               key={sector.id}
@@ -44,7 +44,7 @@ export function OrganizerEventStats({ stats }: { stats: EventStats }) {
               <span>{sector.name}</span>
               <span className="tabular-nums text-muted-foreground">
                 {sector.sold}/{sector.capacity}
-                <span className="mx-1.5 text-white/20">/</span>
+                <span className="mx-1.5 text-foreground/20">/</span>
                 {formatPrice(sector.revenueCents)}
               </span>
             </li>
@@ -58,7 +58,7 @@ export function OrganizerEventStats({ stats }: { stats: EventStats }) {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[11px] uppercase tracking-[0.14em] text-white/40">
+      <dt className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
         {label}
       </dt>
       <dd className="mt-1.5 text-2xl font-semibold tracking-[-0.03em] tabular-nums">

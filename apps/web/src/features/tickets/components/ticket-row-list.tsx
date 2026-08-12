@@ -9,7 +9,7 @@ import type { Ticket } from "@/features/tickets/types";
 
 export function TicketRowList({ tickets }: { tickets: Ticket[] }) {
   return (
-    <ul className="max-w-xl divide-y divide-white/10">
+    <ul className="max-w-xl divide-y divide-border">
       {tickets.map((ticket) => (
         <li key={ticket.id}>
           <Link
@@ -23,22 +23,22 @@ export function TicketRowList({ tickets }: { tickets: Ticket[] }) {
                 className="h-18 w-12 shrink-0 rounded-sm object-cover"
               />
             ) : (
-              <div className="h-18 w-12 shrink-0 rounded-sm bg-white/6" />
+              <div className="h-18 w-12 shrink-0 rounded-sm bg-accent" />
             )}
             <div className="min-w-0 flex-1">
               <p className="font-medium tracking-tight">{ticket.event.title}</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {formatDate(ticket.event.startsAt)}
-                <span className="mx-2 text-white/25">/</span>
+                <span className="mx-2 text-foreground/25">/</span>
                 {ticket.event.venue}
               </p>
               <GateLimitNote
                 hoursBefore={ticket.event.gateOpensHoursBefore}
                 className="mt-1 text-xs"
               />
-              <p className="mt-2 text-sm text-white/55">
+              <p className="mt-2 text-sm text-muted-foreground">
                 {ticketPlace(ticket)}
-                <span className="mx-2 text-white/25">/</span>
+                <span className="mx-2 text-foreground/25">/</span>
                 {ticketStatusLabel(ticket.status)}
               </p>
             </div>

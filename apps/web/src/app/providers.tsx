@@ -1,5 +1,6 @@
 "use client";
 
+import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { AuthProvider } from "@/features/auth/components/auth-provider";
@@ -20,8 +21,16 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const [client] = useState(createQueryClient);
 
   return (
-    <QueryClientProvider client={client}>
-      <AuthProvider>{children}</AuthProvider>
-    </QueryClientProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem={false}
+      storageKey="ticketim-theme"
+      disableTransitionOnChange
+    >
+      <QueryClientProvider client={client}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

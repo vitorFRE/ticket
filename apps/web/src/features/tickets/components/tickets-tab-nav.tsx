@@ -42,7 +42,7 @@ export function TicketsTabNav({
             )}
           >
             {option.label}
-            <span className="ml-1.5 text-xs text-white/35">{option.count}</span>
+            <span className="ml-1.5 text-xs text-foreground/35">{option.count}</span>
           </button>
         );
       })}

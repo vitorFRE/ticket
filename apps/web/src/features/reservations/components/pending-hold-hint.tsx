@@ -19,7 +19,7 @@ export function PendingHoldHint({
   const items = reservationLineItems(reservation);
 
   return (
-    <p className="max-w-xs text-right text-sm leading-relaxed text-white/55">
+    <p className="max-w-xs text-right text-sm leading-relaxed text-muted-foreground">
       {items ? `${items} reservados. ` : "Reserva pendente. "}
       <span className="font-mono tabular-nums text-primary">
         {formatCountdown(remainingMs)}
@@ -27,7 +27,7 @@ export function PendingHoldHint({
       {" · "}
       <Link
         href={`/reservations/${reservation.id}/pay`}
-        className="text-white/80 underline-offset-4 transition-colors hover:text-white hover:underline"
+        className="text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline"
       >
         Pagar
       </Link>

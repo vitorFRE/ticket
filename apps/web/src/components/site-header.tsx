@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SiteBrand } from "@/components/site-brand";
 import { SiteHeaderAccount } from "@/components/site-header-account";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/features/auth/components/auth-provider";
 import type { AuthUser } from "@/features/auth/types";
 
@@ -22,7 +23,7 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/8 bg-background">
+    <header className="sticky top-0 z-50 border-b border-border bg-background">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6 lg:px-8">
         <SiteBrand />
 
@@ -30,11 +31,12 @@ export function SiteHeader() {
           {area && !onArea ? (
             <Link
               href={area.href}
-              className="hidden h-10 items-center rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-white/5 sm:inline-flex"
+              className="hidden h-10 items-center rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent sm:inline-flex"
             >
               {area.label}
             </Link>
           ) : null}
+          <ThemeToggle />
           <SiteHeaderAccount
             user={user}
             isLoading={isLoading}

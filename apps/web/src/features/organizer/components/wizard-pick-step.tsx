@@ -26,7 +26,7 @@ export function WizardPickStep({
           {item.venue ? (
             <p className="mt-1 text-sm text-muted-foreground">{item.venue}</p>
           ) : (
-            <p className="mt-1 text-sm text-white/40">
+            <p className="mt-1 text-sm text-muted-foreground">
               Sem local no catálogo. Você informa no próximo passo.
             </p>
           )}
@@ -43,7 +43,7 @@ export function WizardPickStep({
         <button
           type="button"
           onClick={onBack}
-          className="text-sm text-white/50 underline-offset-4 hover:text-foreground hover:underline"
+          className="text-sm text-foreground/50 underline-offset-4 hover:text-foreground hover:underline"
         >
           Trocar título
         </button>

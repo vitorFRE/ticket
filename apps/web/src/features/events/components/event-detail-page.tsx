@@ -45,7 +45,8 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
         <MissingPage
           title="Evento não encontrado"
           body="Essa sessão saiu de cartaz ou o link não existe."
-          imageSrc="/images/event-missing.jpg"
+          imageSrcLight="/images/event-missing-light.jpg"
+          imageSrcDark="/images/event-missing-dark.jpg"
         />
       ) : null}
 
@@ -73,7 +74,7 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
             <div className="relative mx-auto flex min-h-[78dvh] max-w-6xl flex-col justify-end px-4 pb-12 pt-8 md:px-6 md:pb-16 lg:px-8">
               <Link
                 href="/"
-                className="mb-auto inline-flex w-fit items-center gap-2 text-sm text-white/70 transition-colors hover:text-white"
+                className="mb-auto inline-flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ArrowLeftIcon size={16} weight="bold" />
                 Eventos
@@ -83,11 +84,11 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
                 <h1 className="text-[clamp(2.5rem,7vw,5rem)] font-semibold leading-[1.05] tracking-[-0.045em] text-balance">
                   {event.title}
                 </h1>
-                <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/70 md:text-base">
+                <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
                   {formatDate(event.startsAt)}
-                  <span className="mx-2 text-white/30">/</span>
+                  <span className="mx-2 text-foreground/30">/</span>
                   {event.venue}
-                  <span className="mx-2 text-white/30">/</span>
+                  <span className="mx-2 text-foreground/30">/</span>
                   {kindLabelFromSource(event.externalSource)}
                 </p>
                 <GateLimitNote
@@ -96,16 +97,16 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
                 />
               </div>
 
-              <div className="mt-10 flex flex-wrap items-end justify-between gap-6 border-t border-white/10 pt-8">
+              <div className="mt-10 flex flex-wrap items-end justify-between gap-6 border-t border-border pt-8">
                 <div>
-                  <p className="text-xs text-white/50">A partir de</p>
+                  <p className="text-xs text-foreground/50">A partir de</p>
                   <p className="mt-1 text-3xl font-semibold tracking-tight md:text-4xl">
                     {formatPrice(event.priceCents)}
                   </p>
                 </div>
 
                 {authLoading ? null : isStaff ? (
-                  <p className="max-w-xs text-sm text-white/55">
+                  <p className="max-w-xs text-sm text-muted-foreground">
                     Entre como cliente para reservar.
                   </p>
                 ) : (

@@ -37,7 +37,7 @@ export function SectorPicker({
 
   return (
     <div className="space-y-10">
-      <ul className="divide-y divide-white/10">
+      <ul className="divide-y divide-border">
         {sectors.map((sector) => {
           const active = sector.id === selectedId;
           const soldOut = sector.availableCount < 1;
@@ -57,12 +57,12 @@ export function SectorPicker({
                   <span
                     className={cn(
                       "block text-base font-medium",
-                      active ? "text-foreground" : "text-white/70",
+                      active ? "text-foreground" : "text-muted-foreground",
                     )}
                   >
                     {sector.name}
                   </span>
-                  <span className="mt-1 block text-sm text-white/40">
+                  <span className="mt-1 block text-sm text-muted-foreground">
                     {soldOut
                       ? "Esgotado"
                       : `${sector.availableCount} disponíveis`}
@@ -71,7 +71,7 @@ export function SectorPicker({
                 <span
                   className={cn(
                     "text-sm font-medium",
-                    active ? "text-primary" : "text-white/55",
+                    active ? "text-primary" : "text-muted-foreground",
                   )}
                 >
                   {formatPrice(sector.priceCents)}
@@ -80,7 +80,7 @@ export function SectorPicker({
 
               {active && !locked ? (
                 <div className="mt-4 flex items-center gap-3">
-                  <span className="text-xs text-white/40">
+                  <span className="text-xs text-muted-foreground">
                     Quantidade neste setor
                   </span>
                   <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export function SectorPicker({
                       type="button"
                       onClick={() => onQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
-                      className="flex size-9 items-center justify-center rounded-md border border-white/15 disabled:opacity-40"
+                      className="flex size-9 items-center justify-center rounded-md border border-border disabled:opacity-40"
                       aria-label={`Diminuir ${sector.name}`}
                     >
                       <MinusIcon size={14} weight="bold" />
@@ -100,7 +100,7 @@ export function SectorPicker({
                       type="button"
                       onClick={() => onQuantity(Math.min(max, quantity + 1))}
                       disabled={quantity >= max}
-                      className="flex size-9 items-center justify-center rounded-md border border-white/15 disabled:opacity-40"
+                      className="flex size-9 items-center justify-center rounded-md border border-border disabled:opacity-40"
                       aria-label={`Aumentar ${sector.name}`}
                     >
                       <PlusIcon size={14} weight="bold" />
@@ -113,7 +113,7 @@ export function SectorPicker({
         })}
       </ul>
 
-      <div className="flex flex-wrap items-end justify-between gap-4 border-t border-white/10 pt-6">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-t border-border pt-6">
         <div>
           <p className="text-xs text-muted-foreground">
             {locked

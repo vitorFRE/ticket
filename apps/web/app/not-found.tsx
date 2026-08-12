@@ -8,7 +8,8 @@ export default function NotFound() {
       <MissingPage
         title="Página não encontrada"
         body="Esse endereço não leva a nenhum evento ou área do ticketim."
-        imageSrc="/images/page-missing.jpg"
+        imageSrcLight="/images/page-missing-light.jpg"
+        imageSrcDark="/images/page-missing-dark.jpg"
       />
     </>
   );

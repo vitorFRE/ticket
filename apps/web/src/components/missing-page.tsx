@@ -2,11 +2,13 @@
 
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
+import { useThemeImage } from "@/hooks/use-theme-image";
 
 export function MissingPage({
   title,
   body,
-  imageSrc,
+  imageSrcLight,
+  imageSrcDark,
   backHref = "/",
   backLabel = "Eventos",
   ctaHref = "/",
@@ -14,40 +16,43 @@ export function MissingPage({
 }: {
   title: string;
   body: string;
-  imageSrc: string;
+  imageSrcLight: string;
+  imageSrcDark: string;
   backHref?: string;
   backLabel?: string;
   ctaHref?: string;
   ctaLabel?: string;
 }) {
+  const imageSrc = useThemeImage(imageSrcLight, imageSrcDark);
+
   return (
-    <div className='relative z-10 min-h-[calc(100dvh-4rem)] overflow-hidden'>
+    <div className="relative z-10 min-h-[calc(100dvh-4rem)] overflow-hidden">
       <img
         src={imageSrc}
-        alt=''
-        className='absolute inset-0 h-full w-full object-cover object-center'
+        alt=""
+        className="absolute inset-0 size-full object-cover object-center"
       />
-      <div className='absolute inset-0 bg-linear-to-t from-background via-background/80 to-background/25' />
+      <div className="absolute inset-0 bg-linear-to-t from-background via-background/80 to-background/25" />
 
-      <div className='relative mx-auto flex min-h-[calc(100dvh-4rem)] max-w-6xl flex-col justify-end px-4 pb-16 pt-8 md:px-6 md:pb-20 lg:px-8'>
+      <div className="relative mx-auto flex min-h-[calc(100dvh-4rem)] max-w-6xl flex-col justify-end px-4 pt-8 pb-16 md:px-6 md:pb-20 lg:px-8">
         <Link
           href={backHref}
-          className='mb-auto inline-flex w-fit items-center gap-2 text-sm text-white/70 transition-colors hover:text-white'
+          className="mb-auto inline-flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeftIcon size={16} weight='bold' />
+          <ArrowLeftIcon size={16} weight="bold" />
           {backLabel}
         </Link>
 
-        <div className='max-w-lg'>
-          <h1 className='text-4xl font-semibold tracking-[-0.04em] md:text-6xl'>
+        <div className="max-w-lg">
+          <h1 className="text-4xl font-semibold tracking-[-0.04em] md:text-6xl">
             {title}
           </h1>
-          <p className='mt-4 max-w-[36ch] text-base leading-relaxed text-white/60'>
+          <p className="mt-4 max-w-[36ch] text-base leading-relaxed text-muted-foreground">
             {body}
           </p>
           <Link
             href={ctaHref}
-            className='mt-8 inline-flex h-11 items-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-[transform,opacity] hover:opacity-90 active:scale-[0.98]'
+            className="mt-8 inline-flex h-11 items-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-[transform,opacity] hover:opacity-90 active:scale-[0.98]"
           >
             {ctaLabel}
           </Link>
