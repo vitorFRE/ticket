@@ -17,6 +17,7 @@ import {
   UserRole,
 } from "../src/generated/prisma/enums";
 import { EventsController } from "../src/modules/events/events.controller";
+import { EventMetricsService } from "../src/modules/events/event-metrics.service";
 import { EventsService } from "../src/modules/events/events.service";
 
 class TestJwtGuard implements CanActivate {
@@ -56,6 +57,11 @@ describe("EventsController (e2e)", () => {
     listSectors: jest.fn(),
   };
 
+  const metricsService = {
+    getEventStats: jest.fn(),
+    listEventTickets: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
     eventsService.listPublished.mockResolvedValue({
@@ -84,11 +90,26 @@ describe("EventsController (e2e)", () => {
       eventId: "evt-2",
       items: [{ name: "Pista", capacity: 10, priceCents: 8000 }],
     });
+    metricsService.getEventStats.mockResolvedValue({
+      eventId: "evt-1",
+      ticketsSold: 2,
+      capacity: 120,
+      occupancyPct: 2 / 120,
+      revenueCents: 7000,
+      ticketsUsed: 1,
+      pendingHolds: 0,
+      byStatus: { valid: 1, used: 1, void: 0 },
+      seats: { available: 100, held: 0, sold: 2 },
+    });
+    metricsService.listEventTickets.mockResolvedValue({
+      items: [{ id: "t1", code: "abc", status: "VALID" }],
+    });
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       controllers: [EventsController],
       providers: [
         { provide: EventsService, useValue: eventsService },
+        { provide: EventMetricsService, useValue: metricsService },
         { provide: APP_GUARD, useClass: TestJwtGuard },
         { provide: APP_GUARD, useClass: RolesGuard },
       ],
@@ -114,7 +135,15 @@ describe("EventsController (e2e)", () => {
       .get("/events?q=fight")
       .expect(200);
     expect(res.body.items).toHaveLength(1);
-    expect(eventsService.listPublished).toHaveBeenCalledWith("fight", undefined);
+    expect(eventsService.listPublished).toHaveBeenCalledWith({
+      q: "fight",
+      source: undefined,
+      from: undefined,
+      to: undefined,
+      priceMin: undefined,
+      priceMax: undefined,
+      venue: undefined,
+    });
   });
 
   it("lists published events by catalog source", async () => {
@@ -122,7 +151,58 @@ describe("EventsController (e2e)", () => {
       .get("/events?source=tmdb")
       .expect(200);
     expect(res.body.items).toHaveLength(1);
-    expect(eventsService.listPublished).toHaveBeenCalledWith(undefined, "tmdb");
+    expect(eventsService.listPublished).toHaveBeenCalledWith({
+      q: undefined,
+      source: "tmdb",
+      from: undefined,
+      to: undefined,
+      priceMin: undefined,
+      priceMax: undefined,
+      venue: undefined,
+    });
+  });
+
+  it("lists published events with advanced filters", async () => {
+    await request(app.getHttpServer())
+      .get(
+        "/events?from=2026-09-01T00:00:00.000Z&to=2026-12-31T23:59:59.000Z&priceMin=1000&priceMax=5000&venue=Arena",
+      )
+      .expect(200);
+    expect(eventsService.listPublished).toHaveBeenCalledWith({
+      q: undefined,
+      source: undefined,
+      from: "2026-09-01T00:00:00.000Z",
+      to: "2026-12-31T23:59:59.000Z",
+      priceMin: 1000,
+      priceMax: 5000,
+      venue: "Arena",
+    });
+  });
+
+  it("rejects priceMin greater than priceMax", async () => {
+    await request(app.getHttpServer())
+      .get("/events?priceMin=5000&priceMax=1000")
+      .expect(400);
+  });
+
+  it("rejects invalid from date", async () => {
+    await request(app.getHttpServer())
+      .get("/events?from=not-a-date")
+      .expect(400);
+  });
+
+  it("rejects ticket limit above 100", async () => {
+    await request(app.getHttpServer())
+      .get("/events/evt-1/tickets?limit=101")
+      .set("Authorization", `Bearer ${UserRole.ORGANIZER}`)
+      .expect(400);
+  });
+
+  it("forbids GATE from organizer tickets", async () => {
+    await request(app.getHttpServer())
+      .get("/events/evt-1/tickets")
+      .set("Authorization", `Bearer ${UserRole.GATE}`)
+      .expect(403);
   });
 
   it("returns 403 for CLIENT creating event", async () => {
@@ -234,5 +314,34 @@ describe("EventsController (e2e)", () => {
       .set("Authorization", `Bearer ${UserRole.ORGANIZER}`)
       .expect(200);
     expect(eventsService.listMine).toHaveBeenCalledWith("org-1");
+  });
+
+  it("returns stats for ORGANIZER owner", async () => {
+    const res = await request(app.getHttpServer())
+      .get("/events/evt-1/stats")
+      .set("Authorization", `Bearer ${UserRole.ORGANIZER}`)
+      .expect(200);
+    expect(res.body.ticketsSold).toBe(2);
+    expect(metricsService.getEventStats).toHaveBeenCalledWith("evt-1", "org-1");
+  });
+
+  it("returns tickets for ORGANIZER owner", async () => {
+    const res = await request(app.getHttpServer())
+      .get("/events/evt-1/tickets?limit=20")
+      .set("Authorization", `Bearer ${UserRole.ORGANIZER}`)
+      .expect(200);
+    expect(res.body.items).toHaveLength(1);
+    expect(metricsService.listEventTickets).toHaveBeenCalledWith(
+      "evt-1",
+      "org-1",
+      20,
+    );
+  });
+
+  it("forbids CLIENT from stats", async () => {
+    await request(app.getHttpServer())
+      .get("/events/evt-1/stats")
+      .set("Authorization", `Bearer ${UserRole.CLIENT}`)
+      .expect(403);
   });
 });

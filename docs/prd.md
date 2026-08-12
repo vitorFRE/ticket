@@ -218,8 +218,8 @@ O que conscientemente **não** entra no MVP: realtime websocket no mapa, cancela
 
 Considerados na avaliação, não bloqueiam MVP:
 
-- Busca e filtro avançados de eventos
-- Painel do organizador (métricas / gestão)
+- ~~Busca e filtro avançados de eventos~~ (feito: `from`/`to`/`priceMin`/`priceMax`/`venue` + UI)
+- ~~Painel do organizador (métricas / gestão)~~ (feito: resumo na lista, stats + ingressos no detalhe)
 - Cancelamento com devolução ao estoque
 - Mapa de assentos em tempo real
 - Docker Compose utilizável

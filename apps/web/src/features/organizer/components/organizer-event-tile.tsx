@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { formatDate, modeLabel } from "@/features/events/format";
+import { formatDate, formatPrice, modeLabel } from "@/features/events/format";
 import type { EventListItem } from "@/features/events/types";
 import { eventStatusLabel } from "@/features/organizer/event-status";
 import { cn } from "@/lib/utils";
@@ -18,13 +18,13 @@ export function OrganizerEventTile({
   onPublish,
 }: OrganizerEventTileProps) {
   const draft = event.status === "DRAFT";
+  const sold = event.ticketsSold ?? 0;
+  const occupancy = event.occupancyPct ?? 0;
+  const revenue = event.revenueCents ?? 0;
 
   return (
     <article>
-      <Link
-        href={`/organizer/events/${event.id}`}
-        className="group block"
-      >
+      <Link href={`/organizer/events/${event.id}`} className="group block">
         <div className="relative aspect-16/9 overflow-hidden rounded-lg bg-muted">
           {event.imageUrl ? (
             <img
@@ -54,7 +54,15 @@ export function OrganizerEventTile({
         </p>
       </Link>
 
-      <div className="mt-2 flex items-baseline justify-between gap-3">
+      <p className="mt-2 text-xs tabular-nums text-white/55">
+        {sold} vendido{sold === 1 ? "" : "s"}
+        <span className="mx-1.5 text-white/20">/</span>
+        {Math.round(occupancy * 100)}%
+        <span className="mx-1.5 text-white/20">/</span>
+        {formatPrice(revenue)}
+      </p>
+
+      <div className="mt-1.5 flex items-baseline justify-between gap-3">
         <p className="text-xs text-white/45">
           {eventStatusLabel(event.status)}
           <span className="mx-2 text-white/20">/</span>

@@ -31,7 +31,7 @@ export function GateResult({
 }) {
   const copy = gateResultCopy(
     data.result,
-    data.ticket?.event?.gateOpensHoursBefore,
+    data.ticket?.event?.gateOpensHoursBefore ?? undefined,
   );
   const tone = gateResultTone(data.result);
   const place = gatePlace(data.ticket);

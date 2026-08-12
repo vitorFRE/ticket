@@ -8,6 +8,7 @@ CRUD de eventos do organizador com inventário `SEAT_MAP` ou `GA_SECTOR`, snapsh
 |------|------|
 | `GET /events`, `GET /events/:id`, `GET /events/:id/seats`, `GET /events/:id/sectors` | `@Public()` (JWT opcional: owner vê o próprio `DRAFT`) |
 | `GET /events/mine`, `POST /events`, `PATCH /events/:id`, `POST /events/:id/publish` | JWT + role `ORGANIZER` |
+| `GET /events/:id/stats`, `GET /events/:id/tickets` | JWT + role `ORGANIZER` (só owner) |
 
 | Situação | Status |
 |----------|--------|
@@ -17,13 +18,31 @@ CRUD de eventos do organizador com inventário `SEAT_MAP` ou `GA_SECTOR`, snapsh
 
 ## Rotas
 
-### `GET /events?q=&source=`
+### `GET /events?q=&source=&from=&to=&priceMin=&priceMax=&venue=`
 
-Lista só `PUBLISHED`. `q` filtra por título (`contains`). `source=tmdb|ticketmaster` filtra a origem (filme vs show). Cada item inclui `ticketsSold` (`Ticket` do evento).
+Lista só `PUBLISHED`. Filtros opcionais:
+
+| Param | Efeito |
+|------|--------|
+| `q` | título `contains` |
+| `source` | `tmdb` \| `ticketmaster` |
+| `from` / `to` | ISO → `startsAt` gte/lte |
+| `priceMin` / `priceMax` | `priceCents` gte/lte (400 se min > max) |
+| `venue` | local `contains` |
+
+Cada item inclui `ticketsSold` (`Ticket` do evento).
 
 ### `GET /events/mine`
 
-Eventos do organizer autenticado (draft + published).
+Eventos do organizer autenticado (draft + published). Cada item inclui métricas: `ticketsSold`, `capacity`, `occupancyPct`, `revenueCents`, `ticketsUsed`, `pendingHolds`. Receita = soma dos tickets (seat → `Event.priceCents`; GA → `Sector.priceCents ?? Event.priceCents`).
+
+### `GET /events/:id/stats`
+
+Só owner. Mesmas métricas + `byStatus` + breakdown `seats` (SEAT_MAP) ou `sectors` (GA_SECTOR).
+
+### `GET /events/:id/tickets?limit=`
+
+Só owner. Lista de ingressos (`limit` default 50, max 100): `code`, `status`, `seatLabel`, `sectorName`, `createdAt`, `validatedAt`.
 
 ### `GET /events/:id`
 
@@ -91,10 +110,10 @@ Inventário (mesmo critério de visibilidade do detalhe). Erro 400 se o modo nã
 
 | Código | Quando |
 |--------|--------|
-| 400 | source inválido; venue/startsAt ausentes; inventário incoerente; editar/publicar fora de DRAFT; modo errado em seats/sectors |
+| 400 | source inválido; venue/startsAt ausentes; inventário incoerente; editar/publicar fora de DRAFT; modo errado em seats/sectors; `priceMin` > `priceMax`; `from`/`to` inválidos |
 | 401 | Sem JWT em rota protegida |
 | 403 | Role sem permissão |
-| 404 | Evento inexistente ou draft alheio |
+| 404 | Evento inexistente, draft alheio, ou stats/tickets de outro organizer |
 
 ## Arquivos
 
@@ -103,10 +122,12 @@ apps/api/src/modules/events/
   events.module.ts
   events.controller.ts
   events.service.ts
+  event-metrics.service.ts
   inventory.service.ts
   dto/create-event.dto.ts
   dto/update-event.dto.ts
   dto/list-events.query.dto.ts
+  dto/list-event-tickets.query.dto.ts
 ```
 
 Schema: `Event`, `Seat`, `Sector` + enums em `apps/api/prisma/schema.prisma`.

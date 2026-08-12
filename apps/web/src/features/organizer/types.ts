@@ -38,3 +38,44 @@ export type UpdateEventBody = {
   priceCents?: number;
   imageUrl?: string | null;
 };
+
+export type EventStats = {
+  eventId: string;
+  ticketsSold: number;
+  capacity: number;
+  occupancyPct: number;
+  revenueCents: number;
+  ticketsUsed: number;
+  pendingHolds: number;
+  byStatus: { valid: number; used: number; void: number };
+  seats?: { available: number; held: number; sold: number };
+  sectors?: Array<{
+    id: string;
+    name: string;
+    capacity: number;
+    availableCount: number;
+    sold: number;
+    revenueCents: number;
+  }>;
+};
+
+export type OrganizerTicketItem = {
+  id: string;
+  code: string;
+  status: "VALID" | "USED" | "VOID";
+  seatLabel: string | null;
+  sectorName: string | null;
+  createdAt: string;
+  validatedAt: string | null;
+};
+
+export type OrganizerTicketsResponse = {
+  items: OrganizerTicketItem[];
+};
+
+export type OrganizerListFilter =
+  | "all"
+  | "draft"
+  | "published"
+  | "upcoming";
+

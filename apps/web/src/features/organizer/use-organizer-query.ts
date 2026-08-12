@@ -6,7 +6,9 @@ import {
 import {
   createEvent,
   getOrganizerEvent,
+  getOrganizerEventStats,
   listMyEvents,
+  listOrganizerEventTickets,
   publishEvent,
   updateEvent,
 } from "@/features/organizer/api/organizer-events-api";
@@ -34,6 +36,24 @@ export function useOrganizerEvent(id: string, enabled = true) {
   });
 }
 
+export function useOrganizerEventStats(id: string, enabled = true) {
+  return useQuery({
+    queryKey: queryKeys.events.stats(id),
+    queryFn: () => getOrganizerEventStats(id),
+    enabled: enabled && Boolean(id),
+    staleTime: 10_000,
+  });
+}
+
+export function useOrganizerEventTickets(id: string, enabled = true) {
+  return useQuery({
+    queryKey: queryKeys.events.organizerTickets(id),
+    queryFn: () => listOrganizerEventTickets(id),
+    enabled: enabled && Boolean(id),
+    staleTime: 10_000,
+  });
+}
+
 export function usePublishEvent() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -43,6 +63,9 @@ export function usePublishEvent() {
       queryClient.setQueryData(queryKeys.events.detail(event.id), event);
       void queryClient.invalidateQueries({ queryKey: queryKeys.events.mine });
       void queryClient.invalidateQueries({ queryKey: queryKeys.events.all });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.events.stats(event.id),
+      });
     },
   });
 }

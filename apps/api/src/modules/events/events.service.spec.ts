@@ -58,6 +58,11 @@ describe("EventsService", () => {
       catalog as unknown as CatalogService,
       new InventoryService(),
       { expireOverdueReservations: jest.fn().mockResolvedValue(0) } as never,
+      {
+        attachListMetrics: jest
+          .fn()
+          .mockImplementation(async (items: unknown[]) => items),
+      } as never,
     );
   });
 
@@ -144,7 +149,7 @@ describe("EventsService", () => {
 
   it("lists only published events", async () => {
     prisma.event.findMany.mockResolvedValue([{ id: "p1" }]);
-    const result = await service.listPublished("fight");
+    const result = await service.listPublished({ q: "fight" });
     expect(prisma.event.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -161,7 +166,7 @@ describe("EventsService", () => {
 
   it("filters published list by catalog source", async () => {
     prisma.event.findMany.mockResolvedValue([]);
-    await service.listPublished(undefined, "tmdb");
+    await service.listPublished({ source: "tmdb" });
     expect(prisma.event.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -170,6 +175,81 @@ describe("EventsService", () => {
         }),
       }),
     );
+  });
+
+  it("filters published list by date, price and venue", async () => {
+    prisma.event.findMany.mockResolvedValue([]);
+    await service.listPublished({
+      from: "2026-09-01T00:00:00.000Z",
+      to: "2026-12-31T23:59:59.000Z",
+      priceMin: 1000,
+      priceMax: 5000,
+      venue: "Arena",
+    });
+    expect(prisma.event.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: EventStatus.PUBLISHED,
+          venue: { contains: "Arena" },
+          priceCents: { gte: 1000, lte: 5000 },
+          startsAt: {
+            gte: new Date("2026-09-01T00:00:00.000Z"),
+            lte: new Date("2026-12-31T23:59:59.000Z"),
+          },
+        }),
+      }),
+    );
+  });
+
+  it("filters with priceMin only", async () => {
+    prisma.event.findMany.mockResolvedValue([]);
+    await service.listPublished({ priceMin: 2000 });
+    expect(prisma.event.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          priceCents: { gte: 2000 },
+        }),
+      }),
+    );
+  });
+
+  it("rejects invalid from date", async () => {
+    await expect(
+      service.listPublished({ from: "not-a-date" }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it("listMine attaches metrics via EventMetricsService", async () => {
+    const attachListMetrics = jest.fn().mockResolvedValue([
+      {
+        id: "evt-1",
+        ticketsSold: 2,
+        capacity: 120,
+        occupancyPct: 2 / 120,
+        revenueCents: 7000,
+        ticketsUsed: 1,
+        pendingHolds: 0,
+      },
+    ]);
+    service = new EventsService(
+      prisma as unknown as PrismaService,
+      catalog as unknown as CatalogService,
+      new InventoryService(),
+      { expireOverdueReservations: jest.fn().mockResolvedValue(0) } as never,
+      { attachListMetrics } as never,
+    );
+    prisma.event.findMany.mockResolvedValue([
+      { id: "evt-1", _count: { tickets: 2 } },
+    ]);
+
+    const result = await service.listMine("org-1");
+    expect(attachListMetrics).toHaveBeenCalledWith([
+      expect.objectContaining({ id: "evt-1", ticketsSold: 2 }),
+    ]);
+    expect(result.items[0]).toMatchObject({
+      capacity: 120,
+      revenueCents: 7000,
+    });
   });
 
   it("hides draft from non-owner", async () => {

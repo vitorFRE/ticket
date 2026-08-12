@@ -15,6 +15,11 @@ export type EventListItem = {
   createdAt: string;
   updatedAt: string;
   ticketsSold?: number;
+  capacity?: number;
+  occupancyPct?: number;
+  revenueCents?: number;
+  ticketsUsed?: number;
+  pendingHolds?: number;
 };
 
 export type EventsListResponse = {

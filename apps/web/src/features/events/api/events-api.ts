@@ -6,17 +6,32 @@ import type {
   EventSectorsResponse,
   EventsListResponse,
 } from "@/features/events/types";
+import type { EventListParams } from "@/shared/query/keys";
 
-export async function listEvents(params?: {
-  q?: string;
-  source?: "tmdb" | "ticketmaster";
-}): Promise<EventsListResponse> {
+export async function listEvents(
+  params: EventListParams = {},
+): Promise<EventsListResponse> {
   const url = new URL(`${getApiBaseUrl()}/events`);
-  if (params?.q?.trim()) {
+  if (params.q?.trim()) {
     url.searchParams.set("q", params.q.trim());
   }
-  if (params?.source) {
+  if (params.source) {
     url.searchParams.set("source", params.source);
+  }
+  if (params.from) {
+    url.searchParams.set("from", params.from);
+  }
+  if (params.to) {
+    url.searchParams.set("to", params.to);
+  }
+  if (params.priceMin !== undefined) {
+    url.searchParams.set("priceMin", String(params.priceMin));
+  }
+  if (params.priceMax !== undefined) {
+    url.searchParams.set("priceMax", String(params.priceMax));
+  }
+  if (params.venue?.trim()) {
+    url.searchParams.set("venue", params.venue.trim());
   }
   const res = await fetch(url.toString(), {
     cache: "no-store",

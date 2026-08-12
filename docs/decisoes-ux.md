@@ -70,9 +70,11 @@ Widget flutuante no canto inferior direito, sempre visível neste teste. Não é
 
 Na home o filtro não é o modo de inventário. Filme = origem TMDb. Show = origem Ticketmaster. A URL usa `?kind=filme|show`.
 
+Filtros avançados (painel expansível): data `from`/`to`, preço `priceMin`/`priceMax` (centavos na URL), local `venue`. Painel + limpar.
+
 - **Próximos**: data mais perto.
 - **Populares**: mais `ticketsSold`. Some se ninguém comprou ainda.
-- Com busca (`?q=`), a grade vira uma lista só de **Resultados**.
+- Com busca (`?q=`) **ou** qualquer filtro avançado, a grade vira uma lista só de **Resultados**.
 - No card e no detalhe, o tipo é Filme / Show, não Assentos / Setores.
 - Card do cartaz: foto quase quadrada, texto embaixo (título, tipo + local, data, preço). Sem caixa de vidro, sem ícone, sem selo em cima da imagem.
 - Cada bloco (Próximos, Populares, Resultados) é uma faixa só. Sem barra de scroll embaixo: setas à direita do título. Sem grade de 2 ou 4 colunas.

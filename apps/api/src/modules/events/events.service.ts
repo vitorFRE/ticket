@@ -16,7 +16,9 @@ import { isCatalogSource } from "../catalog/types/catalog-item.type";
 import { PrismaService } from "../prisma/prisma.service";
 import { ReservationsService } from "../reservations/reservations.service";
 import type { CreateEventDto } from "./dto/create-event.dto";
+import type { ListPublishedFilters } from "./dto/list-events.query.dto";
 import type { UpdateEventDto } from "./dto/update-event.dto";
+import { EventMetricsService } from "./event-metrics.service";
 import { InventoryService } from "./inventory.service";
 
 const SOURCE_TO_EXTERNAL: Record<CatalogSource, ExternalSource> = {
@@ -36,13 +38,36 @@ export class EventsService {
     private readonly catalogService: CatalogService,
     private readonly inventory: InventoryService,
     private readonly reservations: ReservationsService,
+    private readonly metrics: EventMetricsService,
   ) {}
 
-  async listPublished(q?: string, source?: CatalogSource) {
+  async listPublished(filters: ListPublishedFilters = {}) {
+    const { q, source, from, to, priceMin, priceMax, venue } = filters;
+
+    const fromDate = from ? this.parseFilterDate(from, "from") : undefined;
+    const toDate = to ? this.parseFilterDate(to, "to") : undefined;
+
     const where: Prisma.EventWhereInput = {
       status: EventStatus.PUBLISHED,
       ...(q ? { title: { contains: q } } : {}),
       ...(source ? { externalSource: SOURCE_TO_EXTERNAL[source] } : {}),
+      ...(venue ? { venue: { contains: venue } } : {}),
+      ...(priceMin !== undefined || priceMax !== undefined
+        ? {
+            priceCents: {
+              ...(priceMin !== undefined ? { gte: priceMin } : {}),
+              ...(priceMax !== undefined ? { lte: priceMax } : {}),
+            },
+          }
+        : {}),
+      ...(fromDate || toDate
+        ? {
+            startsAt: {
+              ...(fromDate ? { gte: fromDate } : {}),
+              ...(toDate ? { lte: toDate } : {}),
+            },
+          }
+        : {}),
     };
 
     const events = await this.prisma.event.findMany({
@@ -54,13 +79,22 @@ export class EventsService {
     return { items: events.map((event) => this.toListItem(event)) };
   }
 
+  private parseFilterDate(value: string, field: "from" | "to") {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      throw new BadRequestException(`${field} inválido`);
+    }
+    return date;
+  }
+
   async listMine(organizerId: string) {
     const events = await this.prisma.event.findMany({
       where: { organizerId },
       orderBy: { updatedAt: "desc" },
       select: this.listSelect(),
     });
-    return { items: events.map((event) => this.toListItem(event)) };
+    const items = events.map((event) => this.toListItem(event));
+    return { items: await this.metrics.attachListMetrics(items) };
   }
 
   async getById(id: string, viewer: Viewer) {

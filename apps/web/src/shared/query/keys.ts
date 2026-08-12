@@ -1,18 +1,36 @@
 export type EventListParams = {
   q?: string;
   source?: "tmdb" | "ticketmaster";
+  from?: string;
+  to?: string;
+  priceMin?: number;
+  priceMax?: number;
+  venue?: string;
 };
 
 export const queryKeys = {
   events: {
     all: ["events"] as const,
     list: (params: EventListParams = {}) =>
-      ["events", "list", params.q ?? "", params.source ?? ""] as const,
+      [
+        "events",
+        "list",
+        params.q ?? "",
+        params.source ?? "",
+        params.from ?? "",
+        params.to ?? "",
+        params.priceMin ?? "",
+        params.priceMax ?? "",
+        params.venue ?? "",
+      ] as const,
     detail: (id: string) => ["events", "detail", id] as const,
     organizerDetail: (id: string) => ["events", "organizer", id] as const,
     seats: (id: string) => ["events", "seats", id] as const,
     sectors: (id: string) => ["events", "sectors", id] as const,
     mine: ["events", "mine"] as const,
+    stats: (id: string) => ["events", "stats", id] as const,
+    organizerTickets: (id: string) =>
+      ["events", "organizer-tickets", id] as const,
   },
   tickets: {
     all: ["tickets"] as const,

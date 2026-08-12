@@ -8,6 +8,8 @@ import { PagePulse } from "@/components/skeletons/page-pulse";
 import { formatDate, formatPrice, modeLabel } from "@/features/events/format";
 import { gateHoursLabel, parseGateHours } from "@/features/events/gate-window";
 import { GateHoursField } from "@/features/organizer/components/gate-hours-field";
+import { OrganizerEventStats } from "@/features/organizer/components/organizer-event-stats";
+import { OrganizerEventTicketsList } from "@/features/organizer/components/organizer-event-tickets-list";
 import { OrganizerShell } from "@/features/organizer/components/organizer-shell";
 import { eventStatusLabel } from "@/features/organizer/event-status";
 import {
@@ -18,6 +20,8 @@ import {
 } from "@/features/organizer/money";
 import {
   useOrganizerEvent,
+  useOrganizerEventStats,
+  useOrganizerEventTickets,
   usePublishEvent,
   useUpdateEvent,
 } from "@/features/organizer/use-organizer-query";
@@ -26,6 +30,12 @@ import { isHttpNotFound, queryErrorMessage } from "@/shared/api/query-error";
 export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
   const eventQuery = useOrganizerEvent(eventId);
   const event = eventQuery.data ?? null;
+  const isPublished = event?.status === "PUBLISHED";
+  const statsQuery = useOrganizerEventStats(eventId, Boolean(event));
+  const ticketsQuery = useOrganizerEventTickets(
+    eventId,
+    Boolean(event) && Boolean(isPublished),
+  );
   const update = useUpdateEvent(eventId);
   const publish = usePublishEvent();
   const [formError, setFormError] = useState<string | null>(null);
@@ -150,25 +160,44 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
             </div>
           </header>
 
-          {event.status === "PUBLISHED" ? (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                {formatDate(event.startsAt)}
-                <span className="mx-2 text-white/25">/</span>
-                {event.venue}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Portaria: {gateHoursLabel(event.gateOpensHoursBefore)}
-              </p>
-              <p className="text-2xl font-semibold tracking-tight">
-                {formatPrice(event.priceCents)}
-              </p>
-              <Link
-                href={`/events/${event.id}`}
-                className="inline-flex h-11 items-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground"
-              >
-                Ver página pública
-              </Link>
+          {isPublished ? (
+            <div className="space-y-10">
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(event.startsAt)}
+                  <span className="mx-2 text-white/25">/</span>
+                  {event.venue}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Portaria: {gateHoursLabel(event.gateOpensHoursBefore)}
+                </p>
+                <p className="text-2xl font-semibold tracking-tight">
+                  {formatPrice(event.priceCents)}
+                </p>
+                <Link
+                  href={`/events/${event.id}`}
+                  className="inline-flex h-11 items-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground"
+                >
+                  Ver página pública
+                </Link>
+              </div>
+
+              {statsQuery.data ? (
+                <OrganizerEventStats stats={statsQuery.data} />
+              ) : statsQuery.isError ? (
+                <p className="text-sm text-destructive">
+                  Não foi possível carregar as métricas.
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Carregando métricas...
+                </p>
+              )}
+
+              <OrganizerEventTicketsList
+                items={ticketsQuery.data?.items ?? []}
+                loading={ticketsQuery.isPending}
+              />
             </div>
           ) : (
             <form onSubmit={(e) => void onSave(e)} className="space-y-5">

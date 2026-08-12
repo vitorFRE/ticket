@@ -2,12 +2,19 @@
 
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { PageState } from "@/components/page-state";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { OrganizerEventTile } from "@/features/organizer/components/organizer-event-tile";
 import { OrganizerEventsSkeleton } from "@/features/organizer/components/organizer-events-skeleton";
+import { OrganizerListStatusFilter } from "@/features/organizer/components/organizer-list-status-filter";
+import { OrganizerMetricsSummary } from "@/features/organizer/components/organizer-metrics-summary";
 import { OrganizerShell } from "@/features/organizer/components/organizer-shell";
+import {
+  filterOrganizerEvents,
+  summarizeOrganizerEvents,
+} from "@/features/organizer/organizer-list-utils";
+import type { OrganizerListFilter } from "@/features/organizer/types";
 import {
   useOrganizerEvents,
   usePublishEvent,
@@ -18,6 +25,7 @@ export function OrganizerEventsListPage() {
   const eventsQuery = useOrganizerEvents();
   const publish = usePublishEvent();
   const events = eventsQuery.data?.items ?? [];
+  const [statusFilter, setStatusFilter] = useState<OrganizerListFilter>("all");
   const loadError = eventsQuery.isError
     ? queryErrorMessage(eventsQuery.error, "Não foi possível carregar.")
     : null;
@@ -25,12 +33,14 @@ export function OrganizerEventsListPage() {
     ? queryErrorMessage(publish.error, "Não foi possível publicar.")
     : null;
 
-  const sorted = useMemo(() => {
-    return [...events].sort((a, b) => {
-      if (a.status === b.status) return 0;
-      return a.status === "DRAFT" ? -1 : 1;
-    });
-  }, [events]);
+  const summary = useMemo(
+    () => summarizeOrganizerEvents(events),
+    [events],
+  );
+  const filtered = useMemo(
+    () => filterOrganizerEvents(events, statusFilter),
+    [events, statusFilter],
+  );
 
   const draftCount = events.filter((event) => event.status === "DRAFT").length;
 
@@ -66,6 +76,22 @@ export function OrganizerEventsListPage() {
         </Link>
       </div>
 
+      {!eventsQuery.isPending && events.length > 0 ? (
+        <OrganizerMetricsSummary
+          publishedCount={summary.publishedCount}
+          ticketsSold={summary.ticketsSold}
+          revenueCents={summary.revenueCents}
+          ticketsUsed={summary.ticketsUsed}
+        />
+      ) : null}
+
+      {!eventsQuery.isPending && events.length > 0 ? (
+        <OrganizerListStatusFilter
+          value={statusFilter}
+          onChange={setStatusFilter}
+        />
+      ) : null}
+
       {loadError ? (
         <PageState title="Não foi possível carregar" body={loadError} />
       ) : null}
@@ -80,27 +106,35 @@ export function OrganizerEventsListPage() {
         </div>
       ) : null}
 
-      {!eventsQuery.isPending && !loadError && events.length === 0 ? (
+      {!eventsQuery.isPending && !loadError && filtered.length === 0 ? (
         <PageState
-          title="Nenhum evento ainda"
-          body="Use Novo evento para puxar um título do catálogo."
+          title={
+            events.length === 0
+              ? "Nenhum evento ainda"
+              : "Nenhum evento neste filtro"
+          }
+          body={
+            events.length === 0
+              ? "Crie o primeiro a partir do catálogo TMDb ou Ticketmaster."
+              : "Troque o filtro ou volte para Todos."
+          }
         />
       ) : null}
 
-      {!eventsQuery.isPending && sorted.length > 0 ? (
-        <ul className="mt-10 grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
-          {sorted.map((event, index) => (
-            <li key={event.id}>
-              <ScrollReveal delayMs={Math.min(index, 5) * 70}>
-                <OrganizerEventTile
-                  event={event}
-                  publishing={publish.isPending && publish.variables === event.id}
-                  onPublish={(id) => publish.mutate(id)}
-                />
-              </ScrollReveal>
-            </li>
+      {!eventsQuery.isPending && filtered.length > 0 ? (
+        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((event, index) => (
+            <ScrollReveal key={event.id} delayMs={index * 40}>
+              <OrganizerEventTile
+                event={event}
+                publishing={
+                  publish.isPending && publish.variables === event.id
+                }
+                onPublish={(id) => publish.mutate(id)}
+              />
+            </ScrollReveal>
           ))}
-        </ul>
+        </div>
       ) : null}
     </OrganizerShell>
   );

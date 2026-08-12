@@ -17,7 +17,7 @@ Shell / redirects: [web-shell.md](./web-shell.md).
 
 | Rota | Auth | Descrição |
 |------|------|-----------|
-| `/` | pública | Lista `GET /events` + busca `?q=` + filtro `?kind=filme|show` (Próximos / Populares) |
+| `/` | pública | Lista `GET /events` + `?q=` + `?kind=filme|show` + filtros `?from=&to=&priceMin=&priceMax=&venue=` (Próximos / Populares; com busca ou filtro avançado → Resultados) |
 | `/login` | guest | `?next=` interno após autenticar |
 | `/events/[id]` | pública | Detalhe + CTA Reservar + também em cartaz |
 | `/events/[id]/checkout` | `CLIENT` | Mapa ou setores → `POST /reservations` |
