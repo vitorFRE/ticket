@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { EventImage } from "@/components/event-image";
 import { formatDate, formatPrice, modeLabel } from "@/features/events/format";
 import type { EventListItem } from "@/features/events/types";
 import { eventStatusLabel } from "@/features/organizer/event-status";
@@ -27,11 +28,13 @@ export function OrganizerEventTile({
       <Link href={`/organizer/events/${event.id}`} className="group block">
         <div className="relative aspect-16/9 overflow-hidden rounded-lg bg-muted">
           {event.imageUrl ? (
-            <img
+            <EventImage
               src={event.imageUrl}
               alt=""
-              className={cn(
-                "h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]",
+              sizes="(max-width: 768px) 100vw, 400px"
+              className="size-full"
+              imgClassName={cn(
+                "transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]",
                 draft && "opacity-60",
               )}
             />

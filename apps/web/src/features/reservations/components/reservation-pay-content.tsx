@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { EventImage } from "@/components/event-image";
 import { formatDate, formatPrice } from "@/features/events/format";
 import {
   formatCountdown,
@@ -133,10 +134,11 @@ function EventHeading({
   return (
     <div className="flex min-w-0 items-start gap-4">
       {imageUrl ? (
-        <img
+        <EventImage
           src={imageUrl}
           alt=""
-          className="h-[4.5rem] w-12 shrink-0 rounded-sm object-cover"
+          sizes="48px"
+          className="h-[4.5rem] w-12 shrink-0 rounded-sm"
         />
       ) : null}
       <div className="min-w-0">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EventImage } from "@/components/event-image";
 import { formatDate, formatPrice } from "@/features/events/format";
 import {
   reservationLineItems,
@@ -22,10 +23,11 @@ export function PaymentHistoryList({
         const body = (
           <>
             {reservation.event.imageUrl ? (
-              <img
+              <EventImage
                 src={reservation.event.imageUrl}
-                alt=''
-                className='h-18 w-12 shrink-0 rounded-sm object-cover'
+                alt=""
+                sizes="48px"
+                className="h-18 w-12 shrink-0 rounded-sm"
               />
             ) : (
               <div className='h-18 w-12 shrink-0 rounded-sm bg-accent' />

@@ -1,5 +1,6 @@
 "use client";
 
+import { EventImage } from "@/components/event-image";
 import type { CatalogItem } from "@/features/organizer/types";
 
 export function WizardPickStep({
@@ -15,10 +16,11 @@ export function WizardPickStep({
     <div className="max-w-xl space-y-8">
       <div className="flex items-start gap-4">
         {item.imageUrl ? (
-          <img
+          <EventImage
             src={item.imageUrl}
             alt=""
-            className="h-[4.5rem] w-12 shrink-0 rounded-sm object-cover"
+            sizes="48px"
+            className="h-[4.5rem] w-12 shrink-0 rounded-sm"
           />
         ) : null}
         <div>

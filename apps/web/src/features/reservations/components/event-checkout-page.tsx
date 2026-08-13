@@ -4,6 +4,7 @@ import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { EventImage } from "@/components/event-image";
 import { PageState } from "@/components/page-state";
 import { PagePulse } from "@/components/skeletons/page-pulse";
 import { useRequireRole } from "@/features/auth/use-require-role";
@@ -164,10 +165,11 @@ export function EventCheckoutPage({ eventId }: { eventId: string }) {
             <div className="flex flex-wrap items-start justify-between gap-x-12 gap-y-8">
               <div className="flex min-w-0 items-start gap-4">
                 {event.imageUrl ? (
-                  <img
+                  <EventImage
                     src={event.imageUrl}
                     alt=""
-                    className="h-18 w-12 shrink-0 rounded-sm object-cover"
+                    sizes="48px"
+                    className="h-18 w-12 shrink-0 rounded-sm"
                   />
                 ) : null}
                 <div className="min-w-0">

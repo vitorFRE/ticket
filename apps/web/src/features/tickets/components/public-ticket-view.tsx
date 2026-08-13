@@ -1,5 +1,6 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { EventImage } from "@/components/event-image";
 import { GateLimitNote } from "@/features/events/components/gate-limit-note";
 import { formatDate } from "@/features/events/format";
 import {
@@ -26,10 +27,11 @@ export function PublicTicketView({ ticket }: { ticket: PublicTicket }) {
         <div className="max-w-xl space-y-10">
           <header className="flex items-start gap-4">
             {ticket.event.imageUrl ? (
-              <img
+              <EventImage
                 src={ticket.event.imageUrl}
                 alt=""
-                className="h-18 w-12 shrink-0 rounded-sm object-cover"
+                sizes="48px"
+                className="h-18 w-12 shrink-0 rounded-sm"
               />
             ) : null}
             <div className="min-w-0">

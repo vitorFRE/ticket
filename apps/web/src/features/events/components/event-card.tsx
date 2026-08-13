@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EventImage } from "@/components/event-image";
 import { kindLabelFromSource } from "@/features/events/catalog-kind";
 import type { EventListItem } from "@/features/events/types";
 import { formatCardDate, formatPrice } from "@/features/events/format";
@@ -16,10 +17,12 @@ export function EventCard({ event }: { event: EventListItem }) {
     >
       <div className="relative aspect-4/5 overflow-hidden rounded-lg bg-muted">
         {event.imageUrl ? (
-          <img
+          <EventImage
             src={event.imageUrl}
             alt={event.title}
-            className="h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+            sizes="(max-width: 640px) 248px, 272px"
+            className="size-full"
+            imgClassName="transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">

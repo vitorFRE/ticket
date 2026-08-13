@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EventImage } from "@/components/event-image";
 import { GateLimitNote } from "@/features/events/components/gate-limit-note";
 import { formatDate } from "@/features/events/format";
 import {
@@ -17,10 +18,11 @@ export function TicketRowList({ tickets }: { tickets: Ticket[] }) {
             className="flex items-start gap-4 py-5 transition-colors hover:text-primary"
           >
             {ticket.event.imageUrl ? (
-              <img
+              <EventImage
                 src={ticket.event.imageUrl}
                 alt=""
-                className="h-18 w-12 shrink-0 rounded-sm object-cover"
+                sizes="48px"
+                className="h-18 w-12 shrink-0 rounded-sm"
               />
             ) : (
               <div className="h-18 w-12 shrink-0 rounded-sm bg-accent" />

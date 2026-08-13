@@ -3,6 +3,7 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { EventImage } from "@/components/event-image";
 import { MissingPage } from "@/components/missing-page";
 import { PageState } from "@/components/page-state";
 import { EventDetailSkeleton } from "@/components/skeletons/event-detail-skeleton";
@@ -61,10 +62,13 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
         <>
           <section className="relative min-h-[78dvh] overflow-hidden">
             {event.imageUrl ? (
-              <img
+              <EventImage
                 src={event.imageUrl}
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover object-[center_20%]"
+                sizes="100vw"
+                priority
+                className="absolute inset-0"
+                imgClassName="object-[center_20%]"
               />
             ) : (
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,color-mix(in_oklch,var(--primary)_18%,transparent),transparent_50%)]" />

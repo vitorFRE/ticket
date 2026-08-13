@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { EventImage } from "@/components/event-image";
 import type { CatalogItem, CatalogSource } from "@/features/organizer/types";
 import { useCatalogSearch } from "@/features/organizer/use-catalog-query";
 import { queryErrorMessage } from "@/shared/api/query-error";
@@ -72,10 +73,11 @@ export function WizardSourceStep({
                 className='flex w-full items-start gap-4 py-4 text-left transition-colors hover:text-primary'
               >
                 {item.imageUrl ? (
-                  <img
+                  <EventImage
                     src={item.imageUrl}
-                    alt=''
-                    className='h-16 w-11 shrink-0 rounded-sm object-cover'
+                    alt=""
+                    sizes="44px"
+                    className="h-16 w-11 shrink-0 rounded-sm"
                   />
                 ) : (
                   <div className='h-16 w-11 shrink-0 rounded-sm bg-accent' />

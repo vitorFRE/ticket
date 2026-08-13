@@ -3,6 +3,7 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type ReactNode, useState } from "react";
+import { EventImage } from "@/components/event-image";
 import { PageState } from "@/components/page-state";
 import { TicketRowSkeletonList } from "@/components/skeletons/ticket-row-skeleton";
 import { useRequireRole } from "@/features/auth/use-require-role";
@@ -83,10 +84,11 @@ export function TicketDetailPage({ ticketId }: { ticketId: string }) {
         <div className="max-w-xl space-y-12">
           <header className="flex items-start gap-4">
             {ticket.event.imageUrl ? (
-              <img
+              <EventImage
                 src={ticket.event.imageUrl}
                 alt=""
-                className="h-18 w-12 shrink-0 rounded-sm object-cover"
+                sizes="48px"
+                className="h-18 w-12 shrink-0 rounded-sm"
               />
             ) : null}
             <div className="min-w-0">

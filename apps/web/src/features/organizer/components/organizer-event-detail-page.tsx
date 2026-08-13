@@ -3,6 +3,7 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type FormEvent, type ReactNode, useEffect, useState } from "react";
+import { EventImage } from "@/components/event-image";
 import { PageState } from "@/components/page-state";
 import { PagePulse } from "@/components/skeletons/page-pulse";
 import { formatDate, formatPrice, modeLabel } from "@/features/events/format";
@@ -142,10 +143,11 @@ export function OrganizerEventDetailPage({ eventId }: { eventId: string }) {
         <div className="max-w-xl space-y-10">
           <header className="flex items-start gap-4">
             {event.imageUrl ? (
-              <img
+              <EventImage
                 src={event.imageUrl}
                 alt=""
-                className="h-[4.5rem] w-12 shrink-0 rounded-sm object-cover"
+                sizes="48px"
+                className="h-[4.5rem] w-12 shrink-0 rounded-sm"
               />
             ) : null}
             <div>
