@@ -67,7 +67,7 @@ export function EventsAdvancedFilters({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-4">
         <button
           type="button"
@@ -78,7 +78,7 @@ export function EventsAdvancedFilters({
         >
           Filtros
           {activeCount > 0 ? (
-            <span className="text-primary">({activeCount})</span>
+            <span className="tabular-nums text-foreground">({activeCount})</span>
           ) : null}
           <CaretDownIcon
             size={14}
@@ -96,7 +96,7 @@ export function EventsAdvancedFilters({
             className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
             <XIcon size={12} weight="bold" />
-            Limpar filtros
+            Limpar
           </button>
         ) : null}
       </div>
@@ -104,7 +104,7 @@ export function EventsAdvancedFilters({
       {open ? (
         <div
           id={panelId}
-          className="grid gap-4 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
         >
           <FilterField label="De">
             <input
@@ -171,16 +171,14 @@ function FilterField({
 }) {
   return (
     <label className={cn("block space-y-1.5", className)}>
-      <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-        {label}
-      </span>
+      <span className="text-xs text-muted-foreground">{label}</span>
       {children}
     </label>
   );
 }
 
 const inputClass =
-  "h-10 w-full border-0 border-b border-border bg-transparent px-0 text-sm outline-none transition-colors placeholder:text-foreground/25 focus:border-primary/50";
+  "h-10 w-full border-0 border-b border-border bg-transparent px-0 text-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-ring";
 
 function countActive(filters: AdvancedEventFilters) {
   let n = 0;

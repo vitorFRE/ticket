@@ -1,6 +1,6 @@
 "use client";
 
-import { ListIcon, SignOutIcon, UserIcon } from "@phosphor-icons/react";
+import { SignOutIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
@@ -58,8 +58,20 @@ export function SiteHeaderAccount({
     return (
       <div
         aria-hidden
-        className="h-10 w-18 animate-pulse rounded-md border border-border bg-muted"
+        className="h-4 w-10 animate-pulse rounded-sm bg-muted"
       />
+    );
+  }
+
+  if (!user) {
+    return (
+      <button
+        type="button"
+        onClick={onLogin}
+        className="inline-flex h-10 items-center px-2 text-sm font-medium text-foreground transition-opacity hover:opacity-70 active:scale-[0.98]"
+      >
+        Entrar
+      </button>
     );
   }
 
@@ -73,61 +85,42 @@ export function SiteHeaderAccount({
         aria-controls={menuId}
         onClick={() => setOpen((current) => !current)}
         className={cn(
-          "inline-flex h-10 items-center gap-2 rounded-md border border-border bg-transparent px-2 text-foreground",
-          "transition-colors hover:bg-accent active:scale-[0.98]",
-          open && "bg-accent",
+          "inline-flex h-10 min-w-10 items-center justify-center px-2 text-sm font-medium tracking-tight text-foreground",
+          "transition-opacity hover:opacity-70 active:scale-[0.98]",
+          open && "opacity-70",
         )}
       >
-        <ListIcon size={16} weight="bold" />
-        <span className="flex size-7 items-center justify-center rounded-md bg-muted text-[11px] font-medium">
-          {user ? avatarGlyph(user) : <UserIcon size={14} weight="bold" />}
-        </span>
+        {avatarGlyph(user)}
       </button>
 
       {open ? (
         <div
           id={menuId}
           role="menu"
-          className="absolute top-[calc(100%+0.5rem)] right-0 z-50 w-56 overflow-hidden rounded-md border border-border bg-card py-1 shadow-[0_8px_24px_rgba(0,0,0,0.04)]"
+          className="shadow-panel absolute top-[calc(100%+0.75rem)] right-0 z-50 w-48 overflow-hidden rounded-lg border border-border bg-background py-1"
         >
-          {user ? (
-            <>
-              {area ? (
-                <Link
-                  href={area.href}
-                  role="menuitem"
-                  className="block px-4 py-3 text-sm text-foreground transition-colors hover:bg-accent"
-                  onClick={() => setOpen(false)}
-                >
-                  {area.label}
-                </Link>
-              ) : null}
-              <button
-                type="button"
-                role="menuitem"
-                className="flex w-full items-center gap-2 border-t border-border px-4 py-3 text-left text-sm text-foreground transition-colors hover:bg-accent"
-                onClick={() => {
-                  setOpen(false);
-                  onLogout();
-                }}
-              >
-                <SignOutIcon size={14} weight="bold" />
-                Sair
-              </button>
-            </>
-          ) : (
-            <button
-              type="button"
+          {area ? (
+            <Link
+              href={area.href}
               role="menuitem"
-              className="block w-full px-4 py-3 text-left text-sm font-medium text-foreground transition-colors hover:bg-accent"
-              onClick={() => {
-                setOpen(false);
-                onLogin();
-              }}
+              className="block px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
+              onClick={() => setOpen(false)}
             >
-              Entrar
-            </button>
-          )}
+              {area.label}
+            </Link>
+          ) : null}
+          <button
+            type="button"
+            role="menuitem"
+            className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
+            onClick={() => {
+              setOpen(false);
+              onLogout();
+            }}
+          >
+            <SignOutIcon size={14} weight="bold" />
+            Sair
+          </button>
         </div>
       ) : null}
     </div>

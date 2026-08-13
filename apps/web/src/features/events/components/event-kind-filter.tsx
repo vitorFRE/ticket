@@ -17,7 +17,7 @@ export function EventKindFilter({
   onChange: (next: CatalogKind | null) => void;
 }) {
   return (
-    <nav aria-label="Tipo de sessão" className="flex flex-wrap items-baseline gap-5">
+    <nav aria-label="Tipo de sessão" className="flex flex-wrap items-baseline gap-6">
       {OPTIONS.map((option) => {
         const active = value === option.id;
         return (
@@ -29,7 +29,7 @@ export function EventKindFilter({
             className={cn(
               "text-sm tracking-tight transition-colors",
               active
-                ? "font-medium text-foreground underline decoration-primary/70 underline-offset-[6px]"
+                ? "font-medium text-foreground"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >

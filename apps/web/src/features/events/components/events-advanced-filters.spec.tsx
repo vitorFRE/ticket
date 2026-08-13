@@ -17,7 +17,7 @@ describe("EventsAdvancedFilters", () => {
     expect(screen.getByText("(2)")).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Arena, Cinemark/)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /Limpar filtros/ }));
+    await user.click(screen.getByRole("button", { name: /Limpar/ }));
     expect(onChange).toHaveBeenCalledWith({});
   });
 

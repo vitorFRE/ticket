@@ -23,20 +23,23 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 md:px-6 lg:px-8">
         <SiteBrand />
 
-        <div className="flex items-center gap-1">
+        <nav
+          aria-label="Conta"
+          className="flex items-center gap-5 text-sm tracking-tight"
+        >
           {area && !onArea ? (
             <Link
               href={area.href}
-              className="hidden h-10 items-center rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent sm:inline-flex"
+              className="hidden text-muted-foreground transition-colors hover:text-foreground sm:inline"
             >
               {area.label}
             </Link>
           ) : null}
-          <ThemeToggle />
+          <ThemeToggle className="size-8 text-muted-foreground hover:bg-transparent hover:text-foreground" />
           <SiteHeaderAccount
             user={user}
             isLoading={isLoading}
@@ -44,7 +47,7 @@ export function SiteHeader() {
             onLogin={() => router.push("/login")}
             onLogout={() => void onLogout()}
           />
-        </div>
+        </nav>
       </div>
     </header>
   );

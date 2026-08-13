@@ -40,19 +40,19 @@ A tela de pay precisa parecer checkout, não um stub vazio.
 
 A quantidade não pode ficar solta no fim da lista. Fica **dentro da linha do setor escolhido** (“Quantidade neste setor”), para não parecer da Pista quando o Camarote está ativo.
 
-- Preço âmbar só no setor selecionado
+- Preço em coral só no setor selecionado
 - Rodapé: `Camarote x 2`, não só o nome
 - Trocar de setor zera a quantidade para 1 (já no checkout)
 
 ## Header
 
-Barra fixa no topo (`sticky`), em fluxo, fundo sólido. Sem faixa do meio (sem busca nem categorias no header). Logo à esquerda, conta à direita. Embaixo de ticketim vai **elitedev**, de onde é o desafio.
+Barra fixa no topo (`sticky`), fundo translúcido com blur — **sem** `border-b` de ponta a ponta. Logo à esquerda; à direita links de texto: área, tema e conta.
 
-Não usa a pílula `rounded-full` do shell antigo. A conta abre um menu (lista + inicial). O link da área (Ingressos / Área org / Portaria) fica à esquerda do menu, some na própria área. Guest só vê o menu, com Entrar.
+Conta: guest vê **Entrar** (vai direto ao login). Logado vê a inicial; o menu abre área + Sair. Sem pílula, sem hamburger + avatar.
 
 ## Tom visual
 
-Manter o editorial do ticketim (âmbar, sem card de vidro extra). Tema **light** é o default; dark opcional via toggle no header/login (`next-themes`, classe `.dark`).
+Coral só em CTAs e ênfase. Tipografia Geist (sans). Espaço entre blocos, busca e filtros em underline (sem caixa/glass). Bordas e sombras de painel usam tokens `--border` / `--shadow-panel` do `globals.css`. Tema **light** default; dark opcional.
 
 - Hold no detalhe do evento = uma linha, não um widget no lugar do Reservar.
 - Hold no checkout = o bloco forte.
@@ -61,11 +61,11 @@ Manter o editorial do ticketim (âmbar, sem card de vidro extra). Tema **light**
 
 ## Lab (avaliador)
 
-Widget flutuante no canto inferior direito, sempre visível neste teste. Não é produto: é atalho para trocar as contas seed, ver a sessão e pular para cinema / show / área org.
+Widget no canto inferior direito — ferramenta de correção, não produto. Botão **Lab**. Painel deixa óbvio: sessão atual em destaque, lista de contas clicáveis (checkbox + “clique para entrar”), atalhos em texto, senha/API em mono.
 
-- Fecha e abre sem recarregar; o estado fica na sessão do browser.
-- Trocar de conta faz login com `Password123!` e manda para a home do papel (org → `/organizer/events`, portaria → `/gate`).
-- Senha e URL da API ficam no rodapé do painel, em mono, sem cartão extra.
+- Fecha e abre sem recarregar; estado na sessão do browser.
+- Trocar de conta faz login com `Password123!` e manda para a home do papel.
+- Atalhos: Início, Ingressos, Área org, Portaria, Cinema, Show.
 
 ## Cartaz (filme vs show)
 
@@ -77,7 +77,8 @@ Filtros avançados (painel expansível): data `from`/`to`, preço `priceMin`/`pr
 - **Populares**: mais `ticketsSold`. Some se ninguém comprou ainda.
 - Com busca (`?q=`) **ou** qualquer filtro avançado, a grade vira uma lista só de **Resultados**.
 - No card e no detalhe, o tipo é Filme / Show, não Assentos / Setores.
-- Card do cartaz: foto quase quadrada, texto embaixo (título, tipo + local, data, preço). Sem caixa de vidro, sem ícone, sem selo em cima da imagem.
+- Card do cartaz: foto quase quadrada, texto embaixo (título, tipo + local, data, preço). Sem caixa, sem selo.
+- Home: um título (“Em cartaz”), busca em underline, tipo + filtros na mesma faixa — sem eyebrow “EM CARTAZ” e sem linha separadora sob os filtros.
 - Cada bloco (Próximos, Populares, Resultados) é uma faixa só. Sem barra de scroll embaixo: setas à direita do título. Sem grade de 2 ou 4 colunas.
 - Rodapé do site: uma linha. Esquerda: © ticketim, TMDb e Ticketmaster. Direita: sem endosso. Sem bloco de marca nem lista em coluna. No mobile, `pb-24` para o Lab.
 

@@ -15,11 +15,11 @@ import type { GateValidateResponse } from "@/features/gate/types";
 import { cn } from "@/lib/utils";
 
 const toneClass = {
-  ok: "text-emerald-300",
-  used: "text-primary",
+  ok: "text-emerald-600 dark:text-emerald-400",
+  used: "text-foreground",
   wrong: "text-foreground",
   invalid: "text-destructive",
-  closed: "text-amber-300",
+  closed: "text-muted-foreground",
 } as const;
 
 export function GateResult({

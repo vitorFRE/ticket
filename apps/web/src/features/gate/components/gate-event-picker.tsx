@@ -50,7 +50,7 @@ export function GateEventPicker({
                 {event.venue}
               </span>
               {closed && opensAt ? (
-                <span className="text-xs text-amber-300/80">
+                <span className="text-xs text-primary/80">
                   Abre às {formatGateOpenTime(opensAt)}
                 </span>
               ) : null}

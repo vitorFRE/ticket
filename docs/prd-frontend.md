@@ -14,7 +14,7 @@ Fatias de API: [docs/features/](./features/).
 
 A API cobre auth, catálogo, eventos/inventário, reservas, pagamento simulado, tickets/QR/share e gate. O web do MVP (F1–F7) está fechado: detalhe, checkout, pay, tickets, organizador, portaria e shell/roles. README/deploy ficam no passo 8 do PRD raiz.
 
-Marca e visual: **ticketim**, light default + dark opcional, âmbar, glass cards, login com imagem de plateia.
+Marca e visual: **ticketim**, light default + dark opcional, coral (#FF385C), glass cards, login com imagem de plateia.
 
 ---
 
@@ -39,7 +39,7 @@ Seed (senha `Password123!`): `client1@` / `client2@` / `organizer@` / `gate@` �
 
 ## 3. Design system (já em uso — manter)
 
-- Light default / dark via toggle (`next-themes`), primary âmbar (`oklch`), ambient + grain
+- Light default / dark via toggle (`next-themes`), primary coral (`oklch` ≈ #FF385C), ambient + grain
 - Header sticky, cards glass / tokens semânticos
 - Ícones: `@phosphor-icons/react` apenas
 - Motion leve (reveal / hover); debounce em buscas
@@ -224,7 +224,7 @@ Clients web: espelhar padrão `features/*/api/*-api.ts` + `authorizedFetch` onde
 - [x] ORGANIZER: criar via TMDb e via Ticketmaster + publish
 - [x] GATE: VALID / INVALID / ALREADY_USED / WRONG_EVENT (manual; câmera se der tempo)
 - [x] Redirect e nav por role
-- [x] UI consistente com ticketim (âmbar/dark/glass), usabilidade simples (debounce, feedback de foco, erros claros)
+- [x] UI consistente com ticketim (coral/dark), usabilidade simples (debounce, feedback de foco, erros claros)
 
 ---
 

@@ -57,8 +57,8 @@ export function EventCardCarousel({
   }
 
   return (
-    <section className={cn("space-y-5", searching && "opacity-70 transition-opacity")}>
-      <header className="flex items-start justify-between gap-4">
+    <section className={cn("space-y-6", searching && "opacity-70 transition-opacity")}>
+      <header className="flex items-end justify-between gap-4">
         <div className="min-w-0 max-w-xl space-y-1">
           <h2 className="text-xl font-semibold tracking-[-0.03em] text-balance md:text-2xl">
             {title}
@@ -113,7 +113,7 @@ function NavButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="inline-flex size-8 items-center justify-center rounded-md border border-border text-foreground transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-30 active:scale-[0.98]"
+      className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none disabled:opacity-25 active:scale-[0.98]"
     >
       {children}
     </button>

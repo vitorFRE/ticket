@@ -4,9 +4,8 @@ import { CircleNotchIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/rea
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { PageState } from "@/components/page-state";
-import { EventCardSkeletonGrid } from "@/components/skeletons/event-card-skeleton";
-import { Input } from "@/components/ui/input";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { EventCardSkeletonGrid } from "@/components/skeletons/event-card-skeleton";
 import {
   dateInputToFromIso,
   dateInputToToIso,
@@ -14,18 +13,17 @@ import {
   parseAdvancedFilters,
   type AdvancedEventFilters,
 } from "@/features/events/advanced-filters";
-import { EventKindFilter } from "@/features/events/components/event-kind-filter";
-import { EventsAdvancedFilters } from "@/features/events/components/events-advanced-filters";
-import { EventSection } from "@/features/events/components/event-section";
 import {
   parseKind,
   sourceFromKind,
   type CatalogKind,
 } from "@/features/events/catalog-kind";
+import { EventKindFilter } from "@/features/events/components/event-kind-filter";
+import { EventSection } from "@/features/events/components/event-section";
+import { EventsAdvancedFilters } from "@/features/events/components/events-advanced-filters";
 import { popularEvents, upcomingEvents } from "@/features/events/split-catalog";
 import { useEventsList } from "@/features/events/use-events-query";
 import { queryErrorMessage } from "@/shared/api/query-error";
-import { glassSubtle } from "@/lib/glass-styles";
 import { cn } from "@/lib/utils";
 
 const SEARCH_DEBOUNCE_MS = 350;
@@ -131,19 +129,16 @@ export function EventsHome() {
 
   return (
     <div className="relative z-10 flex-1">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 pt-10 pb-16 md:px-6 lg:px-8 lg:pt-12 lg:pb-24">
-        <ScrollReveal className="flex flex-col gap-8">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="max-w-2xl space-y-4">
-              <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                Em cartaz
-              </p>
-              <h1 className="hero-title text-balance">O que está em cartaz</h1>
-              <p className="max-w-md text-base leading-relaxed text-muted-foreground">
-                Cinema e palco no mesmo lugar. Escolha uma sessão e reserve.
-              </p>
-            </div>
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 pt-14 pb-20 md:px-6 lg:px-8 lg:pt-20 lg:pb-28">
+        <ScrollReveal className="flex flex-col gap-10">
+          <div className="max-w-xl space-y-4">
+            <h1 className="hero-title text-balance">Em cartaz</h1>
+            <p className="max-w-sm text-[15px] leading-relaxed text-muted-foreground">
+              Cinema e palco. Escolha a sessão e reserve.
+            </p>
+          </div>
 
+          <div className="flex flex-col gap-8">
             <HomeSearch
               searchId={searchId}
               query={query}
@@ -153,10 +148,11 @@ export function EventsHome() {
               onQuery={setQuery}
               onFocus={setFocused}
             />
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-baseline sm:justify-between">
+              <EventKindFilter value={kind} onChange={setKind} />
+              <EventsAdvancedFilters value={advanced} onChange={setAdvanced} />
+            </div>
           </div>
-
-          <EventKindFilter value={kind} onChange={setKind} />
-          <EventsAdvancedFilters value={advanced} onChange={setAdvanced} />
         </ScrollReveal>
 
         {error ? <PageState title="Não foi possível carregar" body={error} /> : null}
@@ -186,7 +182,7 @@ export function EventsHome() {
         ) : null}
 
         {!showSkeleton && !error && !filtering && items.length > 0 ? (
-          <div className="flex flex-col gap-14">
+          <div className="flex flex-col gap-20">
             <EventSection
               title="Próximos"
               subtitle={
@@ -236,44 +232,39 @@ function HomeSearch({
   onFocus: (value: boolean) => void;
 }) {
   return (
-    <div className="w-full max-w-sm shrink-0 space-y-2">
+    <div className="w-full max-w-md">
       <label htmlFor={searchId} className="sr-only">
         Buscar eventos pelo título
       </label>
-      <div
-        className={cn(
-          glassSubtle,
-          "relative transition-[box-shadow,border-color,background-color] duration-200",
-          focused &&
-            "border-primary/50 bg-accent shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary)_28%,transparent)]",
-        )}
-      >
+      <div className="relative">
         <MagnifyingGlassIcon
-          size={18}
+          size={16}
           weight="bold"
           className={cn(
-            "pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 transition-colors",
-            focused ? "text-primary" : "text-muted-foreground",
+            "pointer-events-none absolute top-1/2 left-0 -translate-y-1/2 transition-colors",
+            focused ? "text-foreground" : "text-muted-foreground",
           )}
         />
-        <Input
+        <input
           id={searchId}
           value={query}
           onChange={(e) => onQuery(e.target.value)}
           onFocus={() => onFocus(true)}
           onBlur={() => onFocus(false)}
-          placeholder="Ex.: Duna, Interestelar..."
-          className="h-12 border-0 bg-transparent pr-11 pl-10 shadow-none focus-visible:ring-0"
+          placeholder="Buscar por nome"
+          className={cn(
+            "h-11 w-full border-0 border-b border-border bg-transparent pr-9 pl-7 text-[15px] outline-none transition-colors",
+            "placeholder:text-muted-foreground/70",
+          )}
           aria-label="Buscar eventos pelo título"
-          aria-describedby={`${searchId}-hint`}
           autoComplete="off"
           spellCheck={false}
         />
         {searching && hasQuery ? (
           <CircleNotchIcon
-            size={16}
+            size={14}
             weight="bold"
-            className="absolute top-1/2 right-3.5 -translate-y-1/2 animate-spin text-primary"
+            className="absolute top-1/2 right-0 -translate-y-1/2 animate-spin text-muted-foreground"
             aria-hidden
           />
         ) : null}
@@ -281,24 +272,13 @@ function HomeSearch({
           <button
             type="button"
             onClick={() => onQuery("")}
-            className="absolute top-1/2 right-2.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="absolute top-1/2 right-0 flex size-7 -translate-y-1/2 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
             aria-label="Limpar busca"
           >
             <XIcon size={14} weight="bold" />
           </button>
         ) : null}
       </div>
-      <p
-        id={`${searchId}-hint`}
-        className="px-1 text-xs text-muted-foreground"
-        aria-live="polite"
-      >
-        {searching && hasQuery
-          ? "Buscando..."
-          : focused || hasQuery
-            ? "A lista atualiza enquanto você digita."
-            : "Busque pelo nome."}
-      </p>
     </div>
   );
 }
@@ -330,7 +310,7 @@ function EmptyCatalog({
         <button
           type="button"
           onClick={onClear}
-          className="mt-5 inline-flex h-9 items-center rounded-md bg-primary px-4 text-xs font-medium text-primary-foreground hover:opacity-90"
+          className="mt-5 inline-flex h-9 items-center rounded-md bg-foreground px-4 text-xs font-medium text-background hover:opacity-90"
         >
           Limpar filtros
         </button>

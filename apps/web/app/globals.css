@@ -32,48 +32,52 @@
   --control-height: 2.75rem;
 }
 
-/* Default: light (shadcn token convention) — https://ui.shadcn.com/docs/theming */
+/* Coral accent, clean neutrals — light default */
 :root {
-  --background: oklch(0.985 0.004 85);
-  --foreground: oklch(0.22 0.02 55);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.25 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.02 55);
-  --primary: oklch(0.62 0.14 70);
-  --primary-foreground: oklch(0.99 0.01 90);
-  --secondary: oklch(0.95 0.01 85);
-  --secondary-foreground: oklch(0.28 0.02 55);
-  --muted: oklch(0.94 0.01 85);
-  --muted-foreground: oklch(0.48 0.02 60);
-  --accent: oklch(0.95 0.02 80);
-  --accent-foreground: oklch(0.28 0.02 55);
-  --destructive: oklch(0.55 0.2 25);
-  --border: oklch(0.22 0.02 55 / 12%);
-  --input: oklch(0.22 0.02 55 / 14%);
-  --ring: oklch(0.62 0.14 70);
-  --radius: 0.5rem;
-  --grain-opacity: 0.03;
-  --auth-brand-scrim: oklch(0.18 0.02 55);
+  --card-foreground: oklch(0.25 0 0);
+  /* #FF385C */
+  --primary: oklch(0.63 0.22 15);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.25 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.55 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.25 0 0);
+  --destructive: oklch(0.55 0.22 25);
+  /* Soft structural line — same token for border / input / panels */
+  --border: oklch(0.25 0 0 / 10%);
+  --input: oklch(0.25 0 0 / 12%);
+  --ring: oklch(0.63 0.22 15);
+  --radius: 0.75rem;
+  --grain-opacity: 0.02;
+  --auth-brand-scrim: oklch(0.2 0.01 15);
+  --shadow-panel: 0 2px 8px oklch(0.25 0 0 / 4%);
 }
 
 .dark {
-  --background: oklch(0.145 0.008 55);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.2 0.01 55);
-  --card-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.78 0.14 75);
-  --primary-foreground: oklch(0.2 0.03 60);
-  --secondary: oklch(0.26 0.01 55);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.26 0.01 55);
-  --muted-foreground: oklch(0.72 0.02 70);
-  --accent: oklch(0.26 0.01 55);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.78 0.14 75);
-  --grain-opacity: 0.04;
-  --auth-brand-scrim: oklch(0.12 0.01 55);
+  --background: oklch(0.16 0 0);
+  --foreground: oklch(0.94 0 0);
+  --card: oklch(0.22 0 0);
+  --card-foreground: oklch(0.94 0 0);
+  --primary: oklch(0.68 0.22 15);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.26 0 0);
+  --secondary-foreground: oklch(0.94 0 0);
+  --muted: oklch(0.26 0 0);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.26 0 0);
+  --accent-foreground: oklch(0.94 0 0);
+  --destructive: oklch(0.65 0.2 22);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.68 0.22 15);
+  --grain-opacity: 0.035;
+  --auth-brand-scrim: oklch(0.12 0 0);
+  --shadow-panel: 0 2px 8px oklch(0 0 0 / 35%);
 }
 
 @layer base {
@@ -106,6 +110,10 @@
 
   .auth-brand-panel {
     background: var(--auth-brand-scrim);
+  }
+
+  .shadow-panel {
+    box-shadow: var(--shadow-panel);
   }
 
   .hero-title {
