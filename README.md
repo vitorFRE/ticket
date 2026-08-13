@@ -10,7 +10,7 @@ O app está no ar:
 
 **Web:** [https://ticket-web-murex.vercel.app](https://ticket-web-murex.vercel.app)
 
-No canto inferior direito: **Lab avaliador** — troca entre as contas seed sem digitar senha e atalha para cinema / show / área org / portaria.
+No canto inferior direito: **Lab avaliador** — troca entre as contas seed sem digitar senha e atalha para área org / portaria.
 
 ### Contas seed
 

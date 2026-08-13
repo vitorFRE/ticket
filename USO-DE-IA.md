@@ -32,7 +32,7 @@ Planejamento por etapas (PRD → features → UI) ficou versionado em [`docs/`](
 - Escopo do que entra ou fica de fora
 - Tom visual (ticketim coral; tema claro default)
 - Regras de hold / lock no checkout
-- Lab do avaliador (contas seed, atalhos cinema / show / org / portaria)
+- Lab do avaliador (contas seed, atalhos org / portaria)
 - Pagamento só simulado, sem cadastro / forgot password (conforme o enunciado)
 
 ## Testes

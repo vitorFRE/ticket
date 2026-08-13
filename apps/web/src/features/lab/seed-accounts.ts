@@ -44,19 +44,6 @@ export const SEED_ACCOUNTS: SeedAccount[] = [
   },
 ];
 
-export const SEED_EVENT_LINKS = [
-  {
-    href: "/events/00000000-0000-4000-8000-000000000001",
-    label: "Cinema",
-    hint: "Mapa de assentos",
-  },
-  {
-    href: "/events/00000000-0000-4000-8000-000000000002",
-    label: "Show",
-    hint: "Setores GA",
-  },
-] as const;
-
 export function roleLabel(role: AuthUser["role"]): string {
   if (role === "ORGANIZER") return "Organizador";
   if (role === "GATE") return "Portaria";

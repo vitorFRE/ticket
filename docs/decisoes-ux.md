@@ -65,7 +65,7 @@ Widget no canto inferior direito — ferramenta de correção, não produto. Bot
 
 - Fecha e abre sem recarregar; estado na sessão do browser.
 - Trocar de conta faz login com `Password123!` e manda para a home do papel.
-- Atalhos: Início, Ingressos, Área org, Portaria, Cinema, Show.
+- Atalhos: Início, Ingressos, Área org, Portaria.
 
 ## Cartaz (filme vs show)
 

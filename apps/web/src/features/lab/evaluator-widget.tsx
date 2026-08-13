@@ -14,7 +14,6 @@ import {
   homeForRole,
   roleLabel,
   SEED_ACCOUNTS,
-  SEED_EVENT_LINKS,
   SEED_PASSWORD,
   type SeedAccount,
 } from "@/features/lab/seed-accounts";
@@ -194,11 +193,6 @@ export function EvaluatorWidget() {
                   <LabLink href="/tickets">Ingressos</LabLink>
                   <LabLink href="/organizer/events">Área org</LabLink>
                   <LabLink href="/gate">Portaria</LabLink>
-                  {SEED_EVENT_LINKS.map((link) => (
-                    <LabLink key={link.href} href={link.href} hint={link.hint}>
-                      {link.label}
-                    </LabLink>
-                  ))}
                 </div>
               </section>
 
@@ -230,19 +224,10 @@ export function EvaluatorWidget() {
   );
 }
 
-function LabLink({
-  href,
-  hint,
-  children,
-}: {
-  href: string;
-  hint?: string;
-  children: ReactNode;
-}) {
+function LabLink({ href, children }: { href: string; children: ReactNode }) {
   return (
     <Link
       href={href}
-      title={hint}
       className="text-sm text-muted-foreground transition-colors hover:text-foreground"
     >
       {children}

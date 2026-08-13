@@ -74,7 +74,7 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
             <div className="relative mx-auto flex min-h-[78dvh] max-w-6xl flex-col justify-end px-4 pb-12 pt-8 md:px-6 md:pb-16 lg:px-8">
               <Link
                 href="/"
-                className="mb-auto inline-flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="mb-auto inline-flex w-fit items-center gap-2 rounded-full bg-background/90 px-3 py-1.5 text-sm font-medium text-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-background"
               >
                 <ArrowLeftIcon size={16} weight="bold" />
                 Eventos
