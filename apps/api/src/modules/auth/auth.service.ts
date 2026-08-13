@@ -85,6 +85,11 @@ export class AuthService {
     const isValid = await bcrypt.compare(token, user.refreshToken);
     if (!isValid) throw new UnauthorizedException("Refresh token inválido");
 
+    if (!user.isActive) {
+      await this.usersService.updateRefreshToken(userId, null);
+      throw new UnauthorizedException("Conta desativada");
+    }
+
     const tokens = await this.generateTokens({
       sub: user.id,
       email: user.email,

@@ -150,6 +150,12 @@ curl -sS -o /tmp/a07-08.json -w "%{http_code}" \
 
 **Esperado:** `400` (mínimo 8).
 
+### A07-09 — Refresh de conta inativa
+
+Sem UI para desativar: cobrir via unit (`auth.service.spec.ts`). Com user `isActive: false` e refresh válido:
+
+**Esperado:** `401` `Conta desativada`; hash de refresh zerado; sem novo access. Refresh seguinte (mesmo token) → `401` genérico.
+
 ---
 
 ## A08 — Software or Data Integrity Failures
@@ -291,6 +297,7 @@ curl -sS -o /tmp/a10-06.json -w "%{http_code}" \
 | A07-06 | | |
 | A07-07 | | |
 | A07-08 | | |
+| A07-09 | | unit F-02 |
 | A08-01 | | |
 | A08-02 | | |
 | A08-03 | | |
@@ -320,6 +327,7 @@ Rodar: `pnpm --filter api test` e `pnpm --filter api test:e2e`.
 | A06-04 (sem userId) | `payment-tickets.e2e-spec.ts`, `tickets.service.spec.ts` |
 | A07-01 | `throttler.e2e-spec.ts` |
 | A07-07 | `safe-next-path` spec (web) |
+| A07-09 | `auth.service.spec.ts` |
 | A08-03 / A10-03 / A10-04 / A10-05 | `gate.service.spec.ts` |
 | A10-01 | `reservations.service.spec.ts` |
 

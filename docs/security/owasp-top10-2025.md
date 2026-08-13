@@ -8,7 +8,7 @@
 
 Pagamento simulado e share público são decisões de produto do lab. Este relatório separa **issue real** de **risco aceito no lab**. Senha/contas seed no Lab avaliador **não** são achado (intencional para avaliação).
 
-Correção aplicada depois da auditoria: **F-01 resolvido** (JWT/HMAC leem só `envConfig`). Os demais achados seguem abertos.
+Correções depois da auditoria: **F-01** (secrets JWT/HMAC) e **F-02** (`isActive` no refresh) resolvidos. Os demais achados seguem abertos.
 
 ---
 
@@ -25,7 +25,6 @@ Gaps reais para um avaliador OWASP 2025:
 | Medio | F-05 | A02 | Next sem CSP / security headers |
 | Medio | F-07 | A03 / A09 | Sem CI em `.github/` |
 | Medio | F-18 | A03 | `pnpm audit`: 4 high + 2 moderate (transitivos do Next) |
-| Medio | F-02 | A07 | `isActive` / role não revalidados no refresh |
 
 Nenhum achado **Critico** de broken access control na API. O pay `outcome` escolhido pelo cliente é desenho do lab (F-13), não bypass acidental.
 
@@ -71,18 +70,16 @@ Regressão: [`env.config.spec.ts`](../../apps/api/src/config/env.config.spec.ts)
 
 ---
 
-### F-02 — `isActive` e role só no login; refresh não reconsulta política
+### F-02 — `isActive` e role só no login; refresh não reconsulta política — resolvido
 
-- **Severidade:** Medio
+- **Status:** Resolvido (2026-08-12)
+- **Severidade (original):** Medio
 - **OWASP:** A07 Authentication Failures
-- **Tipo:** issue real
-- **Onde:** [`auth.service.ts`](../../apps/api/src/modules/auth/auth.service.ts) (`login` checa `isActive`; `refreshTokens` não), [`jwt-auth.guard.ts`](../../apps/api/src/common/guards/jwt-auth.guard.ts), [`roles.guard.ts`](../../apps/api/src/common/guards/roles.guard.ts)
+- **Onde:** [`auth.service.ts`](../../apps/api/src/modules/auth/auth.service.ts)
 
-Access JWT carrega `role` no claim. Guard não hidrata o user do DB. Refresh carrega o user, compara o hash, e **não** verifica `isActive`.
+`refreshTokens` valida o hash, depois recusa `isActive === false` (`Conta desativada`) e zera o refresh no DB. Tokens novos usam `email`/`role` atuais do banco (não o claim velho). Access em curso (~15m) ainda vale até expirar — guards não hidratam o user a cada request.
 
-**Impacto:** conta desativada segue até o access expirar (~15m) e ainda **renova** o refresh (~7d). Demote de role só vale no próximo par de tokens.
-
-**Mitigação:** checar `isActive` (e role atual) no refresh; em rotas sensíveis, hidratar do DB. Logout já zera o hash — ok para o token antigo, não para o access em curso.
+Regressão: [`auth.service.spec.ts`](../../apps/api/src/modules/auth/auth.service.spec.ts).
 
 ---
 
@@ -330,6 +327,7 @@ Há `pnpm-lock.yaml` na raiz (bom). `postinstall: prisma generate` na API. Sem D
 | `safeNextPath` bloqueia `//` e `://` | `safe-next-path.ts` + spec |
 | 500 opaco ao cliente | `all-exceptions.filter.ts` |
 | JWT/HMAC leem `envConfig` (`jwt.*` / `ticketHmacSecret`) | `auth.module.ts`, guards, `ticket-qr.service.ts` |
+| Refresh recusa conta inativa e assina com role do DB | `auth.service.ts` `refreshTokens` |
 | Prod recusa secrets fracos/ausentes (`validateEnv` + factory) | `validate-env.ts`, `env.config.ts`, `ConfigModule` |
 | Sem Swagger | `apps/api/package.json` |
 
@@ -345,7 +343,7 @@ Há `pnpm-lock.yaml` na raiz (bom). `postinstall: prisma generate` na API. Sem D
 | A04 | Cryptographic Failures | F-01 resolvido (uma fonte `envConfig`). HMAC fallback só em dev. bcrypt 10. |
 | A05 | Injection | Prisma parametrizado + ValidationPipe. Sem raw SQL. |
 | A06 | Insecure Design | F-12, F-13 (lab). Role no JWT. |
-| A07 | Authentication Failures | F-02, F-03, F-09, F-14, F-16. Throttle auth 10/min. Open redirect mitigado. |
+| A07 | Authentication Failures | F-02 resolvido. F-03, F-09, F-14, F-16. Throttle auth 10/min. Open redirect mitigado. |
 | A08 | Integrity Failures | Pay sem PSP (lab). QR HMAC existe; UUID cru no gate (lab). Sem uploads/webhooks. |
 | A09 | Logging and Alerting | F-08, F-07. Sem alerta de brute-force além do 429. |
 | A10 | Mishandling of Exceptional Conditions | 500 opaco (bom). Pay de expirada → 400 após lazy expire. Gate race → `ALREADY_USED`. HTTP 4xx não logados. |
@@ -370,6 +368,7 @@ E2e em `apps/api/test/` usam services mockados (não DB real para IDOR). Ownersh
 | `event-metrics.service.spec.ts` | stats 404 non-owner |
 | `gate.service.spec.ts` | HMAC, UUID, tamper, VOID, WRONG_EVENT, ALREADY_USED, GATE_CLOSED, race |
 | `env.config.spec.ts` | F-01: fallback JWT/HMAC em dev; throw em prod sem secret |
+| `auth.service.spec.ts` | F-02: refresh inativo 401 + revoke; role do DB |
 | `safe-next-path` spec (web) | open redirect |
 
 Playwright (`apps/web/e2e/`) cobre fluxo feliz de checkout, não authz.
@@ -378,4 +377,4 @@ Playwright (`apps/web/e2e/`) cobre fluxo feliz de checkout, não authz.
 
 ## Próximo passo (fora desta entrega)
 
-Hardening sugerido, por ordem: headers/CSP (F-04/F-05) → CI + `pnpm audit` (F-07/F-18) → `isActive` no refresh (F-02) → cookies httpOnly quando sair do MVP (F-03).
+Hardening sugerido, por ordem: headers/CSP (F-04/F-05) → CI + `pnpm audit` (F-07/F-18) → cookies httpOnly quando sair do MVP (F-03).
