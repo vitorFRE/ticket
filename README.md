@@ -81,6 +81,7 @@ Já deixei as contas no seed e no deploy.
 - O QR desenhado no ingresso é o UUID `ticket.code`. A API ainda aceita o payload HMAC assinado.
 - Sem mapa de assentos em tempo real (WebSocket); o inventário atualiza no refresh / nova reserva, e como o deploy esta na vercel serverless não temos acesso a websocket.
 - Catálogo externo: sem `TMDB_*` / `TICKETMASTER_API_KEY` no `.env`, a seed ainda sobe o cartaz (fallback); só a busca ao vivo do organizador fica indisponível.
+- Portaria não fica amarrada a um evento: qualquer usuário `GATE` valida ingresso de qualquer sessão (escolhe o evento na hora).
 
 ---
 
