@@ -71,11 +71,11 @@ export function EvaluatorWidget() {
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-70 flex justify-end p-4 md:p-6">
-      <div className="pointer-events-auto flex flex-col items-end gap-3">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-70 flex justify-end p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-6">
+      <div className="pointer-events-auto flex max-h-[calc(100dvh-2rem)] w-[min(calc(100vw-2rem),20.5rem)] flex-col items-end gap-3">
         {open ? (
-          <aside className="shadow-panel w-[min(calc(100vw-2rem),20.5rem)] overflow-hidden rounded-lg border border-border bg-background">
-            <header className="flex items-start justify-between gap-3 px-4 pt-4">
+          <aside className="shadow-panel flex min-h-0 w-full flex-col overflow-hidden rounded-lg border border-border bg-background">
+            <header className="flex shrink-0 items-start justify-between gap-3 px-4 pt-4">
               <div>
                 <p className="text-sm font-semibold tracking-tight text-foreground">
                   Lab avaliador
@@ -94,7 +94,7 @@ export function EvaluatorWidget() {
               </button>
             </header>
 
-            <div className="space-y-5 px-4 py-4">
+            <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-4 py-4">
               <section className="rounded-md bg-muted px-3 py-2.5">
                 <p className="text-[11px] text-muted-foreground">Sessão atual</p>
                 {isLoading ? (
@@ -209,7 +209,7 @@ export function EvaluatorWidget() {
           type="button"
           onClick={() => toggle(!open)}
           className={cn(
-            "shadow-panel inline-flex h-12 min-w-44 items-center justify-center gap-2.5 rounded-lg border border-border bg-background px-5",
+            "shadow-panel inline-flex h-12 min-w-44 shrink-0 items-center justify-center gap-2.5 rounded-lg border border-border bg-background px-5",
             "text-sm font-medium tracking-tight text-foreground",
             "transition-[transform,opacity] hover:opacity-80 active:scale-[0.98]",
           )}
