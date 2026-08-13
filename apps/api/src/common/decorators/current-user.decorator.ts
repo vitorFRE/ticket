@@ -4,6 +4,7 @@ import type { JwtPayload } from "../types/jwt-payload.type";
 
 type UserKey = keyof (JwtPayload & { refreshToken?: string });
 
+// createParamDecorator não é Body/Query/Param — o explorer do OpenAPI ignora.
 export const CurrentUser = createParamDecorator(
   (data: UserKey | undefined, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest<Request>();

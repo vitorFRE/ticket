@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Query } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { SkipThrottle, Throttle } from "@nestjs/throttler";
 import { Roles } from "../../common/decorators/roles.decorator";
 import { THROTTLE_PRESETS } from "../../common/throttler/throttler.config";
@@ -6,6 +7,7 @@ import { UserRole } from "../../generated/prisma/enums";
 import { CatalogService } from "./catalog.service";
 import { CatalogSearchQueryDto } from "./dto/catalog-search.query.dto";
 
+@ApiTags("catalog")
 @Controller("catalog")
 @Roles(UserRole.ORGANIZER)
 @SkipThrottle({ default: true })

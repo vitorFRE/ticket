@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { Roles } from "../../common/decorators/roles.decorator";
 import { UserRole } from "../../generated/prisma/enums";
@@ -6,6 +7,7 @@ import { CreateReservationDto } from "./dto/create-reservation.dto";
 import { PayReservationDto } from "./dto/pay-reservation.dto";
 import { ReservationsService } from "./reservations.service";
 
+@ApiTags("reservations")
 @Controller("reservations")
 @Roles(UserRole.CLIENT)
 export class ReservationsController {

@@ -1,9 +1,11 @@
 import { Controller, Get, Param, Post } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { Roles } from "../../common/decorators/roles.decorator";
 import { UserRole } from "../../generated/prisma/enums";
 import { TicketsService } from "./tickets.service";
 
+@ApiTags("tickets")
 @Controller("tickets")
 @Roles(UserRole.CLIENT)
 export class TicketsController {

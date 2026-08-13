@@ -1,4 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { SkipThrottle, Throttle } from "@nestjs/throttler";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { Roles } from "../../common/decorators/roles.decorator";
@@ -7,6 +8,7 @@ import { UserRole } from "../../generated/prisma/enums";
 import { ValidateGateDto } from "./dto/validate-gate.dto";
 import { GateService } from "./gate.service";
 
+@ApiTags("gate")
 @Controller("gate")
 @Roles(UserRole.GATE)
 export class GateController {

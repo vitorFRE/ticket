@@ -7,6 +7,7 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { Public } from "../../common/decorators/public.decorator";
 import { Roles } from "../../common/decorators/roles.decorator";
@@ -19,6 +20,7 @@ import { UpdateEventDto } from "./dto/update-event.dto";
 import { EventMetricsService } from "./event-metrics.service";
 import { EventsService } from "./events.service";
 
+@ApiTags("events")
 @Controller("events")
 export class EventsController {
   constructor(
@@ -66,10 +68,7 @@ export class EventsController {
 
   @Get(":id/stats")
   @Roles(UserRole.ORGANIZER)
-  getStats(
-    @Param("id") id: string,
-    @CurrentUser("sub") organizerId: string,
-  ) {
+  getStats(@Param("id") id: string, @CurrentUser("sub") organizerId: string) {
     return this.metricsService.getEventStats(id, organizerId);
   }
 
