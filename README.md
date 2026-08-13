@@ -45,7 +45,7 @@ Optei por **um único repositório** (`pnpm` workspaces + Turborepo) com `apps/a
 
 ### Uso de IA
 
-O desafio recomenda IA — usei de forma deliberada, não como “colar o PDF e aceitar o resultado”.
+O desafio recomenda IA — usei de forma deliberada, não como “colar o PDF e aceitar o resultado”. Detalhe em [`USO-DE-IA.md`](./USO-DE-IA.md).
 
 | O que | Como |
 | --- | --- |
@@ -55,7 +55,7 @@ O desafio recomenda IA — usei de forma deliberada, não como “colar o PDF e 
 
 Fluxo típico: eu defino a etapa e as restrições → a IA implementa → eu reviso, ajusto e cubro com teste antes de seguir.
 
-Artefatos de processo versionados em [`docs/`](docs/): PRD, etapas do front, features e [decisões de UX](docs/decisoes-ux.md). Isso documenta *por que* a tela é assim, não só o que o código faz.
+Artefatos de processo versionados em [`docs/`](docs/): PRD, etapas do front, features, [decisões de UX](docs/decisoes-ux.md) e [OWASP](docs/security/README.md). Isso documenta *por que* a tela é assim, não só o que o código faz.
 
 ### Testes como rede de segurança
 
@@ -152,6 +152,7 @@ CORS da API: `FRONTEND_URL` com o origin **exato**, sem barra no fim (local e Ve
 
 | Doc | Conteúdo |
 | --- | --- |
+| [USO-DE-IA.md](./USO-DE-IA.md) | O que foi na mão, com Cursor e decisão minha |
 | [docs/prd.md](docs/prd.md) | PRD do desafio |
 | [docs/prd-frontend.md](docs/prd-frontend.md) | Etapas do web (F1–F7) |
 | [docs/decisoes-ux.md](docs/decisoes-ux.md) | Regras de produto na UI |
@@ -165,5 +166,6 @@ apps/
   web/     Next.js (ticketim)
 packages/
   config/  Biome, TypeScript, Jest
-docs/      PRD, UX e features
+docs/      PRD, UX, features e OWASP
+USO-DE-IA.md  o que foi com IA e o que não foi
 ```
