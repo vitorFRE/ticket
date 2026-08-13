@@ -14,7 +14,7 @@ import { JwtRefreshGuard } from "./guards/jwt-refresh.guard";
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>("JWT_ACCESS_SECRET"),
+        secret: config.getOrThrow<string>("jwt.accessSecret"),
       }),
     }),
   ],

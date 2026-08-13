@@ -52,10 +52,7 @@ export class TicketQrService {
   }
 
   private sign(body: string): string {
-    const secret =
-      this.config.get<string>("ticketHmacSecret") ??
-      this.config.get<string>("TICKET_HMAC_SECRET") ??
-      "change-me-ticket-hmac";
+    const secret = this.config.getOrThrow<string>("ticketHmacSecret");
     return createHmac("sha256", secret).update(body).digest("base64url");
   }
 }

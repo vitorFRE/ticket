@@ -3,7 +3,7 @@ import { TicketQrService } from "./ticket-qr.service";
 
 describe("TicketQrService", () => {
   const config = {
-    get: jest.fn().mockReturnValue("test-hmac-secret"),
+    getOrThrow: () => "test-hmac-secret",
   };
   const service = new TicketQrService(config as unknown as ConfigService);
 

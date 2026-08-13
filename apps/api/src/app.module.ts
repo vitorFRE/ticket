@@ -7,6 +7,7 @@ import { JwtAuthGuard } from "./common/guards/jwt-auth.guard";
 import { RolesGuard } from "./common/guards/roles.guard";
 import { throttlerModuleOptions } from "./common/throttler/throttler.config";
 import { envConfig } from "./config/env.config";
+import { validateEnv } from "./config/validate-env";
 import { AuthModule } from "./modules/auth/auth.module";
 import { CatalogModule } from "./modules/catalog/catalog.module";
 import { EventsModule } from "./modules/events/events.module";
@@ -19,7 +20,14 @@ import { UsersModule } from "./modules/users/users.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [envConfig] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [envConfig],
+      validate: (config) => {
+        validateEnv();
+        return config;
+      },
+    }),
     ThrottlerModule.forRoot(throttlerModuleOptions),
     PrismaModule,
     AuthModule,

@@ -32,7 +32,7 @@ export class JwtAuthGuard implements CanActivate {
       if (token) {
         try {
           request.user = await this.jwtService.verifyAsync<JwtPayload>(token, {
-            secret: this.configService.get<string>("JWT_ACCESS_SECRET"),
+            secret: this.configService.getOrThrow<string>("jwt.accessSecret"),
           });
         } catch {
           // rota pública: token inválido não bloqueia; segue sem user
@@ -45,7 +45,7 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       request.user = await this.jwtService.verifyAsync<JwtPayload>(token, {
-        secret: this.configService.get<string>("JWT_ACCESS_SECRET"),
+        secret: this.configService.getOrThrow<string>("jwt.accessSecret"),
       });
     } catch {
       throw new UnauthorizedException("Token inválido ou expirado");
